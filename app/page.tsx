@@ -5,9 +5,6 @@ import { defaultSiteSettings, type SiteSettings } from "./site-settings";
 
 export default function Home() {
   const [settings, setSettings] = useState<SiteSettings>(defaultSiteSettings);
-  const [activeFilter, setActiveFilter] = useState("همه");
-  const [query, setQuery] = useState("");
-  const [selectedItem, setSelectedItem] = useState<SiteSettings["archive"]["items"][number] | null>(null);
   const [guideOpen, setGuideOpen] = useState(false);
 
   useEffect(() => {
@@ -16,20 +13,6 @@ export default function Home() {
       .then((data) => data.settings && setSettings(data.settings))
       .catch(() => undefined);
   }, []);
-
-  const visibleItems = useMemo(() => {
-    const normalized = query.trim();
-    return settings.archive.items.filter((item) => {
-      const inFilter = activeFilter === "همه" || item.category === activeFilter;
-      const inSearch = !normalized || `${item.title} ${item.text} ${item.category}`.includes(normalized);
-      return inFilter && inSearch;
-    });
-  }, [activeFilter, query, settings.archive.items]);
-
-  const filters = useMemo(
-    () => ["همه", ...Array.from(new Set(settings.archive.items.map((item) => item.category)))],
-    [settings.archive.items],
-  );
 
   const sectionOrder = Object.fromEntries(settings.sectionOrder.map((key, index) => [key, index + 3]));
 
@@ -55,7 +38,6 @@ export default function Home() {
     "--card-radius": `${settings.design.cardRadius}px`,
     "--order-mission": sectionOrder.mission,
     "--order-council": sectionOrder.council,
-    "--order-timeline": sectionOrder.timeline,
     "--order-leader": sectionOrder.leader,
     "--order-archive": sectionOrder.archive,
     "--order-standards": sectionOrder.standards,
@@ -88,12 +70,11 @@ export default function Home() {
           <a href="/beheshti">{settings.navigation.leader}</a>
           <a href="/archive">{settings.navigation.archive}</a>
           <a href="/publications">{settings.navigation.publications}</a>
-          <a href="#contribute">{settings.navigation.contribute}</a>
           <a href="/join">عضویت</a>
         </nav>
 
-        <a className="header-cta" href="/publications">
-          {settings.navigation.cta}<span aria-hidden="true">←</span>
+        <a className="header-cta" href="#contribute">
+          {settings.navigation.contribute}<span aria-hidden="true">←</span>
         </a>
 
         <details className="mobile-menu">
@@ -138,9 +119,9 @@ export default function Home() {
           <p>{settings.mission.text}</p>
         </div>
         <div className="archive-grid">
-          {settings.mission.cards.map((card, index) => (
+          {settings.mission.cards.slice(0, 3).map((card, index) => (
             <a className="archive-card" href={card.href} key={card.id}>
-              <span className="card-index">{["۰۱", "۰۲", "۰۳", "۰۴"][index] || index + 1}</span>
+              <span className="card-index">{["۰۱", "۰۲", "۰۳"][index]}</span>
               <span className="card-line" />
               <h3>{card.title}</h3>
               <p>{card.text}</p>
@@ -180,22 +161,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="timeline-section" aria-labelledby="timeline-title">
-        <div className="timeline-heading">
-          <p className="section-kicker">{settings.timeline.kicker}</p>
-          <h2 id="timeline-title">{settings.timeline.title}</h2>
-          <p>{settings.timeline.text}</p>
-        </div>
-        <ol className="timeline">
-          {settings.timeline.items.map((item, index) => (
-            <li key={item.id}>
-              <span className="timeline-dot">{["۰۱", "۰۲", "۰۳", "۰۴", "۰۵"][index]}</span>
-              <div><h3>{item.title}</h3><p>{item.text}</p></div>
-            </li>
-          ))}
-        </ol>
-      </section>
-
       <section className="beheshti-section" id="beheshti">
         <figure className="beheshti-portrait">
           <div className="portrait-frame">
@@ -209,45 +174,36 @@ export default function Home() {
           <h2>{settings.leader.title}</h2>
           <p className="beheshti-lead">{settings.leader.lead}</p>
           <div className="inquiry-list">
-            {settings.leader.inquiries.map((item, index) => (
-              <div key={item.id}><span>{["الف", "ب", "ج", "د", "هـ"][index] || index + 1}</span><p><strong>{item.title}:</strong> {item.text}</p></div>
+            {settings.leader.inquiries.slice(0, 3).map((item, index) => (
+              <div key={item.id}><span>{["الف", "ب", "ج"][index]}</span><p><strong>{item.title}:</strong> {item.text}</p></div>
             ))}
           </div>
           <blockquote>{settings.leader.quote}<cite>{settings.leader.quoteSource}</cite></blockquote>
           <div className="beheshti-library" aria-label="گنجینهٔ آیت‌الله بهشتی">
-            {settings.leader.collections.map((item, index) => (
+            {settings.leader.collections.slice(0, 4).map((item, index) => (
               <a className="legacy-card" href={item.href} key={item.id}>
-                <span>{["۰۱", "۰۲", "۰۳", "۰۴", "۰۵", "۰۶"][index] || index + 1}</span>
+                <span>{["۰۱", "۰۲", "۰۳", "۰۴"][index]}</span>
                 <div><strong>{item.title}</strong><small>{item.text}</small></div><b aria-hidden="true">←</b>
               </a>
             ))}
           </div>
+          <a className="text-link" href="/beheshti">مشاهدهٔ پروندهٔ کامل <span aria-hidden="true">←</span></a>
         </div>
       </section>
 
       <section className="archive-section" id="archive">
         <div className="archive-header">
           <div><p className="section-kicker">{settings.archive.kicker}</p><h2>{settings.archive.title}</h2></div>
-          <label className="archive-search">
-            <span className="sr-only">جست‌وجو در پرونده‌ها</span>
-            <input onChange={(event) => setQuery(event.target.value)} placeholder={settings.archive.searchPlaceholder} type="search" value={query} />
-            <span aria-hidden="true">⌕</span>
-          </label>
+          <a className="button button-dark" href="/archive">مشاهدهٔ آرشیو کامل</a>
         </div>
-        <div className="archive-filters" aria-label="فیلتر موضوعی">
-          {filters.map((filter) => (
-            <button aria-pressed={activeFilter === filter} className={activeFilter === filter ? "active" : ""} key={filter} onClick={() => setActiveFilter(filter)} type="button">{filter}</button>
-          ))}
-        </div>
-        <div className="research-grid" aria-live="polite">
-          {visibleItems.map((item) => (
-            <button className="research-card" key={item.code} onClick={() => setSelectedItem(item)} type="button">
+        <div className="research-grid">
+          {settings.archive.items.slice(0, 4).map((item) => (
+            <a className="research-card" href="/archive" key={item.code}>
               <span className="research-meta"><b>{item.category}</b><small>{item.code}</small></span>
               <h3>{item.title}</h3><p>{item.text}</p>
               <span className="research-status"><i />{item.status}</span><span className="research-open" aria-hidden="true">↖</span>
-            </button>
+            </a>
           ))}
-          {visibleItems.length === 0 && <p className="empty-state">پرونده‌ای با این عبارت یافت نشد. واژهٔ دیگری را امتحان کنید.</p>}
         </div>
       </section>
 
@@ -258,19 +214,11 @@ export default function Home() {
           <p>{settings.standards.text}</p>
         </div>
         <div className="standards-grid">
-          {settings.standards.items.map((item, index) => (
-            <article key={item.id}><span>{["۰۱", "۰۲", "۰۳", "۰۴"][index] || index + 1}</span><h3>{item.title}</h3><p>{item.text}</p></article>
-          ))}
-        </div>
-        <div className="method-heading">
-          <p className="section-kicker">فرایند اجرایی پژوهش</p>
-          <h2>{settings.method.title}</h2>
-        </div>
-        <div className="method-grid">
-          {settings.method.items.map((item, index) => (
+          {settings.standards.items.slice(0, 4).map((item, index) => (
             <article key={item.id}><span>{["۰۱", "۰۲", "۰۳", "۰۴"][index]}</span><h3>{item.title}</h3><p>{item.text}</p></article>
           ))}
         </div>
+        <p><a className="text-link" href="/standards">مطالعهٔ منشور کامل پژوهش <span aria-hidden="true">←</span></a></p>
       </section>
 
       <section className="contribute-section" id="contribute">
@@ -283,7 +231,7 @@ export default function Home() {
           </button>
         </div>
         <div className="contribute-types">
-          {settings.contribute.types.map((item) => <div key={item.id}><span>✦</span><h3>{item.title}</h3><p>{item.text}</p></div>)}
+          {settings.contribute.types.slice(0, 4).map((item) => <div key={item.id}><span>✦</span><h3>{item.title}</h3><p>{item.text}</p></div>)}
         </div>
         {guideOpen && (
           <div className="submission-guide" id="submission-note">
@@ -314,18 +262,6 @@ export default function Home() {
         </div>
         <small>{settings.footer.copyright}</small>
       </footer>
-
-      {selectedItem && (
-        <div aria-labelledby="dialog-title" aria-modal="true" className="dialog-backdrop" role="dialog">
-          <div className="archive-dialog">
-            <button aria-label="بستن" className="dialog-close" onClick={() => setSelectedItem(null)} type="button">×</button>
-            <p className="section-kicker">{selectedItem.category}</p><h2 id="dialog-title">{selectedItem.title}</h2><p>{selectedItem.text}</p>
-            <div className="dialog-rule" />
-            <dl><div><dt>شناسه</dt><dd>{selectedItem.code}</dd></div><div><dt>وضعیت</dt><dd>{selectedItem.status}</dd></div></dl>
-            <p className="dialog-note">این مدخل نقشهٔ نخست پژوهش است. منابع و داده‌های راستی‌آزمایی‌شده به‌تدریج به آن افزوده می‌شود.</p>
-          </div>
-        </div>
-      )}
     </main>
   );
 }
