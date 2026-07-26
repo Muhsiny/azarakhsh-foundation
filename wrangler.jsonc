@@ -6,6 +6,13 @@
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
   "preview_urls": true,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "azarakhsh-db",
+      "database_id": "130db9f3-ff76-4d0d-bccb-196af0248e15"
+    }
+  ],
   "observability": {
     "enabled": true
   }
