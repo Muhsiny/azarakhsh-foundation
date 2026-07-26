@@ -4,6 +4,7 @@ import "./globals.css";
 import "./home-order-fix.css";
 import "./traditional-typography.css";
 import OfflineBootstrap from "./OfflineBootstrap";
+import SiteEnhancer from "./SiteEnhancer";
 
 const naskh = Noto_Naskh_Arabic({
   subsets: ["arabic"],
@@ -39,9 +40,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "بنیاد آذرخش" }],
   creator: "بنیاد آذرخش",
-  alternates: {
-    canonical: "/",
-  },
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "fa_AF",
@@ -49,14 +48,7 @@ export const metadata: Metadata = {
     siteName: "بنیاد آذرخش",
     title: "بنیاد آذرخش",
     description: "آذرخش؛ قاتل تاریکی و سایه‌یی سایه!",
-    images: [
-      {
-        url: "/azarakhsh-logo-web.png",
-        width: 1536,
-        height: 1024,
-        alt: "نشان بنیاد آذرخش",
-      },
-    ],
+    images: [{ url: "/azarakhsh-logo-web.png", width: 1536, height: 1024, alt: "نشان بنیاد آذرخش" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -67,29 +59,14 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
   },
-  icons: {
-    icon: "/app-icon.png",
-    shortcut: "/app-icon.png",
-  },
+  icons: { icon: "/app-icon.png", shortcut: "/app-icon.png" },
   manifest: "/manifest.webmanifest",
-  other: {
-    "codex-preview": "development",
-  },
+  other: { "codex-preview": "development" },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ResearchOrganization",
@@ -97,28 +74,17 @@ export default function RootLayout({
     alternateName: "Azarakhsh Research Foundation",
     url: siteUrl,
     logo: `${siteUrl}/azarakhsh-logo-web.png`,
-    description:
-      "بنیاد مستقل برای پژوهش عمیق تاریخ افغانستان، گردآوری اسناد و بازتاب مسئولانهٔ حقیقت‌های تاریخی.",
+    description: "بنیاد مستقل برای پژوهش عمیق تاریخ افغانستان، گردآوری اسناد و بازتاب مسئولانهٔ حقیقت‌های تاریخی.",
     areaServed: "Afghanistan",
-    knowsAbout: [
-      "تاریخ افغانستان",
-      "حکومت شورای اتفاق اسلامی افغانستان",
-      "حضرت آیت‌الله العظمی بهشتی",
-      "تاریخ هزاره‌جات",
-      "تاریخ شفاهی",
-    ],
+    knowsAbout: ["تاریخ افغانستان", "حکومت شورای اتفاق اسلامی افغانستان", "حضرت آیت‌الله العظمی بهشتی", "تاریخ هزاره‌جات", "تاریخ شفاهی"],
   };
 
   return (
     <html lang="fa" dir="rtl" className={`${naskh.variable} ${nastaliq.variable}`}>
       <body>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
-          }}
-          type="application/ld+json"
-        />
+        <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} type="application/ld+json" />
         <OfflineBootstrap />
+        <SiteEnhancer />
         {children}
       </body>
     </html>
