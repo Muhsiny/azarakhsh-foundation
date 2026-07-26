@@ -72,7 +72,7 @@ const researchItems = [
   },
 ];
 
-const filters = ["همه", "حکومت‌داری", "رهبری", "جامعه", "اسناد"];
+
 
 export default function Home() {
   const [settings, setSettings] =
@@ -102,9 +102,9 @@ export default function Home() {
         `${item.title} ${item.text} ${item.category}`.includes(normalized);
       return inFilter && inSearch;
     });
-  }, [activeFilter, query]);
+  }, [activeFilter, query, settings.archive.items]);
 
-  const highlightedTitle = useMemo(() => {
+  const filters = useMemo(() => [\n    "همه",\n    ...Array.from(new Set(settings.archive.items.map((item) => item.category))),\n  ], [settings.archive.items]);\n\n  const sectionOrder = Object.fromEntries(\n    settings.sectionOrder.map((key, index) => [key, index + 3]),\n  );\n\n  const highlightedTitle = useMemo(() => {
     const word = settings.hero.highlightedWord.trim();
     if (!word || !settings.hero.title.includes(word)) {
       return settings.hero.title;
@@ -127,7 +127,7 @@ export default function Home() {
     "--gold-500": settings.colors.gold,
     "--gold-400": settings.colors.gold,
     "--paper": settings.colors.paper,
-    "--font-persian": settings.design.fontFamily,
+    "--font-persian": settings.design.fontFamily,\n    "--heading-scale": settings.design.headingScale,\n    "--section-space": settings.design.sectionSpacing,\n    "--content-width": `${settings.design.contentWidth}px`,\n    "--card-radius": `${settings.design.cardRadius}px`,\n    "--order-mission": sectionOrder.mission,\n    "--order-council": sectionOrder.council,\n    "--order-timeline": sectionOrder.timeline,\n    "--order-leader": sectionOrder.leader,\n    "--order-archive": sectionOrder.archive,\n    "--order-standards": sectionOrder.standards,\n    "--order-method": sectionOrder.method,\n    "--order-contribute": sectionOrder.contribute,
   } as CSSProperties;
   const hiddenSections = Object.entries(settings.visibility)
     .filter(([, visible]) => !visible)
@@ -136,7 +136,7 @@ export default function Home() {
 
   return (
     <main
-      className={`site-root hero-align-${settings.design.heroAlignment} density-${settings.design.density} ${hiddenSections}`}
+      className={`site-root hero-align-${settings.design.heroAlignment} density-${settings.design.density} header-${settings.design.headerStyle} image-${settings.design.imageStyle} ${hiddenSections}`}
       style={siteStyle}
     >
       {settings.design.customCss && <style>{settings.design.customCss}</style>}
@@ -220,14 +220,14 @@ export default function Home() {
         </div>
 
         <div className="archive-grid">
-          {archiveCards.map((card) => (
+          {settings.mission.cards.map((card, index) => (
             <a className="archive-card" href={card.href} key={card.title}>
-              <span className="card-index">{card.index}</span>
+              <span className="card-index">{String(index + 1).padStart(2, "۰")}</span>
               <span className="card-line" />
               <h3>{card.title}</h3>
               <p>{card.text}</p>
               <span className="card-link">
-                گشودن پرونده <b aria-hidden="true">←</b>
+                {card.label || "گشودن پرونده"} <b aria-hidden="true">←</b>
               </span>
             </a>
           ))}
@@ -270,44 +270,25 @@ export default function Home() {
             <span>شورای اتفاق</span>
             <small>پروندهٔ باز</small>
           </div>
-          <div className="map-item map-item-one">
-            <b>زمینه‌ها</b>
-            <span>پیدایش و نیروهای اجتماعی</span>
-          </div>
-          <div className="map-item map-item-two">
-            <b>ساختار</b>
-            <span>نهادها و تصمیم‌گیری</span>
-          </div>
-          <div className="map-item map-item-three">
-            <b>حکمرانی</b>
-            <span>نظم، عدالت و اداره</span>
-          </div>
-          <div className="map-item map-item-four">
-            <b>فرجام</b>
-            <span>بحران‌ها و میراث</span>
-          </div>
+          {settings.council.axes.slice(0, 4).map((axis, index) => (
+            <div className={`map-item map-item-${["one", "two", "three", "four"][index]}`} key={axis.id}>
+              <b>{axis.title}</b>
+              <span>{axis.text}</span>
+            </div>
+          ))}
           </div>
         </div>
       </section>
 
       <section className="timeline-section" aria-labelledby="timeline-title">
         <div className="timeline-heading">
-          <p className="section-kicker">خط پژوهش، نه خط افسانه</p>
-          <h2 id="timeline-title">روایت تاریخی در پنج ایستگاه</h2>
-          <p>
-            این خط زمانی به‌جای تحمیل پاسخ، مسیر پرسش را نشان می‌دهد. تاریخ هر
-            ایستگاه پس از تطبیق منابع و اسناد معتبر تثبیت خواهد شد.
-          </p>
+          <p className="section-kicker">{settings.timeline.kicker}</p>
+          <h2 id="timeline-title">{settings.timeline.title}</h2>
+          <p>{settings.timeline.text}</p>
         </div>
         <ol className="timeline">
-          {[
-            ["زمینه‌های شکل‌گیری", "جامعه، جغرافیا و خلأ قدرت"],
-            ["تأسیس و انسجام", "ائتلاف نیروها و تعریف نظم"],
-            ["اداره و نهادسازی", "سازوکار تصمیم و اجرای قدرت"],
-            ["بحران و فرسایش", "رقابت‌ها، فشارها و گسست‌ها"],
-            ["میراث و امکان ازدست‌رفته", "اثر تاریخی و پرسش‌های امروز"],
-          ].map(([title, text], index) => (
-            <li key={title}>
+          {settings.timeline.items.map((item, index) => (
+            <li key={item.id}>
               <span className="timeline-dot">
                 {["۰۱", "۰۲", "۰۳", "۰۴", "۰۵"][index]}
               </span>
@@ -331,7 +312,7 @@ export default function Home() {
           </div>
           <figcaption>
             <span>پروندهٔ رهبر</span>
-            <strong>حضرت آیت‌الله العظمی بهشتی(ره)</strong>
+            <strong>{settings.media.leaderImageAlt}</strong>
           </figcaption>
         </figure>
         <div className="beheshti-copy">
@@ -339,40 +320,25 @@ export default function Home() {
           <h2>{settings.leader.title}</h2>
           <p className="beheshti-lead">{settings.leader.lead}</p>
           <div className="inquiry-list">
-            <div>
-              <span>الف</span>
-              <p>
-                اندیشهٔ سیاسی، تلقی از مشروعیت و نسبت دین، جامعه و حکومت
-              </p>
-            </div>
-            <div>
-              <span>ب</span>
-              <p>شیوهٔ رهبری، ائتلاف‌سازی و مدیریت تعارض‌های درون‌ساختاری</p>
-            </div>
-            <div>
-              <span>ج</span>
-              <p>میراث تاریخی، روایت‌های خانوادگی و حافظهٔ نسل‌های پسین</p>
-            </div>
+            {settings.leader.inquiries.map((item, index) => (
+              <div key={item.id}>
+                <span>{["الف", "ب", "ج", "د", "هـ"][index] || index + 1}</span>
+                <p><strong>{item.title}:</strong> {item.text}</p>
+              </div>
+            ))}
           </div>
           <blockquote>
             {settings.leader.quote}
-            <cite>یادداشت تحلیلی بنیاد آذرخش</cite>
+            <cite>{settings.leader.quoteSource}</cite>
           </blockquote>
 
           <div className="beheshti-library" aria-label="گنجینهٔ آیت‌الله بهشتی">
-            {[
-              ["زندگی و زمانه", "زندگی‌نامه، سیر علمی و بستر تاریخی"],
-              ["آثار و نوشته‌ها", "کتاب‌ها، رساله‌ها، نامه‌ها و یادداشت‌ها"],
-              ["سخنرانی‌ها", "صوت، تصویر، متن و پیاده‌سازی گفتارها"],
-              ["اندیشه و باورها", "دین، عدالت، وحدت، جامعه و حکومت"],
-              ["روایت‌های مردم", "خاطره‌ها و شهادت‌های شفاهی نسل‌ها"],
-              ["نگارخانه", "تصاویر، اسناد و یادگارهای تاریخی"],
-            ].map(([title, text], index) => (
-              <a className="legacy-card" href="/publications" key={title}>
-                <span>{["۰۱", "۰۲", "۰۳", "۰۴", "۰۵", "۰۶"][index]}</span>
+            {settings.leader.collections.map((item, index) => (
+              <a className="legacy-card" href={item.href} key={item.id}>
+                <span>{["۰۱", "۰۲", "۰۳", "۰۴", "۰۵", "۰۶", "۰۷", "۰۸"][index] || index + 1}</span>
                 <div>
-                  <strong>{title}</strong>
-                  <small>{text}</small>
+                  <strong>{item.title}</strong>
+                  <small>{item.text}</small>
                 </div>
                 <b aria-hidden="true">←</b>
               </a>
@@ -391,7 +357,7 @@ export default function Home() {
             <span className="sr-only">جست‌وجو در پرونده‌ها</span>
             <input
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="جست‌وجو در عنوان و موضوع..."
+              placeholder={settings.archive.searchPlaceholder}
               type="search"
               value={query}
             />
@@ -444,31 +410,31 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="method-section">
+
+      <section className="standards-section" id="standards">
+        <div className="standards-heading">
+          <p className="section-kicker">{settings.standards.kicker}</p>
+          <h2>{settings.standards.title}</h2>
+          <p>{settings.standards.text}</p>
+        </div>
+        <div className="standards-grid">
+          {settings.standards.items.map((item, index) => (
+            <article key={item.id}>
+              <span>{["۰۱", "۰۲", "۰۳", "۰۴", "۰۵", "۰۶"][index] || index + 1}</span>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+\n      <section className="method-section">
         <div className="method-heading">
-          <p className="section-kicker section-kicker-light">منشور اعتبار</p>
-          <h2>حقیقت تاریخی، حاصلِ نظم در روش است.</h2>
+          <p className="section-kicker section-kicker-light">{settings.method.kicker}</p>
+          <h2>{settings.method.title}</h2>
         </div>
         <div className="method-grid">
-          {[
-            [
-              "گردآوری",
-              "شناسایی سند، ثبت منشأ، زمان، مالکیت و شرایط پیدایش منبع.",
-            ],
-            [
-              "سنجش",
-              "مقایسهٔ روایت‌ها، نقد درونی و بیرونی و تشخیص فاصلهٔ حافظه با واقعه.",
-            ],
-            [
-              "تحلیل",
-              "تفکیک داده از تفسیر و سنجش رخداد در بستر اجتماعی و سیاسی خود.",
-            ],
-            [
-              "انتشار",
-              "بیان سطح اطمینان، ذکر محدودیت‌ها و گشودن راه نقد علمی و اصلاح.",
-            ],
-          ].map(([title, text], index) => (
-            <article key={title}>
+          {settings.method.items.map((item, index) => (
+            <article key={item.id}>
               <span>{["۰۱", "۰۲", "۰۳", "۰۴"][index]}</span>
               <h3>{title}</h3>
               <p>{text}</p>
@@ -479,33 +445,24 @@ export default function Home() {
 
       <section className="contribute-section" id="contribute">
         <div className="contribute-copy">
-          <p className="section-kicker">حافظهٔ شما، بخشی از تاریخ است</p>
-          <h2>یک روایت می‌تواند جای خالی یک نسل را پُر کند.</h2>
-          <p>
-            اگر عکس، نامه، سند، خاطره یا شناختی از شاهدان این دوره دارید، بنیاد
-            آذرخش آمادهٔ ارزیابی پژوهشی آن است. هیچ اثر بدون رضایت صاحب منبع
-            منتشر نمی‌شود و اطلاعات حساس پیش از انتشار بازبینی خواهد شد.
-          </p>
+          <p className="section-kicker">{settings.contribute.kicker}</p>
+          <h2>{settings.contribute.title}</h2>
+          <p>{settings.contribute.text}</p>
           <button
             className="button button-dark"
             onClick={() => setGuideOpen((open) => !open)}
             type="button"
           >
-            {guideOpen ? "بستن راهنما" : "راهنمای ثبت روایت"}
+            {guideOpen ? "بستن راهنما" : settings.contribute.button}
             <span aria-hidden="true">{guideOpen ? "×" : "←"}</span>
           </button>
         </div>
         <div className="contribute-types">
-          {[
-            ["صدا", "روایت شفاهی و گفت‌وگو با شاهد"],
-            ["تصویر", "عکس اشخاص، مکان‌ها و رویدادها"],
-            ["سند", "نامه، اعلامیه، حکم و یادداشت"],
-            ["نشانی", "معرفی شاهد، خانواده یا مجموعه‌دار"],
-          ].map(([title, text]) => (
-            <div key={title}>
+          {settings.contribute.types.map((item) => (
+            <div key={item.id}>
               <span>✦</span>
-              <h3>{title}</h3>
-              <p>{text}</p>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
             </div>
           ))}
         </div>
