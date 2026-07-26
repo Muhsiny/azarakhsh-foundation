@@ -1,0 +1,150 @@
+.membership-page {
+  background: var(--forest-950);
+  color: #fff;
+  inline-size: 100%;
+  min-block-size: 100svh;
+  min-block-size: 100dvh;
+  overflow-x: clip;
+  padding: clamp(20px, 5vw, 72px);
+}
+
+.membership-back {
+  color: var(--gold-400);
+  display: inline-flex;
+  margin-bottom: 28px;
+}
+
+.membership-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 28px;
+  inline-size: min(100%, 1100px);
+  margin-inline: auto;
+}
+
+.membership-intro,
+.membership-form {
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.membership-intro {
+  padding: 18px 0 4px;
+}
+
+.membership-intro img {
+  display: block;
+  inline-size: min(150px, 38vw);
+  block-size: auto;
+  max-block-size: 120px;
+  object-fit: contain;
+}
+
+.membership-intro h1 {
+  color: var(--gold-400);
+  font-size: clamp(34px, 9vw, 58px);
+  line-height: 1.45;
+  margin: 14px 0 18px;
+  overflow-wrap: anywhere;
+}
+
+.membership-intro > p:last-child {
+  line-height: 2;
+  margin: 0;
+  max-inline-size: 660px;
+}
+
+.membership-form {
+  background: #fffdf8;
+  color: var(--forest-950);
+  padding: clamp(20px, 5vw, 42px);
+}
+
+.membership-form label {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 17px;
+}
+
+.membership-form input,
+.membership-form textarea {
+  appearance: none;
+  background: #fff;
+  border: 1px solid rgba(18, 39, 32, 0.2);
+  border-radius: 0;
+  display: block;
+  font: inherit;
+  font-size: 16px;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  padding: 12px;
+}
+
+.membership-form textarea {
+  min-block-size: 140px;
+  resize: vertical;
+}
+
+.membership-form input:focus,
+.membership-form textarea:focus {
+  border-color: var(--gold-500);
+  box-shadow: 0 0 0 3px rgba(201, 155, 59, 0.18);
+  outline: none;
+}
+
+.membership-form .button {
+  inline-size: 100%;
+}
+
+@media (min-width: 900px) {
+  .membership-page {
+    padding: clamp(32px, 7vw, 90px);
+  }
+
+  .membership-layout {
+    align-items: start;
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: clamp(42px, 7vw, 100px);
+  }
+
+  .membership-intro {
+    position: sticky;
+    top: 32px;
+  }
+}
+
+@media (max-width: 899px) {
+  .membership-page {
+    min-block-size: auto;
+    padding-bottom: max(48px, env(safe-area-inset-bottom));
+  }
+
+  .membership-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .membership-intro,
+  .membership-form {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-height: 620px) and (max-width: 899px) {
+  .membership-page {
+    min-block-size: auto;
+  }
+
+  .membership-intro {
+    padding-top: 0;
+  }
+
+  .membership-intro img {
+    max-block-size: 72px;
+  }
+
+  .membership-intro h1 {
+    font-size: clamp(30px, 8vw, 44px);
+    margin-block: 8px 12px;
+  }
+}
