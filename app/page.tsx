@@ -319,8 +319,8 @@ export default function Home() {
                 {["۰۱", "۰۲", "۰۳", "۰۴", "۰۵"][index]}
               </span>
               <div>
-                <h3>{title}</h3>
-                <p>{text}</p>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
               </div>
             </li>
           ))}
@@ -462,8 +462,8 @@ export default function Home() {
           {settings.method.items.map((item, index) => (
             <article key={item.id}>
               <span>{["۰۱", "۰۲", "۰۳", "۰۴"][index]}</span>
-              <h3>{title}</h3>
-              <p>{text}</p>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
             </article>
           ))}
         </div>
