@@ -1,7 +1,7 @@
-/* Preserve the existing colors and layout; change typography only. */
+/* Preserve the existing colors and layout; use one authoritative font setting. */
 :root {
-  --traditional-body-font: var(--managed-body-font, "B Lotus", "BLotus", "Lotus", var(--font-lotus-fallback), "B Mitra", "BMitra", "Mitra", var(--font-naskh), Tahoma, serif);
-  --traditional-display-font: var(--managed-title-font, "B Lotus", "BLotus", "Lotus", var(--font-lotus-fallback), "B Mitra", "BMitra", "Mitra", var(--font-naskh), serif);
+  --traditional-body-font: var(--font-persian, "B Lotus", "BLotus", "Lotus", var(--font-lotus-fallback), "B Mitra", "BMitra", "Mitra", var(--font-naskh), Tahoma, serif);
+  --traditional-display-font: var(--font-persian, "B Lotus", "BLotus", "Lotus", var(--font-lotus-fallback), "B Mitra", "BMitra", "Mitra", var(--font-naskh), serif);
 }
 
 body,
@@ -149,7 +149,6 @@ footer a:focus-visible,
   margin-bottom: 28px;
 }
 
-.global-control-center,
 .page-manager {
   margin: 24px auto;
   width: min(1500px, calc(100% - 32px));
