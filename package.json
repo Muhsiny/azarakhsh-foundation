@@ -10,6 +10,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "verify": "npm run lint && npm run typecheck && npm run build",
     "deploy": "wrangler deploy",
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
     "db:generate": "drizzle-kit generate"
@@ -44,5 +45,5 @@
     "sharp": "0.35.3"
   },
   "type": "module",
-  "displayName": "\u0628\u0646\u06cc\u0627\u062f \u067e\u0698\u0648\u0647\u0634\u06cc \u0622\u0630\u0631\u062e\u0634"
+  "displayName": "بنیاد پژوهشی آذرخش"
 }
