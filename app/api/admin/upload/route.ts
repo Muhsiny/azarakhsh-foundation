@@ -1,7 +1,7 @@
 import { isAdminRequest } from "../../../admin-auth";
 
 type RuntimeEnv = {
-  BUCKET?: R2Bucket;
+  MEDIA?: KVNamespace;
 };
 
 const allowedTypes = new Set([
@@ -9,6 +9,7 @@ const allowedTypes = new Set([
   "image/png",
   "image/webp",
   "image/gif",
+  "application/pdf",
 ]);
 
 export async function POST(request: Request) {
@@ -17,30 +18,33 @@ export async function POST(request: Request) {
   }
 
   const { env } = await import("cloudflare:workers");
-  const bucket = (env as unknown as RuntimeEnv).BUCKET;
-  if (!bucket) {
-    return Response.json({ error: "فضای تصاویر فعال نیست." }, { status: 503 });
+  const media = (env as unknown as RuntimeEnv).MEDIA;
+  if (!media) {
+    return Response.json({ error: "فضای فایل‌ها فعال نیست." }, { status: 503 });
   }
 
   const form = await request.formData();
   const file = form.get("file");
   if (!(file instanceof File) || !allowedTypes.has(file.type)) {
     return Response.json(
-      { error: "فقط تصویر JPG، PNG، WebP یا GIF پذیرفته می‌شود." },
+      { error: "فقط تصویر JPG، PNG، WebP، GIF یا فایل PDF پذیرفته می‌شود." },
       { status: 400 },
     );
   }
-  if (file.size > 8 * 1024 * 1024) {
+  if (file.size > 20 * 1024 * 1024) {
     return Response.json(
-      { error: "حجم تصویر باید کمتر از ۸ مگابایت باشد." },
+      { error: "حجم فایل باید کمتر از ۲۰ مگابایت باشد." },
       { status: 400 },
     );
   }
 
-  const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+  const extension = file.name.split(".").pop()?.toLowerCase() || "bin";
   const key = `${Date.now()}-${crypto.randomUUID()}.${extension}`;
-  await bucket.put(key, await file.arrayBuffer(), {
-    httpMetadata: { contentType: file.type },
+  await media.put(key, await file.arrayBuffer(), {
+    metadata: {
+      contentType: file.type,
+      fileName: file.name,
+    },
   });
 
   return Response.json({ url: `/api/media/${encodeURIComponent(key)}` });
