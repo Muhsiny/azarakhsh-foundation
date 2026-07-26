@@ -1,30 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap");
+
 /* Targeted refinement only: preserve the existing design and colors. */
 :root {
-  --traditional-body-font: "B Nazanin", "BNazanin", "Nazanin", "Noto Naskh Arabic", Tahoma, Arial, sans-serif;
-  --traditional-display-font: "IranNastaliq", "Nastaliq", "Urdu Typesetting", "B Nazanin", "BNazanin", "Nazanin", serif;
+  --traditional-body-font: "Noto Naskh Arabic", "B Nazanin", "BNazanin", "Nazanin", Tahoma, Arial, sans-serif;
+  --traditional-display-font: "Noto Nastaliq Urdu", "IranNastaliq", "Nastaliq", "Urdu Typesetting", serif;
 }
 
 body,
 button,
 input,
 textarea,
-select {
-  font-family: var(--traditional-body-font);
-}
-
+select,
 p,
 li,
 a,
 span,
 small,
-label,
-input,
-textarea,
-select,
-button {
-  font-family: var(--traditional-body-font);
+label {
+  font-family: var(--traditional-body-font) !important;
 }
 
+/* Main titles and section headings use an actual loaded Nastaliq webfont. */
 h1,
 h2,
 h3,
@@ -33,26 +29,39 @@ h5,
 h6,
 .brand strong,
 .footer-brand strong,
+.hero h1,
 .knowledge-hero h1,
 .knowledge-article h2,
-.hero h1,
+.mission-heading h2,
 .council-intro h2,
+.timeline-heading h2,
+.timeline h3,
 .beheshti-copy h2,
+.archive-header h2,
 .archive-card h3,
 .research-card h3,
+.method-heading h2,
 .method-grid h3,
-.contribute-types h3 {
-  font-family: var(--traditional-body-font);
-  letter-spacing: 0;
+.contribute-copy h2,
+.contribute-types h3,
+.contact-section h2,
+.dialog-backdrop h2,
+.membership-page h1 {
+  font-family: var(--traditional-display-font) !important;
+  font-weight: 600;
+  letter-spacing: 0 !important;
+  line-height: 1.85;
 }
 
-/* Nastaliq is reserved for ceremonial identity text so the site remains readable. */
-.brand strong,
-.footer-brand strong,
+/* Small labels stay Nazanin/Naskh so they remain crisp and readable. */
 .hero .eyebrow,
 .section-kicker,
-.knowledge-hero .section-kicker {
-  font-family: var(--traditional-display-font);
+.knowledge-hero .section-kicker,
+.card-index,
+.timeline-dot,
+.research-meta,
+.note-number {
+  font-family: var(--traditional-body-font) !important;
 }
 
 .site-header,
@@ -118,8 +127,7 @@ footer a:focus-visible,
 
 .hero h1,
 .knowledge-hero h1 {
-  font-weight: 700;
-  line-height: 1.5;
+  line-height: 1.9;
 }
 
 .hero-lead,
@@ -134,7 +142,7 @@ footer a:focus-visible,
 .contact-details,
 .knowledge-article p,
 .knowledge-article li {
-  line-height: 2.05;
+  line-height: 2.15;
 }
 
 @media (max-width: 760px) {
@@ -147,8 +155,11 @@ footer a:focus-visible,
     font-size: 17px;
   }
 
+  h1,
+  h2,
+  h3,
   .hero h1,
   .knowledge-hero h1 {
-    line-height: 1.58;
+    line-height: 1.95;
   }
 }
