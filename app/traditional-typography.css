@@ -1,9 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap");
-
 /* Targeted refinement only: preserve the existing design and colors. */
 :root {
-  --traditional-body-font: "Noto Naskh Arabic", "B Nazanin", "BNazanin", "Nazanin", Tahoma, Arial, sans-serif;
-  --traditional-display-font: "Noto Nastaliq Urdu", "IranNastaliq", "Nastaliq", "Urdu Typesetting", serif;
+  --traditional-body-font: var(--font-persian, var(--font-naskh)), "B Nazanin", "BNazanin", "Nazanin", Tahoma, Arial, sans-serif;
+  --traditional-display-font: var(--font-nastaliq), "IranNastaliq", "Nastaliq", "Urdu Typesetting", serif;
 }
 
 body,
@@ -17,10 +15,9 @@ a,
 span,
 small,
 label {
-  font-family: var(--traditional-body-font) !important;
+  font-family: var(--traditional-body-font);
 }
 
-/* Main titles and section headings use an actual loaded Nastaliq webfont. */
 h1,
 h2,
 h3,
@@ -47,13 +44,12 @@ h6,
 .contact-section h2,
 .dialog-backdrop h2,
 .membership-page h1 {
-  font-family: var(--traditional-display-font) !important;
+  font-family: var(--traditional-display-font);
   font-weight: 600;
-  letter-spacing: 0 !important;
+  letter-spacing: 0;
   line-height: 1.85;
 }
 
-/* Small labels stay Nazanin/Naskh so they remain crisp and readable. */
 .hero .eyebrow,
 .section-kicker,
 .knowledge-hero .section-kicker,
@@ -61,7 +57,7 @@ h6,
 .timeline-dot,
 .research-meta,
 .note-number {
-  font-family: var(--traditional-body-font) !important;
+  font-family: var(--traditional-body-font);
 }
 
 .site-header,
