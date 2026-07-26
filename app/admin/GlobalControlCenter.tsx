@@ -3,25 +3,32 @@
 import { useEffect, useState } from "react";
 import { defaultSiteSettings, type SiteSettings } from "../site-settings";
 
+const lotusFont = "'B Lotus', 'BLotus', 'Lotus', var(--font-lotus-fallback), var(--font-naskh), Tahoma, serif";
+const mitraFont = "'B Mitra', 'BMitra', 'Mitra', var(--font-naskh), Tahoma, serif";
+
 const bodyFonts = [
+  { label: "لوتوس", value: lotusFont },
+  { label: "میترا", value: mitraFont },
   { label: "نسخ فارسی خوانا", value: "var(--font-naskh), 'Noto Naskh Arabic', Tahoma, sans-serif" },
   { label: "بی‌نازنین", value: "'B Nazanin', BNazanin, Nazanin, var(--font-naskh), Tahoma, sans-serif" },
   { label: "Tahoma فارسی", value: "Tahoma, Arial, sans-serif" },
 ];
 
 const titleFonts = [
+  { label: "لوتوس", value: lotusFont },
+  { label: "میترا", value: mitraFont },
   { label: "نستعلیق", value: "var(--font-nastaliq), 'Noto Nastaliq Urdu', serif" },
   { label: "نسخ رسمی", value: "var(--font-naskh), 'Noto Naskh Arabic', serif" },
   { label: "بی‌نازنین", value: "'B Nazanin', BNazanin, Nazanin, var(--font-naskh), serif" },
 ];
 
-function readTitleFont(css: string) {
-  const match = css.match(/--managed-title-font:\s*([^;]+);/);
-  return match?.[1]?.trim() || titleFonts[0].value;
+function readManagedFont(css: string, variable: "body" | "title", fallback: string) {
+  const pattern = new RegExp(`--managed-${variable}-font:\\s*([^;]+);`);
+  return css.match(pattern)?.[1]?.trim() || fallback;
 }
 
-function writeTitleFont(css: string, value: string) {
-  const rule = `:root { --managed-title-font: ${value}; }`;
+function writeManagedFonts(css: string, bodyFont: string, titleFont: string) {
+  const rule = `:root {\n  --managed-body-font: ${bodyFont};\n  --managed-title-font: ${titleFont};\n}`;
   const cleaned = css
     .replace(/\/\* AZARAKHSH_FONT_START \*\/[\s\S]*?\/\* AZARAKHSH_FONT_END \*\//g, "")
     .trim();
@@ -30,7 +37,8 @@ function writeTitleFont(css: string, value: string) {
 
 export default function GlobalControlCenter() {
   const [settings, setSettings] = useState<SiteSettings>(defaultSiteSettings);
-  const [titleFont, setTitleFont] = useState(titleFonts[0].value);
+  const [bodyFont, setBodyFont] = useState(lotusFont);
+  const [titleFont, setTitleFont] = useState(lotusFont);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -41,7 +49,8 @@ export default function GlobalControlCenter() {
         const data = (await response.json()) as { settings?: SiteSettings; error?: string };
         if (!response.ok || !data.settings) throw new Error(data.error || "تنظیمات دریافت نشد.");
         setSettings(data.settings);
-        setTitleFont(readTitleFont(data.settings.design.customCss));
+        setBodyFont(readManagedFont(data.settings.design.customCss, "body", lotusFont));
+        setTitleFont(readManagedFont(data.settings.design.customCss, "title", lotusFont));
       })
       .catch((error: Error) => setMessage(error.message))
       .finally(() => setLoading(false));
@@ -58,7 +67,8 @@ export default function GlobalControlCenter() {
       ...settings,
       design: {
         ...settings.design,
-        customCss: writeTitleFont(settings.design.customCss, titleFont),
+        fontFamily: bodyFont,
+        customCss: writeManagedFonts(settings.design.customCss, bodyFont, titleFont),
       },
     };
     const response = await fetch("/api/admin/settings", {
@@ -70,7 +80,7 @@ export default function GlobalControlCenter() {
     if (!response.ok || !data.settings) setMessage(data.error || "ذخیره انجام نشد.");
     else {
       setSettings(data.settings);
-      setMessage("هیدر، فوتر و فونت‌ها ذخیره و روی سایت اعمال شد.");
+      setMessage("فونت لوتوس/میترا و تنظیمات عمومی ذخیره و روی سایت اعمال شد.");
     }
     setSaving(false);
   }
@@ -109,9 +119,9 @@ export default function GlobalControlCenter() {
         <details open>
           <summary>فونت‌های سایت</summary>
           <div className="studio-fields">
-            <label>فونت متن‌ها<select value={settings.design.fontFamily} onChange={(e) => group("design", { fontFamily: e.target.value })}>{bodyFonts.map((font) => <option key={font.label} value={font.value}>{font.label}</option>)}</select></label>
+            <label>فونت متن‌ها<select value={bodyFont} onChange={(e) => setBodyFont(e.target.value)}>{bodyFonts.map((font) => <option key={font.label} value={font.value}>{font.label}</option>)}</select></label>
             <label>فونت عنوان‌ها<select value={titleFont} onChange={(e) => setTitleFont(e.target.value)}>{titleFonts.map((font) => <option key={font.label} value={font.value}>{font.label}</option>)}</select></label>
-            <p className="studio-wide">نستعلیق برای عنوان‌ها و نسخ/بی‌نازنین برای متن‌های طولانی تنظیم می‌شود تا ظاهر طبیعی و خوانا بماند.</p>
+            <p className="studio-wide">لوتوس اکنون انتخاب نخست است. در دستگاهی که نسخهٔ اصلی لوتوس نصب نباشد، فونت فارسی نزدیک و سازگار به‌صورت خودکار نمایش داده می‌شود.</p>
           </div>
         </details>
 
