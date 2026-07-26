@@ -1,7 +1,7 @@
 /* Targeted refinement only: preserve the existing design and colors. */
 :root {
   --traditional-body-font: var(--font-persian, var(--font-naskh)), "B Nazanin", "BNazanin", "Nazanin", Tahoma, Arial, sans-serif;
-  --traditional-display-font: var(--font-nastaliq), "IranNastaliq", "Nastaliq", "Urdu Typesetting", serif;
+  --traditional-display-font: var(--managed-title-font, var(--font-nastaliq)), "IranNastaliq", "Nastaliq", "Urdu Typesetting", serif;
 }
 
 body,
@@ -137,8 +137,22 @@ footer a:focus-visible,
 .contribute-copy > p,
 .contact-details,
 .knowledge-article p,
-.knowledge-article li {
+.knowledge-article li,
+.managed-page-content p {
   line-height: 2.15;
+}
+
+.managed-page-cover {
+  width: 100%;
+  max-height: 560px;
+  object-fit: cover;
+  margin-bottom: 28px;
+}
+
+.global-control-center,
+.page-manager {
+  margin: 24px auto;
+  width: min(1500px, calc(100% - 32px));
 }
 
 @media (max-width: 760px) {
