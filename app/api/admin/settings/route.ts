@@ -8,6 +8,19 @@ import {
   type SiteSettings,
 } from "../../../site-settings";
 
+const lotusFont = "'B Lotus', 'BLotus', 'Lotus', var(--font-lotus-fallback), 'B Mitra', 'BMitra', 'Mitra', var(--font-naskh), Tahoma, serif";
+
+function normalizeTypography(settings: SiteSettings): SiteSettings {
+  const current = settings.design.fontFamily || "";
+  if (!current || /B Nazanin|BNazanin|Noto Naskh Arabic/i.test(current)) {
+    settings.design.fontFamily = lotusFont;
+  }
+  settings.design.customCss = settings.design.customCss
+    .replace(/\/\* AZARAKHSH_FONT_START \*\/[\s\S]*?\/\* AZARAKHSH_FONT_END \*\//g, "")
+    .trim();
+  return settings;
+}
+
 export async function GET() {
   if (!(await canManageSiteRequest())) {
     return Response.json({ error: "اجازهٔ دسترسی ندارید." }, { status: 403 });
@@ -19,7 +32,7 @@ export async function GET() {
     .where(eq(siteSettings.id, 1))
     .limit(1);
   const parsed = row?.data ? JSON.parse(row.data) : defaultSiteSettings;
-  return Response.json({ settings: mergeSiteSettings(parsed) });
+  return Response.json({ settings: normalizeTypography(mergeSiteSettings(parsed)) });
 }
 
 export async function PUT(request: Request) {
@@ -28,7 +41,7 @@ export async function PUT(request: Request) {
   }
 
   const payload = (await request.json()) as { settings?: Partial<SiteSettings> };
-  const settings = mergeSiteSettings(payload.settings);
+  const settings = normalizeTypography(mergeSiteSettings(payload.settings));
   const db = await getDb();
   const now = new Date().toISOString();
   await db
