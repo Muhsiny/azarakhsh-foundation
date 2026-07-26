@@ -298,7 +298,18 @@ export default function SiteStudio() {
               <label className="studio-wide">عنوان<input value={settings[group].title} onChange={(event) => setGroup(group, { title: event.target.value })} /></label>
               {group !== "method" && <label className="studio-wide">متن<textarea rows={3} value={settings[group].text} onChange={(event) => setGroup(group, { text: event.target.value })} /></label>}
               {group === "contribute" && <label>متن دکمه<input value={settings.contribute.button} onChange={(event) => setGroup("contribute", { button: event.target.value })} /></label>}
-              <CardEditor title={`موارد بخش ${label}`} items={settings[group][field]} onChange={(items) => setCards(group, field, items)} showHref={false} />
+              <CardEditor
+                title={`موارد بخش ${label}`}
+                items={
+                  group === "contribute"
+                    ? settings.contribute.types
+                    : group === "method"
+                      ? settings.method.items
+                      : settings.standards.items
+                }
+                onChange={(items) => setCards(group, field, items)}
+                showHref={false}
+              />
             </div>
           </details>
         ))}
