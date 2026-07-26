@@ -1,7 +1,8 @@
 const { app, BrowserWindow, shell } = require("electron");
 const path = require("path");
 
-const SITE_URL = "https://azarakhsh-foundation.sjzjan420.workers.dev";
+const SITE_ORIGIN = "https://azarakhsh-foundation.zulfiqar14.workers.dev";
+const START_URL = SITE_ORIGIN;
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -19,12 +20,12 @@ function createWindow() {
     }
   });
 
-  win.loadURL(SITE_URL).catch(() => {
+  win.loadURL(START_URL).catch(() => {
     win.loadFile(path.join(__dirname, "../web/index.html"));
   });
 
   win.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith(SITE_URL)) return { action: "allow" };
+    if (url.startsWith(SITE_ORIGIN)) return { action: "allow" };
     if (url.startsWith("https://") || url.startsWith("http://")) shell.openExternal(url);
     return { action: "deny" };
   });
