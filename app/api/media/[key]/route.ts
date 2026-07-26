@@ -1,5 +1,10 @@
 type RuntimeEnv = {
-  BUCKET?: R2Bucket;
+  MEDIA?: KVNamespace;
+};
+
+type MediaMetadata = {
+  contentType?: string;
+  fileName?: string;
 };
 
 type RouteContext = {
@@ -8,16 +13,15 @@ type RouteContext = {
 
 export async function GET(_request: Request, context: RouteContext) {
   const { env } = await import("cloudflare:workers");
-  const bucket = (env as unknown as RuntimeEnv).BUCKET;
-  if (!bucket) return new Response("Not found", { status: 404 });
+  const media = (env as unknown as RuntimeEnv).MEDIA;
+  if (!media) return new Response("Not found", { status: 404 });
 
   const { key } = await context.params;
-  const object = await bucket.get(key);
-  if (!object) return new Response("Not found", { status: 404 });
+  const object = await media.getWithMetadata<MediaMetadata>(key, "arrayBuffer");
+  if (!object.value) return new Response("Not found", { status: 404 });
 
   const headers = new Headers();
-  object.writeHttpMetadata(headers);
-  headers.set("etag", object.httpEtag);
+  headers.set("content-type", object.metadata?.contentType || "application/octet-stream");
   headers.set("cache-control", "public, max-age=31536000, immutable");
-  return new Response(object.body, { headers });
+  return new Response(object.value, { headers });
 }
