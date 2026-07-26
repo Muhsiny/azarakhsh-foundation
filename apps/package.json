@@ -1,0 +1,44 @@
+{
+  "name": "azarakhsh-foundation-installers",
+  "version": "1.0.0",
+  "private": true,
+  "main": "desktop/main.cjs",
+  "scripts": {
+    "android:add": "cap add android",
+    "android:sync": "cap sync android",
+    "desktop": "electron .",
+    "dist:win": "electron-builder --win nsis"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/core": "^7.4.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.3",
+    "electron": "^38.1.2",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "org.azarakhshfoundation.app",
+    "productName": "Azarakhsh Foundation",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "desktop/**/*",
+      "web/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "artifactName": "Azarakhsh-Foundation-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Azarakhsh Foundation"
+    }
+  }
+}
