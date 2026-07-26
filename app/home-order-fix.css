@@ -1,0 +1,11 @@
+.site-root > .contact-section {
+  order: 100;
+}
+
+.site-root > footer {
+  order: 101;
+}
+
+.site-root > .dialog-backdrop {
+  order: 102;
+}
