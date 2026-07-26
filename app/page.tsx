@@ -250,7 +250,22 @@ export default function Home() {
           </a>
         </div>
 
-        <div className="council-map" aria-label="محورهای پژوهش شورای اتفاق">
+        <div className="council-visuals">
+          <figure className="council-emblem-card">
+            <div className="historical-image-frame">
+              <img
+                src="/api/media/site%2Fshura-e-ettefaq-emblem.webp"
+                alt="نشان تاریخی حکومت شورای اتفاق اسلامی افغانستان"
+              />
+            </div>
+            <figcaption>
+              <span>سند تصویری</span>
+              <strong>نشان تاریخی حکومت شورای اتفاق اسلامی افغانستان</strong>
+              <small>نسخهٔ آرشیوی؛ تاریخ و منشأ دقیق در حال تکمیل است.</small>
+            </figcaption>
+          </figure>
+
+          <div className="council-map" aria-label="محورهای پژوهش شورای اتفاق">
           <div className="map-center">
             <span>شورای اتفاق</span>
             <small>پروندهٔ باز</small>
@@ -270,6 +285,7 @@ export default function Home() {
           <div className="map-item map-item-four">
             <b>فرجام</b>
             <span>بحران‌ها و میراث</span>
+          </div>
           </div>
         </div>
       </section>
@@ -305,12 +321,19 @@ export default function Home() {
       </section>
 
       <section className="beheshti-section" id="beheshti">
-        <div className="beheshti-portrait" aria-hidden="true">
-          <div className="portrait-ring portrait-ring-one" />
-          <div className="portrait-ring portrait-ring-two" />
-          <span className="portrait-letter">ب</span>
-          <small>پروندهٔ رهبر</small>
-        </div>
+        <figure className="beheshti-portrait">
+          <div className="portrait-frame">
+            <img
+              src="/api/media/site%2Fayatollah-beheshti.webp"
+              alt="حضرت آیت‌الله العظمی بهشتی(ره)"
+            />
+            <span className="portrait-glow" aria-hidden="true" />
+          </div>
+          <figcaption>
+            <span>پروندهٔ رهبر</span>
+            <strong>حضرت آیت‌الله العظمی بهشتی(ره)</strong>
+          </figcaption>
+        </figure>
         <div className="beheshti-copy">
           <p className="section-kicker">{settings.leader.kicker}</p>
           <h2>{settings.leader.title}</h2>
@@ -335,6 +358,26 @@ export default function Home() {
             {settings.leader.quote}
             <cite>یادداشت تحلیلی بنیاد آذرخش</cite>
           </blockquote>
+
+          <div className="beheshti-library" aria-label="گنجینهٔ آیت‌الله بهشتی">
+            {[
+              ["زندگی و زمانه", "زندگی‌نامه، سیر علمی و بستر تاریخی"],
+              ["آثار و نوشته‌ها", "کتاب‌ها، رساله‌ها، نامه‌ها و یادداشت‌ها"],
+              ["سخنرانی‌ها", "صوت، تصویر، متن و پیاده‌سازی گفتارها"],
+              ["اندیشه و باورها", "دین، عدالت، وحدت، جامعه و حکومت"],
+              ["روایت‌های مردم", "خاطره‌ها و شهادت‌های شفاهی نسل‌ها"],
+              ["نگارخانه", "تصاویر، اسناد و یادگارهای تاریخی"],
+            ].map(([title, text], index) => (
+              <a className="legacy-card" href="/publications" key={title}>
+                <span>{["۰۱", "۰۲", "۰۳", "۰۴", "۰۵", "۰۶"][index]}</span>
+                <div>
+                  <strong>{title}</strong>
+                  <small>{text}</small>
+                </div>
+                <b aria-hidden="true">←</b>
+              </a>
+            ))}
+          </div>
         </div>
       </section>
 
