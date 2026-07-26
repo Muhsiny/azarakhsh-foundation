@@ -115,12 +115,12 @@ export default function Home() {
         </a>
 
         <nav aria-label="فهرست اصلی">
-          <a href="#mission">{settings.navigation.about}</a>
+          <a href="/about">{settings.navigation.about}</a>
           <a href="#council">{settings.navigation.council}</a>
-          <a href="#beheshti">{settings.navigation.leader}</a>
-          <a href="#archive">{settings.navigation.archive}</a>
+          <a href="/beheshti">{settings.navigation.leader}</a>
+          <a href="/archive">{settings.navigation.archive}</a>
           <a href="/publications">{settings.navigation.publications}</a>
-          <a href="#contribute">{settings.navigation.contribute}</a>
+          <a href="/contact">{settings.navigation.contribute}</a>
           <a href="/join">عضویت</a>
         </nav>
 
@@ -131,10 +131,10 @@ export default function Home() {
         <details className="mobile-menu">
           <summary aria-label="بازکردن فهرست">فهرست</summary>
           <div>
-            <a href="#mission">{settings.navigation.about}</a>
+            <a href="/about">{settings.navigation.about}</a>
             <a href="#council">{settings.navigation.council}</a>
-            <a href="#beheshti">{settings.navigation.leader}</a>
-            <a href="#archive">{settings.navigation.archive}</a>
+            <a href="/beheshti">{settings.navigation.leader}</a>
+            <a href="/archive">{settings.navigation.archive}</a>
             <a href="/publications">{settings.navigation.publications}</a>
             <a href="#contribute">{settings.navigation.contribute}</a>
             <a href="/join">عضویت</a>
