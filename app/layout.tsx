@@ -1,8 +1,23 @@
 import type { Metadata } from "next";
+import { Noto_Naskh_Arabic, Noto_Nastaliq_Urdu } from "next/font/google";
 import "./globals.css";
 import "./home-order-fix.css";
 import "./traditional-typography.css";
 import OfflineBootstrap from "./OfflineBootstrap";
+
+const naskh = Noto_Naskh_Arabic({
+  subsets: ["arabic"],
+  variable: "--font-naskh",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
+
+const nastaliq = Noto_Nastaliq_Urdu({
+  subsets: ["arabic"],
+  variable: "--font-nastaliq",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
 
 const siteUrl = "https://azarakhsh-foundation.zulfiqar14.workers.dev";
 
@@ -95,7 +110,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="fa" dir="rtl">
+    <html lang="fa" dir="rtl" className={`${naskh.variable} ${nastaliq.variable}`}>
       <body>
         <script
           dangerouslySetInnerHTML={{
