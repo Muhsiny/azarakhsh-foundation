@@ -1,10 +1,10 @@
+import type { CSSProperties } from "react";
 import { and, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { getDb } from "../../../db";
 import { ensurePlatformSchema } from "../../../db/platform";
-import { posts } from "../../../db/schema";
+import { posts, siteSettings } from "../../../db/schema";
 import { defaultSiteSettings, mergeSiteSettings } from "../../site-settings";
-import { siteSettings } from "../../../db/schema";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +12,12 @@ export default async function CustomPage({ params }: { params: Promise<{ slug: s
   await ensurePlatformSchema();
   const { slug } = await params;
   const db = await getDb();
-  const [page] = await db.select().from(posts).where(and(eq(posts.slug, slug), eq(posts.contentType, "page"), eq(posts.status, "published"))).limit(1);
+  const [page] = await db
+    .select()
+    .from(posts)
+    .where(and(eq(posts.slug, slug), eq(posts.contentType, "page"), eq(posts.status, "published")))
+    .limit(1);
+
   if (!page || page.visibility !== "public") notFound();
 
   const [settingsRow] = await db.select().from(siteSettings).where(eq(siteSettings.id, 1)).limit(1);
@@ -27,7 +32,7 @@ export default async function CustomPage({ params }: { params: Promise<{ slug: s
     "--gold-400": settings.colors.gold,
     "--paper": settings.colors.paper,
     "--font-persian": settings.design.fontFamily,
-  } as React.CSSProperties;
+  } as CSSProperties;
 
   return (
     <main className="knowledge-page custom-managed-page" style={style}>
