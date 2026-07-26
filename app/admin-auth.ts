@@ -137,15 +137,20 @@ export function expiredSessionCookie() {
 export async function authenticateAdmin(emailValue: string, password: string) {
   const env = await runtimeEnv();
   const email = emailValue.trim().toLowerCase();
+  const normalizedPassword = password.normalize("NFKC").trim();
   const ownerEmail = env.ADMIN_EMAIL?.trim().toLowerCase() ?? "";
   const secret = env.SESSION_SECRET ?? "";
 
-  if (!email || !password || !secret) return null;
+  if (!email || !normalizedPassword || !secret) return null;
 
   if (
     email === ownerEmail &&
     env.ADMIN_PASSWORD &&
-    (await equalSecret(password, env.ADMIN_PASSWORD, secret))
+    (await equalSecret(
+      normalizedPassword,
+      env.ADMIN_PASSWORD.normalize("NFKC").trim(),
+      secret,
+    ))
   ) {
     const user: AdminUser = {
       id: null,
@@ -166,7 +171,7 @@ export async function authenticateAdmin(emailValue: string, password: string) {
 
   if (!stored || stored.status !== "active") return null;
   const passwordHash = bytesToBase64Url(
-    await hmac(`password:${stored.password_salt}:${password}`, secret),
+    await hmac(`password:${stored.password_salt}:${normalizedPassword}`, secret),
   );
   if (!(await equalSecret(passwordHash, stored.password_hash, secret))) return null;
 
