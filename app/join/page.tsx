@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import "./join.css";
 
 export default function JoinPage() {
   const [message, setMessage] = useState("");
@@ -28,7 +29,7 @@ export default function JoinPage() {
   return (
     <main className="membership-page">
       <a className="membership-back" href="/">بازگشت به بنیاد ←</a>
-      <section>
+      <section className="membership-layout">
         <div className="membership-intro">
           <img src="/azarakhsh-logo-transparent-web.png" alt="نشان بنیاد آذرخش" />
           <p className="section-kicker section-kicker-light">عضویت پژوهشی</p>
@@ -38,15 +39,15 @@ export default function JoinPage() {
             درخواست عضویت بفرستند. دسترسی پس از بررسی مدیر فعال می‌شود.
           </p>
         </div>
-        <form onSubmit={submit}>
-          <label>نام کامل<input name="fullName" required /></label>
-          <label>ایمیل<input name="email" required type="email" /></label>
-          <label>سازمان یا حوزهٔ فعالیت<input name="organization" /></label>
+        <form className="membership-form" onSubmit={submit}>
+          <label>نام کامل<input autoComplete="name" name="fullName" required /></label>
+          <label>ایمیل<input autoComplete="email" inputMode="email" name="email" required type="email" /></label>
+          <label>سازمان یا حوزهٔ فعالیت<input autoComplete="organization" name="organization" /></label>
           <label>هدف از عضویت<textarea name="reason" rows={6} required /></label>
           <button className="button button-dark" disabled={saving} type="submit">
             {saving ? "در حال ثبت..." : "ارسال درخواست عضویت"}
           </button>
-          {message && <p className="admin-message">{message}</p>}
+          {message && <p className="admin-message" role="status">{message}</p>}
         </form>
       </section>
     </main>
