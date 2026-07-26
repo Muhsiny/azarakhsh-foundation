@@ -40,7 +40,6 @@ export default function PublicationsPage() {
   const [query, setQuery] = useState("");
   const [language, setLanguage] = useState("all");
   const [type, setType] = useState("all");
-  const [activePost, setActivePost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -65,11 +64,6 @@ export default function PublicationsPage() {
       );
     });
   }, [posts, query, language, type]);
-
-  function openPost(post: Post) {
-    setActivePost(post);
-    void fetch(`/api/posts/${post.id}/view`, { method: "POST" });
-  }
 
   return (
     <main className="publications-shell">
@@ -121,31 +115,13 @@ export default function PublicationsPage() {
                   <h2>{post.title}</h2>
                   <p>{post.excerpt}</p>
                   <small>{post.authorName || "تیم پژوهشی بنیاد"} · {post.views} بازدید</small>
-                  <button onClick={() => openPost(post)} type="button">گشودن پرونده ←</button>
+                  <a className="publication-read" href={`/publications/${post.slug}`}>گشودن پروندهٔ مستقل ←</a>
                 </div>
               </article>
             ))}
           </div>
         )}
       </section>
-      {activePost && (
-        <div className="dialog-backdrop" role="dialog" aria-modal="true">
-          <article className="article-dialog">
-            <button aria-label="بستن" className="dialog-close" onClick={() => setActivePost(null)} type="button">×</button>
-            <span>{typeLabels[activePost.contentType] ?? activePost.category}</span>
-            <h2>{activePost.title}</h2>
-            <p className="article-excerpt">{activePost.excerpt}</p>
-            {activePost.coverImage && <img src={activePost.coverImage} alt="" />}
-            <div className="article-content">{activePost.content}</div>
-            {activePost.sourceNote && <p className="source-note">منبع: {activePost.sourceNote}</p>}
-            {activePost.fileUrl && (
-              <a className="button button-dark" href={`/api/posts/${activePost.id}/download`}>
-                دانلود {activePost.fileName || "فایل آرشیوی"} ({activePost.downloads})
-              </a>
-            )}
-          </article>
-        </div>
-      )}
     </main>
   );
 }
