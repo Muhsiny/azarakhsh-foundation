@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./home-order-fix.css";
+import "./editorial-redesign.css";
 import OfflineBootstrap from "./OfflineBootstrap";
 
 const siteUrl = "https://azarakhsh-foundation.zulfiqar14.workers.dev";
