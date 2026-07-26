@@ -3,7 +3,7 @@
   "appName": "بنیاد آذرخش",
   "webDir": "web",
   "server": {
-    "url": "https://azarakhsh-foundation.sjzjan420.workers.dev",
+    "url": "https://azarakhsh-foundation.zulfiqar14.workers.dev",
     "cleartext": false,
     "androidScheme": "https"
   }
