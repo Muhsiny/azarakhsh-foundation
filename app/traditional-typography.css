@@ -1,0 +1,154 @@
+/* Targeted refinement only: preserve the existing design and colors. */
+:root {
+  --traditional-body-font: "B Nazanin", "BNazanin", "Nazanin", "Noto Naskh Arabic", Tahoma, Arial, sans-serif;
+  --traditional-display-font: "IranNastaliq", "Nastaliq", "Urdu Typesetting", "B Nazanin", "BNazanin", "Nazanin", serif;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: var(--traditional-body-font);
+}
+
+p,
+li,
+a,
+span,
+small,
+label,
+input,
+textarea,
+select,
+button {
+  font-family: var(--traditional-body-font);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.brand strong,
+.footer-brand strong,
+.knowledge-hero h1,
+.knowledge-article h2,
+.hero h1,
+.council-intro h2,
+.beheshti-copy h2,
+.archive-card h3,
+.research-card h3,
+.method-grid h3,
+.contribute-types h3 {
+  font-family: var(--traditional-body-font);
+  letter-spacing: 0;
+}
+
+/* Nastaliq is reserved for ceremonial identity text so the site remains readable. */
+.brand strong,
+.footer-brand strong,
+.hero .eyebrow,
+.section-kicker,
+.knowledge-hero .section-kicker {
+  font-family: var(--traditional-display-font);
+}
+
+.site-header,
+.knowledge-nav {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.025), rgba(0,0,0,.08)),
+    var(--forest-900);
+  border-bottom: 1px solid rgba(239, 211, 139, .28);
+  color: var(--white);
+}
+
+.site-header .brand strong,
+.site-header .brand small,
+.knowledge-nav .brand strong,
+.knowledge-nav .brand small {
+  color: var(--white);
+}
+
+.site-header nav a,
+.knowledge-nav nav a {
+  color: rgba(255, 253, 248, .88);
+}
+
+.site-header nav a:hover,
+.site-header nav a:focus-visible,
+.knowledge-nav nav a:hover,
+.knowledge-nav nav a:focus-visible {
+  color: var(--gold-300);
+}
+
+.site-header .header-cta {
+  border-color: rgba(239, 211, 139, .7);
+  color: var(--gold-300);
+}
+
+.site-header .header-cta:hover,
+.site-header .header-cta:focus-visible {
+  background: var(--gold-500);
+  border-color: var(--gold-500);
+  color: var(--forest-950);
+}
+
+.mobile-menu summary {
+  background: rgba(255,255,255,.04);
+  color: var(--gold-300);
+}
+
+footer,
+.knowledge-footer {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(201, 155, 59, .08), transparent 32%),
+    linear-gradient(180deg, var(--forest-900), var(--forest-950));
+  border-top: 1px solid rgba(239, 211, 139, .18);
+}
+
+.footer-brand strong,
+footer a:hover,
+footer a:focus-visible,
+.knowledge-footer a:hover,
+.knowledge-footer a:focus-visible {
+  color: var(--gold-300);
+}
+
+.hero h1,
+.knowledge-hero h1 {
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.hero-lead,
+.mission-heading p,
+.council-intro p,
+.timeline-heading p,
+.timeline p,
+.beheshti-lead,
+.research-card > p,
+.method-grid p,
+.contribute-copy > p,
+.contact-details,
+.knowledge-article p,
+.knowledge-article li {
+  line-height: 2.05;
+}
+
+@media (max-width: 760px) {
+  .site-header,
+  .knowledge-nav {
+    min-height: 70px;
+  }
+
+  .brand strong {
+    font-size: 17px;
+  }
+
+  .hero h1,
+  .knowledge-hero h1 {
+    line-height: 1.58;
+  }
+}
