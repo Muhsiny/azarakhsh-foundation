@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 
-export type AdminRole = "owner" | "admin" | "editor";
+export type AdminRole = "owner" | "admin" | "reviewer" | "editor" | "member";
 
 export type AdminUser = {
   id: number | null;
@@ -20,7 +20,7 @@ type StoredAdmin = {
   id: number;
   email: string;
   display_name: string;
-  role: "admin" | "editor";
+  role: AdminRole;
   password_hash: string;
   password_salt: string;
   status: string;
@@ -222,15 +222,31 @@ export async function getAdminUser(): Promise<AdminUser | null> {
 }
 
 export async function isAdminRequest() {
-  return Boolean(await getAdminUser());
+  const role = (await getAdminUser())?.role;
+  return role === "owner" || role === "admin" || role === "reviewer" || role === "editor";
 }
 
 export async function isOwnerRequest() {
   return (await getAdminUser())?.role === "owner";
 }
 
+export async function canManageSiteRequest() {
+  const role = (await getAdminUser())?.role;
+  return role === "owner" || role === "admin";
+}
+
+export async function canPublishRequest() {
+  const role = (await getAdminUser())?.role;
+  return role === "owner" || role === "admin" || role === "reviewer";
+}
+
 export async function requireAdminPage() {
   const user = await getAdminUser();
+  const authorized =
+    user?.role === "owner" ||
+    user?.role === "admin" ||
+    user?.role === "reviewer" ||
+    user?.role === "editor";
   return {
     user: user ?? {
       id: null,
@@ -238,7 +254,7 @@ export async function requireAdminPage() {
       displayName: "مدیر بنیاد",
       role: "editor" as const,
     },
-    authorized: Boolean(user),
+    authorized,
   };
 }
 
@@ -255,7 +271,7 @@ export async function listAdminUsers() {
 export async function createAdminUser(input: {
   email: string;
   displayName: string;
-  role: "admin" | "editor";
+  role: Exclude<AdminRole, "owner">;
   password: string;
 }) {
   const env = await runtimeEnv();
@@ -293,7 +309,7 @@ export async function updateAdminUser(
   id: number,
   input: {
     displayName?: string;
-    role?: "admin" | "editor";
+    role?: Exclude<AdminRole, "owner">;
     status?: "active" | "disabled";
     password?: string;
   },

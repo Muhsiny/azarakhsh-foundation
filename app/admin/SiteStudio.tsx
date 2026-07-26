@@ -346,6 +346,43 @@ export default function SiteStudio() {
         </details>
 
         <details>
+          <summary>تماس و نشانی رسمی</summary>
+          <div className="studio-fields">
+            <label>
+              ایمیل
+              <input
+                dir="ltr"
+                value={settings.contact.email}
+                onChange={(event) => setGroup("contact", { email: event.target.value })}
+              />
+            </label>
+            <label>
+              شماره تماس
+              <input
+                dir="ltr"
+                value={settings.contact.phone}
+                onChange={(event) => setGroup("contact", { phone: event.target.value })}
+              />
+            </label>
+            <label>
+              نشانی
+              <input
+                value={settings.contact.address}
+                onChange={(event) => setGroup("contact", { address: event.target.value })}
+              />
+            </label>
+            <label>
+              وب‌سایت یا شبکهٔ رسمی
+              <input
+                dir="ltr"
+                value={settings.contact.website}
+                onChange={(event) => setGroup("contact", { website: event.target.value })}
+              />
+            </label>
+          </div>
+        </details>
+
+        <details>
           <summary>پابرگ</summary>
           <div className="studio-fields">
             <label className="studio-wide">معرفی بنیاد<textarea rows={3} value={settings.footer.mission} onChange={(event) => setGroup("footer", { mission: event.target.value })} /></label>

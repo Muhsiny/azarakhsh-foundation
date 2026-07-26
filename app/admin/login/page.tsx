@@ -3,9 +3,9 @@ export const dynamic = "force-dynamic";
 export default async function AdminLoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; returnTo?: string }>;
 }) {
-  const { error } = await searchParams;
+  const { error, returnTo } = await searchParams;
   return (
     <main className="admin-shell">
       <section className="admin-access-card">
@@ -14,6 +14,7 @@ export default async function AdminLoginPage({
         <h1>مرکز مدیریت بنیاد آذرخش</h1>
         <p>با ایمیل و رمز مدیریتی وارد شوید.</p>
         <form action="/api/auth/login" method="post">
+          <input name="returnTo" type="hidden" value={returnTo || "/admin"} />
           <label>
             ایمیل
             <input name="email" required type="email" autoComplete="username" />

@@ -23,5 +23,9 @@ export async function GET(_request: Request, context: RouteContext) {
   const headers = new Headers();
   headers.set("content-type", object.metadata?.contentType || "application/octet-stream");
   headers.set("cache-control", "public, max-age=31536000, immutable");
+  headers.set("x-content-type-options", "nosniff");
+  if (object.metadata?.fileName) {
+    headers.set("content-disposition", `inline; filename*=UTF-8''${encodeURIComponent(object.metadata.fileName)}`);
+  }
   return new Response(object.value, { headers });
 }

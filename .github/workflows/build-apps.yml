@@ -34,6 +34,8 @@ jobs:
         run: npm install
       - name: Create Android project
         run: npx cap add android
+      - name: Apply official Azarakhsh icon and splash
+        run: npx capacitor-assets generate --android --assetPath assets
       - name: Sync Android project
         run: npx cap sync android
       - name: Build installable APK

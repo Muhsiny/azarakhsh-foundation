@@ -2,6 +2,9 @@
 
 # dependencies
 /node_modules
+/apps/node_modules
+/apps/android
+/apps/release
 /.pnp
 .pnp.*
 .yarn/*
@@ -35,6 +38,7 @@ yarn-error.log*
 
 # typescript
 next-env.d.ts
+*.tsbuildinfo
 /dist/
 /.wrangler/
 /.sites-runtime/

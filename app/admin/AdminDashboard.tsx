@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
+import GovernanceCenter from "./GovernanceCenter";
 import SiteStudio from "./SiteStudio";
 
 type Post = {
@@ -10,8 +11,19 @@ type Post = {
   excerpt: string;
   content: string;
   category: string;
+  contentType: string;
+  language: string;
+  visibility: string;
+  authorName: string;
   coverImage: string | null;
-  status: "draft" | "published";
+  fileUrl: string | null;
+  fileName: string | null;
+  sourceNote: string;
+  tags: string;
+  featured: number;
+  views: number;
+  downloads: number;
+  status: "draft" | "review" | "approved" | "published" | "archived";
   updatedAt: string;
 };
 
@@ -20,8 +32,17 @@ type Draft = {
   excerpt: string;
   content: string;
   category: string;
+  contentType: string;
+  language: string;
+  visibility: string;
+  authorName: string;
   coverImage: string;
-  status: "draft" | "published";
+  fileUrl: string;
+  fileName: string;
+  sourceNote: string;
+  tags: string;
+  featured: boolean;
+  status: "draft" | "review" | "approved" | "published" | "archived";
 };
 
 const blankDraft: Draft = {
@@ -29,7 +50,16 @@ const blankDraft: Draft = {
   excerpt: "",
   content: "",
   category: "مقالات",
+  contentType: "article",
+  language: "fa",
+  visibility: "public",
+  authorName: "",
   coverImage: "",
+  fileUrl: "",
+  fileName: "",
+  sourceNote: "",
+  tags: "",
+  featured: false,
   status: "draft",
 };
 
@@ -79,6 +109,22 @@ export default function AdminDashboard({
     setSaving(false);
   }
 
+  async function uploadAttachment(file: File) {
+    setSaving(true);
+    setMessage("فایل در حال بارگذاری است...");
+    const form = new FormData();
+    form.append("file", file);
+    const response = await fetch("/api/admin/upload", { method: "POST", body: form });
+    const data = (await response.json()) as { url?: string; error?: string };
+    if (!response.ok || !data.url) {
+      setMessage(data.error ?? "بارگذاری فایل انجام نشد.");
+    } else {
+      setDraft((current) => ({ ...current, fileUrl: data.url!, fileName: file.name }));
+      setMessage("فایل با موفقیت به آرشیو افزوده شد.");
+    }
+    setSaving(false);
+  }
+
   async function savePost(event: FormEvent) {
     event.preventDefault();
     setSaving(true);
@@ -110,7 +156,16 @@ export default function AdminDashboard({
       excerpt: post.excerpt,
       content: post.content,
       category: post.category,
+      contentType: post.contentType,
+      language: post.language,
+      visibility: post.visibility,
+      authorName: post.authorName,
       coverImage: post.coverImage ?? "",
+      fileUrl: post.fileUrl ?? "",
+      fileName: post.fileName ?? "",
+      sourceNote: post.sourceNote,
+      tags: post.tags,
+      featured: Boolean(post.featured),
       status: post.status,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -142,6 +197,7 @@ export default function AdminDashboard({
         </div>
       </header>
 
+      <GovernanceCenter />
       <SiteStudio />
 
       <section className="admin-grid">
@@ -179,6 +235,23 @@ export default function AdminDashboard({
           </label>
           <div className="form-row">
             <label>
+              نوع آرشیو
+              <select
+                onChange={(event) => setDraft({ ...draft, contentType: event.target.value })}
+                value={draft.contentType}
+              >
+                <option value="article">مقاله و پژوهش</option>
+                <option value="book">کتاب</option>
+                <option value="document">سند تاریخی</option>
+                <option value="biography">زندگی‌نامه</option>
+                <option value="oral-history">تاریخ شفاهی</option>
+                <option value="image">تصویر</option>
+                <option value="video">ویدیو</option>
+                <option value="audio">صوت</option>
+                <option value="news">خبر بنیاد</option>
+              </select>
+            </label>
+            <label>
               دسته‌بندی
               <select
                 onChange={(event) =>
@@ -206,10 +279,44 @@ export default function AdminDashboard({
                 value={draft.status}
               >
                 <option value="draft">پیش‌نویس</option>
+                <option value="review">ارسال برای بررسی</option>
+                <option value="approved">تأییدشده</option>
                 <option value="published">منتشرشده</option>
+                <option value="archived">بایگانی‌شده</option>
               </select>
             </label>
           </div>
+          <div className="form-row">
+            <label>
+              زبان
+              <select
+                onChange={(event) => setDraft({ ...draft, language: event.target.value })}
+                value={draft.language}
+              >
+                <option value="fa">فارسی</option>
+                <option value="ps">پښتو</option>
+                <option value="en">English</option>
+              </select>
+            </label>
+            <label>
+              دسترسی
+              <select
+                onChange={(event) => setDraft({ ...draft, visibility: event.target.value })}
+                value={draft.visibility}
+              >
+                <option value="public">عمومی</option>
+                <option value="members">فقط اعضای تأییدشده</option>
+                <option value="private">خصوصی مدیران</option>
+              </select>
+            </label>
+          </div>
+          <label>
+            نویسنده یا پژوهشگر
+            <input
+              onChange={(event) => setDraft({ ...draft, authorName: event.target.value })}
+              value={draft.authorName}
+            />
+          </label>
           <label>
             خلاصه
             <textarea
@@ -231,6 +338,23 @@ export default function AdminDashboard({
               value={draft.content}
             />
           </label>
+          <div className="form-row">
+            <label>
+              برچسب‌ها
+              <input
+                onChange={(event) => setDraft({ ...draft, tags: event.target.value })}
+                placeholder="تاریخ، شورای اتفاق، بهشتی"
+                value={draft.tags}
+              />
+            </label>
+            <label>
+              یادداشت منبع و اصالت
+              <input
+                onChange={(event) => setDraft({ ...draft, sourceNote: event.target.value })}
+                value={draft.sourceNote}
+              />
+            </label>
+          </div>
           <div className="cover-control">
             <label className="upload-button">
               انتخاب تصویر شاخص
@@ -255,12 +379,57 @@ export default function AdminDashboard({
               </div>
             )}
           </div>
+          <div className="cover-control">
+            <label className="upload-button">
+              بارگذاری PDF، سند یا رسانه
+              <input
+                accept="application/pdf,image/*,audio/*,video/mp4"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) void uploadAttachment(file);
+                }}
+                type="file"
+              />
+            </label>
+            {draft.fileUrl && (
+              <div>
+                <strong>{draft.fileName || "فایل آرشیوی"}</strong>
+                <button type="button" onClick={() => setDraft({ ...draft, fileUrl: "", fileName: "" })}>
+                  حذف فایل
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="form-row">
+            <label>
+              یا نشانی مستقیم فایل/ویدیو
+              <input
+                dir="ltr"
+                onChange={(event) => setDraft({ ...draft, fileUrl: event.target.value })}
+                placeholder="https://..."
+                type="url"
+                value={draft.fileUrl}
+              />
+            </label>
+            <label>
+              نام فایل
+              <input
+                onChange={(event) => setDraft({ ...draft, fileName: event.target.value })}
+                placeholder="نام نمایشی فایل"
+                value={draft.fileName}
+              />
+            </label>
+          </div>
+          <label className="visibility-toggle">
+            <input
+              checked={draft.featured}
+              onChange={(event) => setDraft({ ...draft, featured: event.target.checked })}
+              type="checkbox"
+            />
+            نمایش به‌عنوان محتوای برجسته
+          </label>
           <button className="button button-dark" disabled={saving} type="submit">
-            {saving
-              ? "در حال ذخیره..."
-              : draft.status === "published"
-                ? "ذخیره و انتشار"
-                : "ذخیرهٔ پیش‌نویس"}
+            {saving ? "در حال ذخیره..." : "ذخیرهٔ محتوا"}
           </button>
           {message && <p className="admin-message">{message}</p>}
         </form>
@@ -284,7 +453,13 @@ export default function AdminDashboard({
                   <span
                     className={`status-chip ${post.status === "published" ? "published" : ""}`}
                   >
-                    {post.status === "published" ? "منتشرشده" : "پیش‌نویس"}
+                    {{
+                      draft: "پیش‌نویس",
+                      review: "در انتظار بررسی",
+                      approved: "تأییدشده",
+                      published: "منتشرشده",
+                      archived: "بایگانی‌شده",
+                    }[post.status]}
                   </span>
                   <h3>{post.title}</h3>
                   <p>{post.category}</p>

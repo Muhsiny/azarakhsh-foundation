@@ -113,6 +113,12 @@ export type SiteSettings = {
     mission: string;
     copyright: string;
   };
+  contact: {
+    email: string;
+    phone: string;
+    address: string;
+    website: string;
+  };
   colors: {
     primary: string;
     dark: string;
@@ -277,7 +283,18 @@ export const defaultSiteSettings: SiteSettings = {
     mission: "نهادی مستقل برای پژوهش عمیق تاریخ و بازتاب مسئولانهٔ حقیقت‌های افغانستان.",
     copyright: "© ۲۰۲۶ بنیاد آذرخش — تمامی حقوق محفوظ است.",
   },
-  colors: { primary: "#0a3b2f", dark: "#041b16", gold: "#c99b3b", paper: "#f5f0e5" },
+  contact: {
+    email: "",
+    phone: "",
+    address: "افغانستان",
+    website: "",
+  },
+  colors: {
+    primary: "#0a3b2f",
+    dark: "#041b16",
+    gold: "#c99b3b",
+    paper: "#f5f0e5",
+  },
   design: {
     fontFamily: '"B Nazanin", Nazanin, "Noto Naskh Arabic", Tahoma, Arial, sans-serif',
     heroAlignment: "right",
@@ -314,6 +331,7 @@ export function mergeSiteSettings(value: Partial<SiteSettings> | null | undefine
     method: { ...defaultSiteSettings.method, ...value.method, items: arrayOrDefault(value.method?.items, defaultSiteSettings.method.items) },
     contribute: { ...defaultSiteSettings.contribute, ...value.contribute, types: arrayOrDefault(value.contribute?.types, defaultSiteSettings.contribute.types) },
     footer: { ...defaultSiteSettings.footer, ...value.footer },
+    contact: { ...defaultSiteSettings.contact, ...value.contact },
     colors: { ...defaultSiteSettings.colors, ...value.colors },
     design: { ...defaultSiteSettings.design, ...value.design },
     visibility: { ...defaultSiteSettings.visibility, ...value.visibility },

@@ -6,87 +6,19 @@ import {
   type SiteSettings,
 } from "./site-settings";
 
-const archiveCards = [
-  {
-    index: "۰۱",
-    title: "شورای اتفاق",
-    text: "بازخوانی ساختار، تصمیم‌ها، نهادها و تجربهٔ حکومت‌داری بر پایهٔ اسناد و روایت‌های قابل ارزیابی.",
-    href: "#council",
-  },
-  {
-    index: "۰۲",
-    title: "پروندهٔ بهشتی",
-    text: "زندگی، اندیشه، رهبری و میراث حضرت آیت‌الله العظمی بهشتی(ره) در آیینهٔ منابع تاریخی.",
-    href: "#beheshti",
-  },
-  {
-    index: "۰۳",
-    title: "حافظهٔ مردمی",
-    text: "گردآوری خاطرات، تصاویر، نامه‌ها و روایت‌های شاهدان برای تکمیل حافظهٔ جمعی هزاره‌جات.",
-    href: "#contribute",
-  },
-];
-
-const researchItems = [
-  {
-    category: "حکومت‌داری",
-    title: "نقشهٔ نهادی شورای اتفاق",
-    text: "پرونده‌ای برای بازسازی ساختار تصمیم‌گیری، ادارهٔ محلی و نسبت نهادها با جامعه.",
-    code: "AZ/GOV/01",
-    status: "در حال گردآوری",
-  },
-  {
-    category: "رهبری",
-    title: "آیت‌الله بهشتی و منطق وحدت سیاسی",
-    text: "تحلیل زمینه‌ها، گزینه‌های راهبردی و محدودیت‌های رهبری در یکی از پیچیده‌ترین ادوار تاریخی.",
-    code: "AZ/LEAD/02",
-    status: "طرح پژوهش",
-  },
-  {
-    category: "اسناد",
-    title: "نامه‌ها و اعلامیه‌های تشکیلاتی",
-    text: "فهرست‌نویسی، اصالت‌سنجی و خوانش انتقادی مکاتبات، فرمان‌ها و متون باقی‌مانده.",
-    code: "AZ/DOC/03",
-    status: "پذیرش منبع",
-  },
-  {
-    category: "جامعه",
-    title: "اقتصاد، معیشت و ادارهٔ محلی",
-    text: "پرسش از چگونگی تأمین منابع، نظم بازار، حل اختلاف‌ها و زندگی روزمره در قلمرو شورا.",
-    code: "AZ/SOC/04",
-    status: "طرح پژوهش",
-  },
-  {
-    category: "جامعه",
-    title: "حافظهٔ خانواده‌ها و روایت‌های محلی",
-    text: "ثبت روایت‌های چندصدایی از زنان، مردان، عالمان، کارگزاران و شهروندان مناطق مختلف.",
-    code: "AZ/ORAL/05",
-    status: "فراخوان روایت",
-  },
-  {
-    category: "اسناد",
-    title: "اطلس تصویری یک تجربهٔ سیاسی",
-    text: "گردآوری تصاویر اشخاص، مکان‌ها، نشست‌ها و آثار مادی همراه با شرح و منشأ روشن.",
-    code: "AZ/VIS/06",
-    status: "فراخوان تصویر",
-  },
-];
-
-
-
 export default function Home() {
   const [settings, setSettings] =
     useState<SiteSettings>(defaultSiteSettings);
   const [activeFilter, setActiveFilter] = useState("همه");
   const [query, setQuery] = useState("");
   const [selectedItem, setSelectedItem] =
-    useState<(typeof researchItems)[number] | null>(null);
+    useState<SiteSettings["archive"]["items"][number] | null>(null);
   const [guideOpen, setGuideOpen] = useState(false);
 
   useEffect(() => {
     fetch("/api/settings")
-      .then((response) => response.json())
-      .then((data: { settings?: SiteSettings }) => {
+      .then(async (response) => (await response.json()) as { settings?: SiteSettings })
+      .then((data) => {
         if (data.settings) setSettings(data.settings);
       })
       .catch(() => undefined);
@@ -189,12 +121,25 @@ export default function Home() {
           <a href="#archive">{settings.navigation.archive}</a>
           <a href="/publications">{settings.navigation.publications}</a>
           <a href="#contribute">{settings.navigation.contribute}</a>
+          <a href="/join">عضویت</a>
         </nav>
 
         <a className="header-cta" href="/publications">
           {settings.navigation.cta}
           <span aria-hidden="true">←</span>
         </a>
+        <details className="mobile-menu">
+          <summary aria-label="بازکردن فهرست">فهرست</summary>
+          <div>
+            <a href="#mission">{settings.navigation.about}</a>
+            <a href="#council">{settings.navigation.council}</a>
+            <a href="#beheshti">{settings.navigation.leader}</a>
+            <a href="#archive">{settings.navigation.archive}</a>
+            <a href="/publications">{settings.navigation.publications}</a>
+            <a href="#contribute">{settings.navigation.contribute}</a>
+            <a href="/join">عضویت</a>
+          </div>
+        </details>
       </header>
 
       <section className="hero" id="top">
@@ -517,6 +462,20 @@ export default function Home() {
         )}
       </section>
 
+      <section className="contact-section" id="contact">
+        <div>
+          <p className="section-kicker">ارتباط رسمی</p>
+          <h2>برای همکاری علمی و سپردن اسناد با بنیاد تماس بگیرید.</h2>
+        </div>
+        <div className="contact-details">
+          {settings.contact.email && <a href={`mailto:${settings.contact.email}`}>{settings.contact.email}</a>}
+          {settings.contact.phone && <a href={`tel:${settings.contact.phone}`}>{settings.contact.phone}</a>}
+          <span>{settings.contact.address}</span>
+          {settings.contact.website && <a href={settings.contact.website}>شبکهٔ رسمی بنیاد</a>}
+          <a href="/join">درخواست عضویت پژوهشی ←</a>
+        </div>
+      </section>
+
       <footer>
         <div className="footer-brand">
           <img
@@ -536,6 +495,8 @@ export default function Home() {
           <a href="#archive">پرونده‌ها</a>
           <a href="/publications">نشرها</a>
           <a href="#contribute">همکاری</a>
+          <a href="#contact">تماس</a>
+          <a href="/join">عضویت</a>
           <a href="/admin">مدیریت سایت</a>
           <a href="#top">بازگشت به بالا ↑</a>
         </div>

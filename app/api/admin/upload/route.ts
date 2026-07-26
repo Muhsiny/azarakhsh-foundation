@@ -10,6 +10,10 @@ const allowedTypes = new Set([
   "image/webp",
   "image/gif",
   "application/pdf",
+  "audio/mpeg",
+  "audio/mp4",
+  "audio/ogg",
+  "video/mp4",
 ]);
 
 export async function POST(request: Request) {
@@ -27,7 +31,7 @@ export async function POST(request: Request) {
   const file = form.get("file");
   if (!(file instanceof File) || !allowedTypes.has(file.type)) {
     return Response.json(
-      { error: "فقط تصویر JPG، PNG، WebP، GIF یا فایل PDF پذیرفته می‌شود." },
+      { error: "فقط تصویر، PDF، صوت یا ویدیوی MP4 پذیرفته می‌شود." },
       { status: 400 },
     );
   }

@@ -1,6 +1,6 @@
 {
   "name": "azarakhsh-foundation-installers",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "description": "Official Android and Windows applications for Azarakhsh Foundation",
   "author": "Azarakhsh Foundation",
@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^7.4.3",
+    "@capacitor/assets": "^3.0.5",
     "electron": "^38.1.2",
     "electron-builder": "^26.0.12"
   },
@@ -37,6 +38,7 @@
     ],
     "win": {
       "target": "nsis",
+      "icon": "assets/icon.ico",
       "artifactName": "Azarakhsh-Foundation-Setup-${version}.${ext}"
     },
     "nsis": {
@@ -45,6 +47,7 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Azarakhsh Foundation"
-    }
+    },
+    "compression": "maximum"
   }
 }

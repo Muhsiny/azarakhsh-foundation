@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { getDb } from "../../../../db";
 import { siteSettings } from "../../../../db/schema";
-import { isAdminRequest } from "../../../admin-auth";
+import { canManageSiteRequest } from "../../../admin-auth";
 import {
   defaultSiteSettings,
   mergeSiteSettings,
@@ -9,7 +9,7 @@ import {
 } from "../../../site-settings";
 
 export async function GET() {
-  if (!(await isAdminRequest())) {
+  if (!(await canManageSiteRequest())) {
     return Response.json({ error: "اجازهٔ دسترسی ندارید." }, { status: 403 });
   }
   const db = await getDb();
@@ -23,7 +23,7 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  if (!(await isAdminRequest())) {
+  if (!(await canManageSiteRequest())) {
     return Response.json({ error: "اجازهٔ دسترسی ندارید." }, { status: 403 });
   }
 

@@ -1,0 +1,19 @@
+{
+  "name": "بنیاد آذرخش",
+  "short_name": "آذرخش",
+  "description": "پژوهش، اسناد و حافظهٔ تاریخی افغانستان",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#041b16",
+  "theme_color": "#0a3b2f",
+  "lang": "fa",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "/app-icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

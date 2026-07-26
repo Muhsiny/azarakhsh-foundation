@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import OfflineBootstrap from "./OfflineBootstrap";
 
-const siteUrl = "https://www.azarakhshfoundation.org";
+const siteUrl = "https://azarakhsh-foundation.zulfiqar14.workers.dev";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -58,9 +59,10 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/azarakhsh-logo-web.png",
-    shortcut: "/azarakhsh-logo-web.png",
+    icon: "/app-icon.png",
+    shortcut: "/app-icon.png",
   },
+  manifest: "/manifest.webmanifest",
   other: {
     "codex-preview": "development",
   },
@@ -99,6 +101,7 @@ export default function RootLayout({
           }}
           type="application/ld+json"
         />
+        <OfflineBootstrap />
         {children}
       </body>
     </html>
