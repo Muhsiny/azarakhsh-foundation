@@ -11,17 +11,26 @@ export async function GET(request: Request) {
     const visibility = user ? ["public", "members"] : ["public"];
     const db = await getDb();
     const slug = new URL(request.url).searchParams.get("slug")?.trim();
+
     if (slug) {
       const [post] = await db
         .select()
         .from(posts)
-        .where(eq(posts.slug, slug))
+        .where(
+          and(
+            eq(posts.slug, slug),
+            eq(posts.status, "published"),
+            inArray(posts.visibility, visibility),
+          ),
+        )
         .limit(1);
-      if (!post || post.status !== "published") {
+
+      if (!post) {
         return Response.json({ error: "مطلب یافت نشد." }, { status: 404 });
       }
       return Response.json({ post });
     }
+
     const rows = await db
       .select()
       .from(posts)
