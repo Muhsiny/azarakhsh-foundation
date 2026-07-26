@@ -94,7 +94,7 @@ export default function Home() {
 
   const visibleItems = useMemo(() => {
     const normalized = query.trim();
-    return researchItems.filter((item) => {
+    return settings.archive.items.filter((item) => {
       const inFilter =
         activeFilter === "همه" || item.category === activeFilter;
       const inSearch =
@@ -104,7 +104,21 @@ export default function Home() {
     });
   }, [activeFilter, query, settings.archive.items]);
 
-  const filters = useMemo(() => [\n    "همه",\n    ...Array.from(new Set(settings.archive.items.map((item) => item.category))),\n  ], [settings.archive.items]);\n\n  const sectionOrder = Object.fromEntries(\n    settings.sectionOrder.map((key, index) => [key, index + 3]),\n  );\n\n  const highlightedTitle = useMemo(() => {
+  const filters = useMemo(
+    () => [
+      "همه",
+      ...Array.from(
+        new Set(settings.archive.items.map((item) => item.category)),
+      ),
+    ],
+    [settings.archive.items],
+  );
+
+  const sectionOrder = Object.fromEntries(
+    settings.sectionOrder.map((key, index) => [key, index + 3]),
+  );
+
+  const highlightedTitle = useMemo(() => {
     const word = settings.hero.highlightedWord.trim();
     if (!word || !settings.hero.title.includes(word)) {
       return settings.hero.title;
@@ -127,7 +141,19 @@ export default function Home() {
     "--gold-500": settings.colors.gold,
     "--gold-400": settings.colors.gold,
     "--paper": settings.colors.paper,
-    "--font-persian": settings.design.fontFamily,\n    "--heading-scale": settings.design.headingScale,\n    "--section-space": settings.design.sectionSpacing,\n    "--content-width": `${settings.design.contentWidth}px`,\n    "--card-radius": `${settings.design.cardRadius}px`,\n    "--order-mission": sectionOrder.mission,\n    "--order-council": sectionOrder.council,\n    "--order-timeline": sectionOrder.timeline,\n    "--order-leader": sectionOrder.leader,\n    "--order-archive": sectionOrder.archive,\n    "--order-standards": sectionOrder.standards,\n    "--order-method": sectionOrder.method,\n    "--order-contribute": sectionOrder.contribute,
+    "--font-persian": settings.design.fontFamily,
+    "--heading-scale": settings.design.headingScale,
+    "--section-space": settings.design.sectionSpacing,
+    "--content-width": `${settings.design.contentWidth}px`,
+    "--card-radius": `${settings.design.cardRadius}px`,
+    "--order-mission": sectionOrder.mission,
+    "--order-council": sectionOrder.council,
+    "--order-timeline": sectionOrder.timeline,
+    "--order-leader": sectionOrder.leader,
+    "--order-archive": sectionOrder.archive,
+    "--order-standards": sectionOrder.standards,
+    "--order-method": sectionOrder.method,
+    "--order-contribute": sectionOrder.contribute,
   } as CSSProperties;
   const hiddenSections = Object.entries(settings.visibility)
     .filter(([, visible]) => !visible)
@@ -427,7 +453,7 @@ export default function Home() {
           ))}
         </div>
       </section>
-\n      <section className="method-section">
+      <section className="method-section">
         <div className="method-heading">
           <p className="section-kicker section-kicker-light">{settings.method.kicker}</p>
           <h2>{settings.method.title}</h2>
