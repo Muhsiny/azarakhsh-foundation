@@ -2643,3 +2643,308 @@ nav a {
     grid-column: auto;
   }
 }
+
+
+/* 2026 archival visual refinement — tradition meeting modernity */
+.council-section,
+.beheshti-section {
+  isolation: isolate;
+}
+
+.council-section::before,
+.beheshti-section::before {
+  background-image:
+    linear-gradient(rgba(201, 155, 59, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201, 155, 59, 0.045) 1px, transparent 1px);
+  background-size: 34px 34px;
+  content: "";
+  inset: 0;
+  mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+}
+
+.council-visuals {
+  align-self: center;
+  display: grid;
+  gap: 28px;
+  max-width: 650px;
+  width: 100%;
+}
+
+.council-emblem-card {
+  align-items: center;
+  background: linear-gradient(135deg, #fffdf7, #f3ecdb);
+  border: 1px solid rgba(155, 116, 40, 0.28);
+  box-shadow: 0 25px 70px rgba(4, 27, 22, 0.12);
+  display: grid;
+  gap: 22px;
+  grid-template-columns: minmax(150px, 0.82fr) minmax(190px, 1.18fr);
+  margin: 0;
+  padding: 18px;
+  position: relative;
+}
+
+.council-emblem-card::after {
+  border: 1px solid rgba(201, 155, 59, 0.22);
+  content: "";
+  inset: 8px;
+  pointer-events: none;
+  position: absolute;
+}
+
+.historical-image-frame {
+  aspect-ratio: 1;
+  background: var(--paper);
+  border: 1px solid rgba(4, 27, 22, 0.12);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.historical-image-frame img {
+  filter: sepia(0.15) contrast(1.04) saturate(0.82);
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.council-emblem-card figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 15px 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.council-emblem-card figcaption span,
+.beheshti-portrait figcaption span {
+  color: #9b7428;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.council-emblem-card figcaption strong {
+  color: var(--forest-900);
+  font-family: var(--font-persian);
+  font-size: 20px;
+  line-height: 1.8;
+}
+
+.council-emblem-card figcaption small {
+  color: #6d746d;
+  font-size: 10px;
+  line-height: 1.9;
+}
+
+.council-visuals .council-map {
+  max-width: 520px;
+  margin-inline: auto;
+}
+
+.beheshti-section {
+  align-items: start;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(201, 155, 59, 0.13), transparent 25%),
+    linear-gradient(145deg, #f3eddf, #fbf8f1);
+  grid-template-columns: minmax(320px, 0.78fr) minmax(0, 1.22fr);
+}
+
+.beheshti-portrait {
+  aspect-ratio: auto;
+  background: transparent;
+  border-radius: 0;
+  display: block;
+  margin: 0;
+  max-width: 520px;
+  position: sticky;
+  top: 130px;
+}
+
+.portrait-frame {
+  aspect-ratio: 0.84;
+  background: var(--forest-950);
+  border: 1px solid rgba(201, 155, 59, 0.55);
+  box-shadow:
+    0 32px 80px rgba(4, 27, 22, 0.22),
+    18px 18px 0 rgba(201, 155, 59, 0.12);
+  overflow: hidden;
+  position: relative;
+}
+
+.portrait-frame::before {
+  border: 1px solid rgba(255, 225, 157, 0.42);
+  content: "";
+  inset: 15px;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+
+.portrait-frame img {
+  filter: saturate(0.86) contrast(1.04);
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 28%;
+  width: 100%;
+}
+
+.portrait-glow {
+  background: linear-gradient(to top, rgba(4, 27, 22, 0.5), transparent 38%);
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.beheshti-portrait figcaption {
+  align-items: baseline;
+  border-bottom: 1px solid rgba(155, 116, 40, 0.3);
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 18px 2px 14px;
+}
+
+.beheshti-portrait figcaption strong {
+  color: var(--forest-900);
+  font-size: 15px;
+}
+
+.beheshti-library {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 34px;
+}
+
+.legacy-card {
+  align-items: center;
+  background: rgba(255, 253, 248, 0.72);
+  border: 1px solid rgba(4, 27, 22, 0.11);
+  color: var(--forest-900);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 34px 1fr auto;
+  min-height: 92px;
+  padding: 16px;
+  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.legacy-card:hover,
+.legacy-card:focus-visible {
+  border-color: rgba(155, 116, 40, 0.5);
+  box-shadow: 0 14px 30px rgba(4, 27, 22, 0.08);
+  transform: translateY(-3px);
+}
+
+.legacy-card > span {
+  color: #a47b2b;
+  font-family: Georgia, serif;
+  font-size: 11px;
+}
+
+.legacy-card div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.legacy-card strong {
+  font-size: 14px;
+}
+
+.legacy-card small {
+  color: #72786f;
+  font-size: 9px;
+  line-height: 1.7;
+}
+
+.legacy-card > b {
+  color: var(--gold-500);
+  font-size: 16px;
+}
+
+@media (max-width: 1050px) {
+  .council-section {
+    grid-template-columns: 44px minmax(0, 0.88fr) minmax(370px, 1.12fr);
+    gap: 40px;
+  }
+
+  .council-emblem-card {
+    grid-template-columns: 140px 1fr;
+  }
+
+  .beheshti-section {
+    gap: 60px;
+    grid-template-columns: minmax(280px, 0.78fr) minmax(0, 1.22fr);
+    padding-inline: 55px;
+  }
+}
+
+@media (max-width: 760px) {
+  .council-visuals {
+    margin-top: 50px;
+  }
+
+  .council-emblem-card {
+    grid-template-columns: 112px 1fr;
+    padding: 13px;
+  }
+
+  .council-emblem-card figcaption {
+    padding: 8px 4px;
+  }
+
+  .council-emblem-card figcaption strong {
+    font-size: 15px;
+  }
+
+  .council-emblem-card figcaption small {
+    display: none;
+  }
+
+  .council-visuals .council-map {
+    margin-top: 10px;
+  }
+
+  .beheshti-section {
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding: 78px 20px;
+  }
+
+  .beheshti-section::after {
+    display: block;
+    font-size: 94px;
+    left: -5px;
+    opacity: 0.8;
+    top: 22px;
+  }
+
+  .beheshti-portrait {
+    margin-inline: auto;
+    max-width: 420px;
+    position: relative;
+    top: auto;
+  }
+
+  .portrait-frame {
+    aspect-ratio: 0.9;
+    box-shadow:
+      0 24px 55px rgba(4, 27, 22, 0.2),
+      9px 9px 0 rgba(201, 155, 59, 0.12);
+  }
+
+  .beheshti-library {
+    grid-template-columns: 1fr;
+  }
+
+  .legacy-card {
+    min-height: 82px;
+  }
+}
