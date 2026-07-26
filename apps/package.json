@@ -2,12 +2,18 @@
   "name": "azarakhsh-foundation-installers",
   "version": "1.0.0",
   "private": true,
+  "description": "Official Android and Windows applications for Azarakhsh Foundation",
+  "author": "Azarakhsh Foundation",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Muhsiny/azarakhsh-foundation.git"
+  },
   "main": "desktop/main.cjs",
   "scripts": {
     "android:add": "cap add android",
     "android:sync": "cap sync android",
     "desktop": "electron .",
-    "dist:win": "electron-builder --win nsis"
+    "dist:win": "electron-builder --win nsis --publish never"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
