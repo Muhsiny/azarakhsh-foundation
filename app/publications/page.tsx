@@ -43,6 +43,12 @@ export default function PublicationsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const topic = new URLSearchParams(window.location.search).get("topic");
+    if (topic === "life") {
+      window.location.replace("/beheshti");
+      return;
+    }
+
     fetch("/api/posts")
       .then(async (response) => (await response.json()) as { posts?: Post[] })
       .then((data) => setPosts(data.posts ?? []))
