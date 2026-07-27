@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Naskh_Arabic, Noto_Nastaliq_Urdu, Noto_Serif_Arabic } from "next/font/google";
+import { Noto_Naskh_Arabic, Noto_Nastaliq_Urdu } from "next/font/google";
 import "./globals.css";
 import "./home-order-fix.css";
 import "./traditional-typography.css";
@@ -16,13 +16,6 @@ const naskh = Noto_Naskh_Arabic({
 const nastaliq = Noto_Nastaliq_Urdu({
   subsets: ["arabic"],
   variable: "--font-nastaliq",
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
-});
-
-const lotusFallback = Noto_Serif_Arabic({
-  subsets: ["arabic"],
-  variable: "--font-lotus-fallback",
   display: "swap",
   weight: ["400", "500", "600", "700"],
 });
@@ -87,7 +80,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   };
 
   return (
-    <html lang="fa" dir="rtl" className={`${naskh.variable} ${nastaliq.variable} ${lotusFallback.variable}`}>
+    <html lang="fa" dir="rtl" className={`${naskh.variable} ${nastaliq.variable}`}>
       <body>
         <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} type="application/ld+json" />
         <OfflineBootstrap />
