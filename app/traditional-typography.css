@@ -1,7 +1,7 @@
 /* Preserve the existing colors and layout; use one authoritative font setting. */
 :root {
-  --traditional-body-font: var(--font-persian, "B Lotus", "BLotus", "Lotus", var(--font-lotus-fallback), "B Mitra", "BMitra", "Mitra", var(--font-naskh), Tahoma, serif);
-  --traditional-display-font: var(--font-persian, "B Lotus", "BLotus", "Lotus", var(--font-lotus-fallback), "B Mitra", "BMitra", "Mitra", var(--font-naskh), serif);
+  --traditional-body-font: var(--font-persian, "B Lotus", "BLotus", "Lotus", "B Mitra", "BMitra", "Mitra", var(--font-naskh), Tahoma, serif);
+  --traditional-display-font: var(--font-persian, "B Lotus", "BLotus", "Lotus", "B Mitra", "BMitra", "Mitra", var(--font-naskh), serif);
 }
 
 body,
