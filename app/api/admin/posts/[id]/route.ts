@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { getDb } from "../../../../../db";
 import { ensurePlatformSchema } from "../../../../../db/platform";
 import { posts } from "../../../../../db/schema";
+import { writeAuditLog } from "../../../../admin-audit";
 import {
   canManageSiteRequest,
   canPublishRequest,
@@ -86,6 +87,17 @@ export async function PUT(request: Request, context: RouteContext) {
     .where(eq(posts.id, numericId))
     .returning();
 
+  if (!post) {
+    return Response.json({ error: "محتوا پیدا نشد." }, { status: 404 });
+  }
+
+  await writeAuditLog({
+    action: "content.update",
+    entityType: post.contentType || "post",
+    entityId: post.id,
+    details: { title: post.title, slug: post.slug, status: post.status },
+  });
+
   return Response.json({ post });
 }
 
@@ -102,6 +114,22 @@ export async function DELETE(_request: Request, context: RouteContext) {
 
   await ensurePlatformSchema();
   const db = await getDb();
+  const [existing] = await db
+    .select({ id: posts.id, title: posts.title, slug: posts.slug, contentType: posts.contentType })
+    .from(posts)
+    .where(eq(posts.id, numericId))
+    .limit(1);
+
+  if (!existing) {
+    return Response.json({ error: "محتوا پیدا نشد." }, { status: 404 });
+  }
+
   await db.delete(posts).where(eq(posts.id, numericId));
+  await writeAuditLog({
+    action: "content.delete",
+    entityType: existing.contentType || "post",
+    entityId: existing.id,
+    details: { title: existing.title, slug: existing.slug },
+  });
   return Response.json({ ok: true });
 }
