@@ -2,6 +2,7 @@ import { desc } from "drizzle-orm";
 import { getDb } from "../../../../db";
 import { ensurePlatformSchema } from "../../../../db/platform";
 import { posts } from "../../../../db/schema";
+import { writeAuditLog } from "../../../admin-audit";
 import {
   canPublishRequest,
   getAdminUser,
@@ -106,6 +107,13 @@ export async function POST(request: Request) {
       updatedAt: now,
     })
     .returning();
+
+  await writeAuditLog({
+    action: "content.create",
+    entityType: post.contentType || "post",
+    entityId: post.id,
+    details: { title: post.title, slug: post.slug, status: post.status },
+  });
 
   return Response.json({ post }, { status: 201 });
 }
