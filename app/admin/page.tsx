@@ -1,5 +1,6 @@
 import { requireAdminPage } from "../admin-auth";
 import AdminDashboard from "./AdminDashboard";
+import LeaderPageManager from "./LeaderPageManager";
 import PageManager from "./PageManager";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +27,7 @@ export default async function AdminPage() {
   return (
     <>
       <AdminDashboard displayName={user.displayName} signOutHref="/api/auth/logout" />
+      <LeaderPageManager />
       <PageManager />
     </>
   );
