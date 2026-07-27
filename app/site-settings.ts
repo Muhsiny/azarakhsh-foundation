@@ -79,6 +79,14 @@ export type SiteSettings = {
   sectionOrder: SectionKey[];
 };
 
+export type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends Array<infer U>
+    ? U[]
+    : T[K] extends object
+      ? DeepPartial<T[K]>
+      : T[K];
+};
+
 const missionCards: LinkCard[] = [
   { id: "council", title: "شورای اتفاق", text: "بازخوانی ساختار، تصمیم‌ها، نهادها و تجربهٔ حکومت‌داری بر پایهٔ اسناد و روایت‌های قابل ارزیابی.", href: "#council", label: "گشودن پرونده" },
   { id: "leader", title: "پروندهٔ بهشتی", text: "زندگی، اندیشه، رهبری و میراث حضرت آیت‌الله العظمی بهشتی(ره) در آیینهٔ منابع تاریخی.", href: "#beheshti", label: "گشودن پرونده" },
@@ -251,3 +259,28 @@ export const defaultSiteSettings: SiteSettings = {
   },
   sectionOrder: ["mission", "council", "timeline", "leader", "archive", "standards", "method", "contribute"],
 };
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function deepMerge<T>(base: T, override?: DeepPartial<T>): T {
+  if (override === undefined || override === null) return base;
+  if (Array.isArray(base) || Array.isArray(override)) return override as T;
+  if (!isPlainObject(base) || !isPlainObject(override)) return override as T;
+
+  const result: Record<string, unknown> = { ...base };
+  for (const [key, value] of Object.entries(override)) {
+    if (value === undefined) continue;
+    result[key] = key in result
+      ? deepMerge(result[key], value as never)
+      : value;
+  }
+  return result as T;
+}
+
+export function mergeSiteSettings(
+  settings?: DeepPartial<SiteSettings> | null,
+): SiteSettings {
+  return deepMerge(defaultSiteSettings, settings ?? undefined);
+}
