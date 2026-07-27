@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { getDb } from "../../../../db";
 import { siteSettings } from "../../../../db/schema";
+import { writeAuditLog } from "../../../admin-audit";
 import { canManageSiteRequest } from "../../../admin-auth";
 import {
   defaultSiteSettings,
@@ -51,5 +52,17 @@ export async function PUT(request: Request) {
       target: siteSettings.id,
       set: { data: JSON.stringify(settings), updatedAt: now },
     });
+
+  await writeAuditLog({
+    action: "site.settings.update",
+    entityType: "site",
+    entityId: 1,
+    details: {
+      siteName: settings.identity.siteName,
+      sectionOrder: settings.sectionOrder,
+      visibility: settings.visibility,
+    },
+  });
+
   return Response.json({ settings });
 }
