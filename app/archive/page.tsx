@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import InstitutionalPage from "../components/InstitutionalPage";
+import ArchiveBrowser from "./ArchiveBrowser";
 
 export const metadata: Metadata = { title: "آرشیو اسناد و تاریخ شفاهی", description: "راهنمای آرشیو تاریخی بنیاد آذرخش و معیارهای ثبت، توصیف و دسترسی به اسناد." };
 
@@ -11,6 +12,11 @@ const sections = [
   { title: "نظام شناسه‌گذاری", text: "هر مدرک یک شناسهٔ پایدار دریافت می‌کند تا ارجاع، بازیابی، نسخه‌بندی و تشخیص ارتباط میان اسناد ممکن باشد.", points: ["AZ-DOC: سند مکتوب", "AZ-PHO: تصویر", "AZ-AUD: صوت", "AZ-VID: ویدئو", "AZ-OH: تاریخ شفاهی"] },
   { title: "دسترسی و حقوق", text: "نمایش عمومی، دسترسی پژوهشی یا محدودیت زمانی بر اساس حقوق صاحب اثر، حریم خصوصی و حساسیت تاریخی تعیین می‌شود." },
 ];
+
 export default function ArchivePage() {
-  return <InstitutionalPage kicker="حافظهٔ مستند" title="آرشیو تاریخی آذرخش" lead="زیرساختی برای نگهداری، توصیف، راستی‌آزمایی و دسترسی مسئولانه به اسناد حکومت شورای اتفاق و تاریخ معاصر هزاره‌جات." sections={sections} />;
+  return (
+    <InstitutionalPage kicker="حافظهٔ مستند" title="آرشیو تاریخی آذرخش" lead="زیرساختی برای نگهداری، توصیف، راستی‌آزمایی و دسترسی مسئولانه به اسناد حکومت شورای اتفاق و تاریخ معاصر هزاره‌جات." sections={sections}>
+      <ArchiveBrowser />
+    </InstitutionalPage>
+  );
 }
