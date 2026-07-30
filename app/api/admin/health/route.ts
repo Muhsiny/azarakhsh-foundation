@@ -1,7 +1,7 @@
-import { getDb } from "../../../../../db";
-import { ensurePlatformSchema } from "../../../../../db/platform";
-import { posts, siteSettings } from "../../../../../db/schema";
-import { canManageSiteRequest, getAdminUser } from "../../../../admin-auth";
+import { getDb } from "../../../../db";
+import { ensurePlatformSchema } from "../../../../db/platform";
+import { posts, siteSettings } from "../../../../db/schema";
+import { canManageSiteRequest, getAdminUser } from "../../../admin-auth";
 
 type RuntimeEnv = {
   DB?: D1Database;
