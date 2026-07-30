@@ -6,6 +6,7 @@ import "./traditional-typography.css";
 import OfflineBootstrap from "./OfflineBootstrap";
 import SiteEnhancer from "./SiteEnhancer";
 import UniversalInlineEditorV2 from "./components/UniversalInlineEditorV2";
+import LegacyInlineEditCompatibility from "./components/LegacyInlineEditCompatibility";
 
 const naskh = Noto_Naskh_Arabic({
   subsets: ["arabic"],
@@ -93,6 +94,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <OfflineBootstrap />
         <SiteEnhancer />
         <UniversalInlineEditorV2 />
+        <LegacyInlineEditCompatibility />
         {children}
       </body>
     </html>
