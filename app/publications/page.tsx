@@ -119,9 +119,18 @@ export default function PublicationsPage() {
                 <div>
                   <span>{typeLabels[post.contentType] ?? post.category} · {post.language.toUpperCase()}</span>
                   <h2>{post.title}</h2>
-                  <p>{post.excerpt}</p>
+                  <p
+                    style={{
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 3,
+                      overflow: "hidden",
+                    }}
+                  >
+                    {post.excerpt || post.content}
+                  </p>
                   <small>{post.authorName || "تیم پژوهشی بنیاد"} · {post.views} بازدید</small>
-                  <a className="publication-read" href={`/publications/${post.slug}`}>گشودن پروندهٔ مستقل ←</a>
+                  <a className="publication-read" href={`/publications/${post.slug}`}>بیشتر ←</a>
                 </div>
               </article>
             ))}
