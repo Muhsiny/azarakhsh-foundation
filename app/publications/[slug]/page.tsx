@@ -2,6 +2,7 @@
 
 import { Fragment, ReactNode, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import DownloadQuizGate from "../../components/DownloadQuizGate";
 
 type Post = { id:number; slug:string; title:string; excerpt:string; content:string; category:string; contentType:string; language:string; authorName:string; coverImage:string|null; fileUrl:string|null; fileName:string|null; sourceNote:string; downloads:number; publishedAt:string|null; updatedAt:string };
 
@@ -59,7 +60,7 @@ export default function ArticlePage() {
         <div className="article-provenance"><div><b>پدیدآورنده</b><span>{post.authorName || "تحریریهٔ بنیاد آذرخش"}</span></div><div><b>شناسه</b><span>AZ-{post.id}</span></div><div><b>آخرین ویرایش</b><span>{new Date(post.updatedAt).toLocaleDateString("fa-AF")}</span></div></div>
         <div className="article-body">{paragraphs.map(formattedParagraph)}</div>
         {post.sourceNote && <section className="source-note"><strong>منبع و یادداشت آرشیوی</strong><p>{post.sourceNote}</p></section>}
-        {post.fileUrl && <a className="button button-dark" href={`/api/posts/${post.id}/download`}>دریافت {post.fileName || "فایل آرشیوی"} ({post.downloads})</a>}
+        {post.fileUrl && <DownloadQuizGate postId={post.id} fileName={post.fileName || "فایل آرشیوی"} downloads={post.downloads} />}
         <aside className="citation-box"><strong>شیوهٔ پیشنهادی ارجاع</strong><p>بنیاد آذرخش، «{post.title}»، شناسهٔ AZ-{post.id}، تاریخ دسترسی: {new Date().toLocaleDateString("fa-AF")}.</p></aside>
       </article>
     </main>
