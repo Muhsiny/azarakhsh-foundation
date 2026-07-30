@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import ExpandableSectionText from "./ExpandableSectionText";
 
 export type InstitutionalSection = {
   title: string;
@@ -12,12 +13,14 @@ export default function InstitutionalPage({
   lead,
   sections,
   children,
+  collapseSectionText = false,
 }: {
   kicker: string;
   title: string;
   lead: string;
   sections: InstitutionalSection[];
   children?: ReactNode;
+  collapseSectionText?: boolean;
 }) {
   return (
     <main className="knowledge-page">
@@ -52,7 +55,7 @@ export default function InstitutionalPage({
             <section id={`section-${index + 1}`} key={section.title}>
               <span className="knowledge-index">{String(index + 1).padStart(2, "0")}</span>
               <h2>{section.title}</h2>
-              <p>{section.text}</p>
+              {collapseSectionText ? <ExpandableSectionText text={section.text} /> : <p>{section.text}</p>}
               {section.points && <ul>{section.points.map((point) => <li key={point}>{point}</li>)}</ul>}
             </section>
           ))}
