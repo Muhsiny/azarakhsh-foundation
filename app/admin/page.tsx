@@ -31,6 +31,14 @@ export default async function AdminPage() {
     <>
       <TextFormattingTools />
       <AdminDashboard displayName={user.displayName} signOutHref="/api/auth/logout" />
+      {user.role === "owner" && (
+        <section className="admin-access-card" style={{ margin: "18px auto", width: "min(1100px, calc(100% - 32px))" }}>
+          <p className="section-kicker">پژوهش محفوظ مالک</p>
+          <h2>پاسخ‌های آزمون و دیدگاه مخاطبان</h2>
+          <p>نام، ایمیل، شغل و پاسخ‌های تحلیلی فقط در حساب مالک قابل مشاهده است.</p>
+          <a className="button button-dark" href="/admin/research-responses">مشاهدهٔ پاسخ‌ها</a>
+        </section>
+      )}
       <AdminArchiveViewer />
       <PublishingHealth />
       <LeaderPageManager />
