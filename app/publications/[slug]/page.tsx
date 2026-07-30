@@ -1,9 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, ReactNode, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
 type Post = { id:number; slug:string; title:string; excerpt:string; content:string; category:string; contentType:string; language:string; authorName:string; coverImage:string|null; fileUrl:string|null; fileName:string|null; sourceNote:string; downloads:number; publishedAt:string|null; updatedAt:string };
+
+function inlineFormatting(value: string): ReactNode[] {
+  return value.split(/(\*\*[^*]+\*\*)/g).filter(Boolean).map((part, index) =>
+    part.startsWith("**") && part.endsWith("**")
+      ? <strong key={index}>{part.slice(2, -2)}</strong>
+      : <Fragment key={index}>{part}</Fragment>,
+  );
+}
+
+function formattedLines(value: string) {
+  return value.split("\n").map((line, index, lines) => (
+    <Fragment key={index}>
+      {inlineFormatting(line)}
+      {index < lines.length - 1 && <br />}
+    </Fragment>
+  ));
+}
+
+function formattedParagraph(value: string, index: number) {
+  const match = value.match(/^:::(rtl|center|justify)\n([\s\S]*?)\n:::$/);
+  const mode = match?.[1];
+  const text = match?.[2] ?? value;
+  const style = mode === "center"
+    ? { direction: "rtl" as const, textAlign: "center" as const }
+    : mode === "justify"
+      ? { direction: "rtl" as const, textAlign: "justify" as const }
+      : { direction: "rtl" as const, textAlign: "right" as const };
+
+  return <p key={index} style={style}>{formattedLines(text)}</p>;
+}
 
 export default function ArticlePage() {
   const params = useParams<{ slug: string }>();
@@ -27,7 +57,7 @@ export default function ArticlePage() {
         <p className="article-deck">{post.excerpt}</p>
         {post.coverImage && <figure><img src={post.coverImage} alt={`تصویر شاخص ${post.title}`} /><figcaption>تصویر مرتبط با این پرونده — منبع باید در متن پژوهش درج شود.</figcaption></figure>}
         <div className="article-provenance"><div><b>پدیدآورنده</b><span>{post.authorName || "تحریریهٔ بنیاد آذرخش"}</span></div><div><b>شناسه</b><span>AZ-{post.id}</span></div><div><b>آخرین ویرایش</b><span>{new Date(post.updatedAt).toLocaleDateString("fa-AF")}</span></div></div>
-        <div className="article-body">{paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>
+        <div className="article-body">{paragraphs.map(formattedParagraph)}</div>
         {post.sourceNote && <section className="source-note"><strong>منبع و یادداشت آرشیوی</strong><p>{post.sourceNote}</p></section>}
         {post.fileUrl && <a className="button button-dark" href={`/api/posts/${post.id}/download`}>دریافت {post.fileName || "فایل آرشیوی"} ({post.downloads})</a>}
         <aside className="citation-box"><strong>شیوهٔ پیشنهادی ارجاع</strong><p>بنیاد آذرخش، «{post.title}»، شناسهٔ AZ-{post.id}، تاریخ دسترسی: {new Date().toLocaleDateString("fa-AF")}.</p></aside>
