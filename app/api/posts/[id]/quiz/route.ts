@@ -1,17 +1,29 @@
 import { createDownloadPermit } from "../../../../download-gate";
 
-const correctAnswers = [
-  "۱۳۰۸ش، سنگ‌تختِ ورس",
-  "آغاز نزد پدر و علمای محلی، حدود شش سال در یکاولنگ، سپس نجف",
-  "مدرسهٔ علمیهٔ سنگ‌تخت، مدرسهٔ باقریه و شورای انقلابی اتفاق اسلامی افغانستان",
-  "به‌سبب اعتبار علمی و دینی، حل اختلافات، نفوذ مردمی و نقش او در آزادسازی و سازمان‌دهی مناطق",
-  "شش سال",
-  "برای تکمیل حلقهٔ نهایی وحدت جریان‌های شیعی و بازگرداندن همه نیروها به یک محور مشترک",
-  "حضور در شورای عالی نظارت و ایفای نقش وحدت‌بخش و نظارتی",
-  "۶۷ سال؛ ۱۳۷۵ش",
-  "تقریرات فقه و اصول، الارجوزة فی اصول الفقه، نوشته‌های شرح رسائل و قوانین، تجربه و مبارزه و اخلاق",
-  "۸ ولایت، ۴۲ ولسوالی، ۱۵ حوزه و ۵ کمیسیون اصلی",
+const acceptedAnswers: string[][] = [
+  ["1308", "۱۳۰۸"],
+  ["سنگ تخت", "سنگ‌تخت", "ورس"],
+  ["8", "۸", "هشت"],
+  ["15 سنبله 1358", "۱۵ سنبله ۱۳۵۸", "15سنبله1358", "۱۵سنبله۱۳۵۸"],
+  ["3", "۳", "سه"],
+  ["1364", "۱۳۶۴"],
+  ["1368", "۱۳۶۸"],
+  ["1375", "۱۳۷۵"],
+  ["42", "۴۲", "چهل و دو", "چهل‌ودو"],
+  ["5", "۵", "پنج"],
 ];
+
+function normalize(value: string) {
+  return value
+    .normalize("NFKC")
+    .replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)))
+    .replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)))
+    .replace(/[ـ‌]/g, " ")
+    .replace(/[،,:؛.]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
 
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   const id = Number((await context.params).id);
@@ -22,18 +34,21 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   try {
     const payload = (await request.json()) as { answers?: unknown[] };
     const answers = Array.isArray(payload.answers) ? payload.answers : [];
-    const complete = answers.length === correctAnswers.length && answers.every((answer) => typeof answer === "string" && answer.trim().length > 0);
+    const complete = answers.length === acceptedAnswers.length && answers.every((answer) => typeof answer === "string" && answer.trim().length > 0);
     if (!complete) {
       return Response.json({ error: "برای دانلود، به هر ۱۰ پرسش پاسخ دهید." }, { status: 400 });
     }
 
-    const wrong = correctAnswers
-      .map((correct, index) => answers[index] === correct ? null : index + 1)
+    const wrong = acceptedAnswers
+      .map((accepted, index) => {
+        const candidate = normalize(String(answers[index]));
+        return accepted.some((answer) => normalize(answer) === candidate) ? null : index + 1;
+      })
       .filter((value): value is number => value !== null);
 
     if (wrong.length) {
       return Response.json(
-        { error: `پاسخ پرسش‌های ${wrong.join("، ")} نادرست است. سرنخ هر پرسش را بخوانید و در پرونده‌های تاریخی تحقیق کنید.` },
+        { error: `پاسخ پرسش‌های ${wrong.join("، ")} نادرست است. پاسخ باید کوتاه و دقیق باشد.` },
         { status: 400 },
       );
     }
