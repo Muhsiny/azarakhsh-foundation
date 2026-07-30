@@ -8,11 +8,7 @@ import { defaultSiteSettings, mergeSiteSettings } from "../../site-settings";
 async function readSettings() {
   await ensurePlatformSchema();
   const db = await getDb();
-  const [row] = await db
-    .select()
-    .from(siteSettings)
-    .where(eq(siteSettings.id, 1))
-    .limit(1);
+  const [row] = await db.select().from(siteSettings).where(eq(siteSettings.id, 1)).limit(1);
   const parsed = row?.data ? JSON.parse(row.data) : defaultSiteSettings;
   return { db, settings: mergeSiteSettings(parsed) };
 }
@@ -38,26 +34,20 @@ export async function PUT(request: Request) {
     if (!key || key.length > 240) {
       return Response.json({ error: "شناسهٔ بخش معتبر نیست." }, { status: 400 });
     }
-    if (value.length > 20000) {
-      return Response.json({ error: "متن بیش از حد طولانی است." }, { status: 400 });
+    if (value.length > 250000) {
+      return Response.json({ error: "محتوا و پیوست‌های این بخش بیش از حد بزرگ است." }, { status: 400 });
     }
 
     const { db, settings } = await readSettings();
     settings.inlineOverrides = { ...(settings.inlineOverrides || {}), [key]: value };
     const now = new Date().toISOString();
-    await db
-      .insert(siteSettings)
-      .values({ id: 1, data: JSON.stringify(settings), updatedAt: now })
-      .onConflictDoUpdate({
-        target: siteSettings.id,
-        set: { data: JSON.stringify(settings), updatedAt: now },
-      });
+    await db.insert(siteSettings).values({ id: 1, data: JSON.stringify(settings), updatedAt: now }).onConflictDoUpdate({
+      target: siteSettings.id,
+      set: { data: JSON.stringify(settings), updatedAt: now },
+    });
 
     return Response.json({ ok: true, key, value });
   } catch (error) {
-    return Response.json(
-      { error: error instanceof Error ? error.message : "ذخیره انجام نشد." },
-      { status: 500 },
-    );
+    return Response.json({ error: error instanceof Error ? error.message : "ذخیره انجام نشد." }, { status: 500 });
   }
 }
