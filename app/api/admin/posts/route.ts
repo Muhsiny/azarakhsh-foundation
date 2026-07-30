@@ -18,18 +18,30 @@ function slugify(value: string) {
     .slice(0, 100);
 }
 
+function errorMessage(error: unknown) {
+  return error instanceof Error ? error.message : "خطای ناشناخته در پایگاه داده.";
+}
+
 export async function GET() {
   if (!(await isAdminRequest())) {
     return Response.json({ error: "اجازهٔ دسترسی ندارید." }, { status: 403 });
   }
 
-  await ensurePlatformSchema();
-  const db = await getDb();
-  const rows = await db
-    .select()
-    .from(posts)
-    .orderBy(desc(posts.updatedAt), desc(posts.id));
-  return Response.json({ posts: rows });
+  try {
+    await ensurePlatformSchema();
+    const db = await getDb();
+    const rows = await db
+      .select()
+      .from(posts)
+      .orderBy(desc(posts.updatedAt), desc(posts.id));
+    return Response.json({ posts: rows });
+  } catch (error) {
+    console.error("Failed to load admin posts", error);
+    return Response.json(
+      { error: `دریافت مطالب انجام نشد: ${errorMessage(error)}` },
+      { status: 500 },
+    );
+  }
 }
 
 export async function POST(request: Request) {
@@ -37,83 +49,95 @@ export async function POST(request: Request) {
     return Response.json({ error: "اجازهٔ دسترسی ندارید." }, { status: 403 });
   }
 
-  const payload = (await request.json()) as {
-    title?: string;
-    slug?: string;
-    excerpt?: string;
-    content?: string;
-    category?: string;
-    coverImage?: string | null;
-    fileUrl?: string | null;
-    fileName?: string | null;
-    contentType?: string;
-    language?: string;
-    visibility?: string;
-    authorName?: string;
-    sourceNote?: string;
-    tags?: string;
-    featured?: boolean;
-    status?: "draft" | "review" | "approved" | "published" | "archived";
-  };
+  try {
+    const payload = (await request.json()) as {
+      title?: string;
+      slug?: string;
+      excerpt?: string;
+      content?: string;
+      category?: string;
+      coverImage?: string | null;
+      fileUrl?: string | null;
+      fileName?: string | null;
+      contentType?: string;
+      language?: string;
+      visibility?: string;
+      authorName?: string;
+      sourceNote?: string;
+      tags?: string;
+      featured?: boolean;
+      status?: "draft" | "review" | "approved" | "published" | "archived";
+    };
 
-  const title = payload.title?.trim() ?? "";
-  if (!title) {
-    return Response.json({ error: "عنوان الزامی است." }, { status: 400 });
+    const title = payload.title?.trim() ?? "";
+    if (!title) {
+      return Response.json({ error: "عنوان الزامی است." }, { status: 400 });
+    }
+
+    const baseSlug = slugify(payload.slug || title) || `post-${Date.now()}`;
+    const slug = `${baseSlug}-${Date.now().toString(36)}`;
+    const requestedStatus = payload.status ?? "draft";
+    const validStatuses = ["draft", "review", "approved", "published", "archived"];
+    const status =
+      requestedStatus === "published" && !(await canPublishRequest())
+        ? "review"
+        : validStatuses.includes(requestedStatus)
+          ? requestedStatus
+          : "draft";
+    const now = new Date().toISOString();
+
+    await ensurePlatformSchema();
+    const db = await getDb();
+    const [post] = await db
+      .insert(posts)
+      .values({
+        title,
+        slug,
+        excerpt: payload.excerpt?.trim() ?? "",
+        content: payload.content?.trim() ?? "",
+        category: payload.category?.trim() || "مقالات",
+        contentType: payload.contentType?.trim() || "article",
+        language: ["fa", "ps", "en"].includes(payload.language ?? "")
+          ? payload.language!
+          : "fa",
+        visibility: ["public", "members", "private"].includes(
+          payload.visibility ?? "",
+        )
+          ? payload.visibility!
+          : "public",
+        authorName:
+          payload.authorName?.trim() ||
+          (await getAdminUser())?.displayName ||
+          "",
+        coverImage: payload.coverImage?.trim() || null,
+        fileUrl: payload.fileUrl?.trim() || null,
+        fileName: payload.fileName?.trim() || null,
+        sourceNote: payload.sourceNote?.trim() || "",
+        tags: payload.tags?.trim() || "",
+        featured: payload.featured ? 1 : 0,
+        status,
+        publishedAt: status === "published" ? now : null,
+        updatedAt: now,
+      })
+      .returning();
+
+    try {
+      await writeAuditLog({
+        action: "content.create",
+        entityType: post.contentType || "post",
+        entityId: post.id,
+        details: { title: post.title, slug: post.slug, status: post.status },
+      });
+    } catch (auditError) {
+      console.error("Post created but audit logging failed", auditError);
+    }
+
+    return Response.json({ post }, { status: 201 });
+  } catch (error) {
+    console.error("Failed to create post", error);
+    return Response.json(
+      { error: `ذخیرهٔ مطلب انجام نشد: ${errorMessage(error)}` },
+      { status: 500 },
+    );
   }
-
-  const baseSlug = slugify(payload.slug || title) || `post-${Date.now()}`;
-  const slug = `${baseSlug}-${Date.now().toString(36)}`;
-  const requestedStatus = payload.status ?? "draft";
-  const validStatuses = ["draft", "review", "approved", "published", "archived"];
-  const status =
-    requestedStatus === "published" && !(await canPublishRequest())
-      ? "review"
-      : validStatuses.includes(requestedStatus)
-        ? requestedStatus
-        : "draft";
-  const now = new Date().toISOString();
-
-  await ensurePlatformSchema();
-  const db = await getDb();
-  const [post] = await db
-    .insert(posts)
-    .values({
-      title,
-      slug,
-      excerpt: payload.excerpt?.trim() ?? "",
-      content: payload.content?.trim() ?? "",
-      category: payload.category?.trim() || "مقالات",
-      contentType: payload.contentType?.trim() || "article",
-      language: ["fa", "ps", "en"].includes(payload.language ?? "")
-        ? payload.language!
-        : "fa",
-      visibility: ["public", "members", "private"].includes(
-        payload.visibility ?? "",
-      )
-        ? payload.visibility!
-        : "public",
-      authorName:
-        payload.authorName?.trim() ||
-        (await getAdminUser())?.displayName ||
-        "",
-      coverImage: payload.coverImage?.trim() || null,
-      fileUrl: payload.fileUrl?.trim() || null,
-      fileName: payload.fileName?.trim() || null,
-      sourceNote: payload.sourceNote?.trim() || "",
-      tags: payload.tags?.trim() || "",
-      featured: payload.featured ? 1 : 0,
-      status,
-      publishedAt: status === "published" ? now : null,
-      updatedAt: now,
-    })
-    .returning();
-
-  await writeAuditLog({
-    action: "content.create",
-    entityType: post.contentType || "post",
-    entityId: post.id,
-    details: { title: post.title, slug: post.slug, status: post.status },
-  });
-
-  return Response.json({ post }, { status: 201 });
 }
