@@ -3,6 +3,7 @@ import AdminDashboard from "./AdminDashboard";
 import LeaderPageManager from "./LeaderPageManager";
 import PageManager from "./PageManager";
 import PublishingHealth from "./PublishingHealth";
+import TextFormattingTools from "./TextFormattingTools";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,7 @@ export default async function AdminPage() {
 
   return (
     <>
+      <TextFormattingTools />
       <AdminDashboard displayName={user.displayName} signOutHref="/api/auth/logout" />
       <PublishingHealth />
       <LeaderPageManager />
