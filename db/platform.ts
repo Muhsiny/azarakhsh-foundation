@@ -21,6 +21,37 @@ export async function ensurePlatformSchema() {
     const db = (env as unknown as RuntimeEnv).DB;
     if (!db) throw new Error("Cloudflare D1 is unavailable.");
 
+    await db.prepare(`CREATE TABLE IF NOT EXISTS posts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      slug TEXT NOT NULL UNIQUE,
+      title TEXT NOT NULL,
+      excerpt TEXT NOT NULL DEFAULT '',
+      content TEXT NOT NULL DEFAULT '',
+      category TEXT NOT NULL DEFAULT 'مقالات',
+      content_type TEXT NOT NULL DEFAULT 'article',
+      language TEXT NOT NULL DEFAULT 'fa',
+      visibility TEXT NOT NULL DEFAULT 'public',
+      author_name TEXT NOT NULL DEFAULT '',
+      cover_image TEXT,
+      file_url TEXT,
+      file_name TEXT,
+      source_note TEXT NOT NULL DEFAULT '',
+      tags TEXT NOT NULL DEFAULT '',
+      featured INTEGER NOT NULL DEFAULT 0,
+      views INTEGER NOT NULL DEFAULT 0,
+      downloads INTEGER NOT NULL DEFAULT 0,
+      status TEXT NOT NULL DEFAULT 'draft',
+      published_at TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )`).run();
+
+    await db.prepare(`CREATE TABLE IF NOT EXISTS site_settings (
+      id INTEGER PRIMARY KEY NOT NULL,
+      data TEXT NOT NULL,
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )`).run();
+
     await db.prepare(`CREATE TABLE IF NOT EXISTS admin_users (
       id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
       email TEXT NOT NULL UNIQUE,
