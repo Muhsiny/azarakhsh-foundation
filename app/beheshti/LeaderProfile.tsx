@@ -83,6 +83,7 @@ export default function LeaderProfile() {
       title={title}
       lead={lead}
       sections={sections}
+      collapseSectionText
     />
   );
 }
