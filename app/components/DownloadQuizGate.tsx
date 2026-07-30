@@ -2,48 +2,58 @@
 
 import { useState } from "react";
 
-type Question = { prompt: string; options: string[] };
+type Question = { prompt: string; options: string[]; hint: string };
 
 const questions: Question[] = [
   {
-    prompt: "آیت‌الله سید علی بهشتی پس از بازگشت از نجف، در کدام منطقه حوزهٔ علمی برپا کرد؟",
-    options: ["ورس", "کابل", "هرات", "مزارشریف"],
+    prompt: "آیت‌الله سید علی بهشتی در چه سال و در کجا زاده شد؟",
+    options: ["۱۳۰۸ش، سنگ‌تختِ ورس", "۱۳۱۸ش، کابل", "۱۲۹۸ش، نجف", "۱۳۲۸ش، یکاولنگ"],
+    hint: "برای پاسخ، بخش «خاندان و تولد» پروندهٔ رهبر را مطالعه کنید.",
   },
   {
-    prompt: "اجتماع بزرگ نمایندگان مناطق مرکزی که زمینهٔ تأسیس شورای انقلابی اتفاق اسلامی افغانستان را فراهم کرد، در کجا برگزار شد؟",
-    options: ["ورس", "غزنی", "بامیان مرکزی", "کویته"],
+    prompt: "مسیر اصلی تحصیل آیت‌الله بهشتی کدام بود؟",
+    options: ["آغاز نزد پدر و علمای محلی، حدود شش سال در یکاولنگ، سپس نجف", "فقط کابل و هرات", "مشهد، قم و دمشق", "فقط آموزش خصوصی در ورس"],
+    hint: "نام استادان و مسیر یکاولنگ تا نجف در بخش «تحصیلات و استادان» آمده است.",
   },
   {
-    prompt: "شورای انقلابی اتفاق اسلامی افغانستان در چه تاریخی تأسیس شد؟",
-    options: ["۱۵ سنبلهٔ ۱۳۵۸", "۷ ثور ۱۳۵۷", "۲۴ حوت ۱۳۵۷", "۱ حمل ۱۳۵۹"],
+    prompt: "کدام مجموعه از نهادهایی است که آیت‌الله بهشتی در ایجاد یا بنیان‌گذاری آن‌ها نقش مستقیم داشت؟",
+    options: ["مدرسهٔ علمیهٔ سنگ‌تخت، مدرسهٔ باقریه و شورای انقلابی اتفاق اسلامی افغانستان", "دانشگاه کابل و بانک مرکزی", "سازمان نصر و پاسداران جهاد", "حزب دموکراتیک خلق و شورای ملی"],
+    hint: "به فعالیت‌های علمی پس از بازگشت از نجف و سپس نهادسازی سیاسی او توجه کنید.",
   },
   {
-    prompt: "آیت‌الله بهشتی برای چه مدتی به ریاست شورای انقلابی اتفاق اسلامی افغانستان برگزیده شد؟",
-    options: ["سه سال", "یک سال", "پنج سال", "مادام‌العمر"],
+    prompt: "چرا نمایندگان مردم آیت‌الله بهشتی را به ریاست شورای اتفاق برگزیدند؟",
+    options: ["به‌سبب اعتبار علمی و دینی، حل اختلافات، نفوذ مردمی و نقش او در آزادسازی و سازمان‌دهی مناطق", "به‌سبب حمایت ارتش شوروی", "به‌سبب انتصاب از کابل", "به‌سبب ثروت شخصی و مالکیت زمین"],
+    hint: "پاسخ را در پیوند میان آموزش، حل منازعات، جهاد و اعتماد عمومی جست‌وجو کنید.",
   },
   {
-    prompt: "قلمرو حکومت شورای اتفاق چند ولسوالی را در بر می‌گرفت؟",
-    options: ["۴۲ ولسوالی", "۱۵ ولسوالی", "۸ ولسوالی", "۶۰ ولسوالی"],
+    prompt: "حکومت محلی شورای اتفاق از ۱۳۵۸ تا ۱۳۶۴ دوام یافت؛ این دوره تقریباً چند سال بود؟",
+    options: ["شش سال", "سه سال", "ده سال", "یک سال"],
+    hint: "میان «دورهٔ انتخاب اولیه» و «مدت دوام حکومت محلی» تفاوت بگذارید.",
   },
   {
-    prompt: "قلمرو حکومت شورای اتفاق در چند ولایت گسترده بود؟",
-    options: ["۸ ولایت", "۴ ولایت", "۱۲ ولایت", "۲ ولایت"],
+    prompt: "چرا آیت‌الله بهشتی در سال ۱۳۶۸ به روند تشکیل حزب وحدت اسلامی پیوست؟",
+    options: ["برای تکمیل حلقهٔ نهایی وحدت جریان‌های شیعی و بازگرداندن همه نیروها به یک محور مشترک", "برای انحلال کامل همه شوراهای محلی", "برای پیوستن به دولت کمونیستی", "برای کناره‌گیری کامل از سیاست"],
+    hint: "در منابع، پیوستن او «تکمیل حلقهٔ نهایی وحدت» توصیف شده است.",
   },
   {
-    prompt: "ساختار اداری شورای اتفاق به چند حوزه تقسیم شده بود؟",
-    options: ["۱۵ حوزه", "۱۰ حوزه", "۲۰ حوزه", "۴۲ حوزه"],
+    prompt: "مهم‌ترین نقش آیت‌الله بهشتی در ساختار حزب وحدت چه بود؟",
+    options: ["حضور در شورای عالی نظارت و ایفای نقش وحدت‌بخش و نظارتی", "فرماندهی نیروی هوایی", "مسئولیت وزارت مالیه", "ریاست دستگاه تبلیغاتی خارجی"],
+    hint: "به جایگاه او در شورای عالی نظارت و نقش او در مشروعیت‌بخشی و نظارت سیاسی توجه کنید.",
   },
   {
-    prompt: "کدام مورد از نهادها و مسئولیت‌های رسمی حکومت شورای اتفاق بود؟",
-    options: ["قضا، مالیه، دارالانشا و فرماندهی جهاد", "فقط تبلیغات", "فقط امور مذهبی", "فقط فرماندهی نظامی"],
+    prompt: "آیت‌الله بهشتی چند سال عمر کرد و در چه سالی درگذشت؟",
+    options: ["۶۷ سال؛ ۱۳۷۵ش", "۵۷ سال؛ ۱۳۶۵ش", "۷۷ سال؛ ۱۳۸۵ش", "۴۷ سال؛ ۱۳۵۵ش"],
+    hint: "سال تولد و وفات را کنار هم بگذارید.",
   },
   {
-    prompt: "سند عبور صادرشده از سوی حکومت شورای اتفاق چه نام داشت؟",
-    options: ["خط راهداری", "تذکرهٔ جهادی", "فرمان عبور", "برگهٔ مهاجرت"],
+    prompt: "کدام گزینه مجموعه‌ای از آثار و نوشته‌های ثبت‌شدهٔ آیت‌الله بهشتی را درست‌تر نشان می‌دهد؟",
+    options: ["تقریرات فقه و اصول، الارجوزة فی اصول الفقه، نوشته‌های شرح رسائل و قوانین، تجربه و مبارزه و اخلاق", "فقط یک دیوان شعر", "کتاب‌های پزشکی و مهندسی", "هیچ اثر علمی از او باقی نمانده است"],
+    hint: "بخش «آثار علمی» را با دقت بخوانید؛ برخی آثار کتاب مستقل و برخی تقریرات و یادداشت‌های درسی‌اند.",
   },
   {
-    prompt: "قطعنامهٔ نخستین اجلاس شورای انقلابی اتفاق اسلامی افغانستان چند ماده داشت؟",
-    options: ["۱۷ ماده", "۹۰ ماده", "۱۵ ماده", "۴۲ ماده"],
+    prompt: "کدام ترکیب، ساختار قلمرو و ادارهٔ حکومت شورای اتفاق را درست بیان می‌کند؟",
+    options: ["۸ ولایت، ۴۲ ولسوالی، ۱۵ حوزه و ۵ کمیسیون اصلی", "۵ ولایت، ۱۵ ولسوالی و ۲ کمیسیون", "۱۲ ولایت، ۶۰ ولسوالی و بدون کمیسیون", "۲ ولایت، ۸ ولسوالی و یک کمیسیون"],
+    hint: "در بخش ساختار حکومت، هم تقسیمات جغرافیایی و هم کمیسیون‌های جهاد، فرهنگی، مالی، ارتباطات و قضا را بررسی کنید.",
   },
 ];
 
@@ -84,15 +94,10 @@ export default function DownloadQuizGate({ postId, fileName, downloads }: { post
       </button>
 
       {open && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="آزمون تاریخی پیش از دانلود"
-          style={{ position: "fixed", inset: 0, zIndex: 13000, background: "rgba(4,27,22,.78)", overflow: "auto", padding: 18 }}
-        >
-          <section style={{ width: "min(800px,100%)", margin: "24px auto", background: "#fffdf8", color: "#173f33", borderRadius: 14, padding: 20, direction: "rtl" }}>
-            <h2 style={{ marginTop: 0 }}>آزمون تاریخ آیت‌الله بهشتی و حکومت شورای اتفاق</h2>
-            <p>برای دریافت فایل، به هر ۱۰ پرسش پاسخ درست بدهید. پاسخ‌های نادرست دوباره قابل اصلاح‌اند.</p>
+        <div role="dialog" aria-modal="true" aria-label="آزمون تاریخی پیش از دانلود" style={{ position: "fixed", inset: 0, zIndex: 13000, background: "rgba(4,27,22,.78)", overflow: "auto", padding: 18 }}>
+          <section style={{ width: "min(820px,100%)", margin: "24px auto", background: "#fffdf8", color: "#173f33", borderRadius: 14, padding: 20, direction: "rtl" }}>
+            <h2 style={{ marginTop: 0 }}>آزمون حافظهٔ تاریخی آذرخش</h2>
+            <p>این آزمون برای حفظ‌کردن چند عدد ساخته نشده است؛ هدف آن شناخت مسیر زندگی، منطق اعتماد مردم، نهادسازی، وحدت‌خواهی و کارنامهٔ حکومتی آیت‌الله بهشتی است. برای دانلود باید هر ۱۰ پاسخ درست باشد.</p>
 
             <div style={{ display: "grid", gap: 16 }}>
               {questions.map((question, index) => (
@@ -101,33 +106,28 @@ export default function DownloadQuizGate({ postId, fileName, downloads }: { post
                   <div style={{ display: "grid", gap: 8, marginTop: 8 }}>
                     {question.options.map((option) => (
                       <label key={option} style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                        <input
-                          type="radio"
-                          name={`question-${index}`}
-                          value={option}
-                          checked={answers[index] === option}
-                          onChange={(event) => {
-                            const next = [...answers];
-                            next[index] = event.target.value;
-                            setAnswers(next);
-                          }}
-                        />
+                        <input type="radio" name={`question-${index}`} value={option} checked={answers[index] === option} onChange={(event) => {
+                          const next = [...answers];
+                          next[index] = event.target.value;
+                          setAnswers(next);
+                        }} />
                         <span>{option}</span>
                       </label>
                     ))}
                   </div>
+                  <small style={{ display: "block", marginTop: 9, opacity: .78 }}>{question.hint}</small>
                 </fieldset>
               ))}
             </div>
 
             {message && <p style={{ marginTop: 14, fontWeight: 700 }}>{message}</p>}
-            <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
+            <div style={{ display: "flex", gap: 10, marginTop: 18, flexWrap: "wrap" }}>
               <button type="button" disabled={busy} onClick={() => void submit()} style={{ padding: "10px 18px", border: 0, borderRadius: 7, background: "#173f33", color: "white" }}>
                 {busy ? "در حال بررسی پاسخ‌ها…" : "بررسی پاسخ‌ها و دانلود"}
               </button>
-              <button type="button" disabled={busy} onClick={() => setOpen(false)} style={{ padding: "10px 18px", border: "1px solid #aaa", borderRadius: 7, background: "transparent" }}>
-                لغو
-              </button>
+              <a href="/beheshti" target="_blank" rel="noreferrer" style={{ padding: "10px 18px", border: "1px solid #c7a45b", borderRadius: 7, textDecoration: "none" }}>مطالعهٔ پروندهٔ رهبر</a>
+              <a href="/archive" target="_blank" rel="noreferrer" style={{ padding: "10px 18px", border: "1px solid #c7a45b", borderRadius: 7, textDecoration: "none" }}>مطالعهٔ پروندهٔ شورای اتفاق</a>
+              <button type="button" disabled={busy} onClick={() => setOpen(false)} style={{ padding: "10px 18px", border: "1px solid #aaa", borderRadius: 7, background: "transparent" }}>لغو</button>
             </div>
           </section>
         </div>
