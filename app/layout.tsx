@@ -5,6 +5,7 @@ import "./home-order-fix.css";
 import "./traditional-typography.css";
 import OfflineBootstrap from "./OfflineBootstrap";
 import SiteEnhancer from "./SiteEnhancer";
+import AdminEditShortcut from "./components/AdminEditShortcut";
 
 const naskh = Noto_Naskh_Arabic({
   subsets: ["arabic"],
@@ -91,6 +92,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} type="application/ld+json" />
         <OfflineBootstrap />
         <SiteEnhancer />
+        <AdminEditShortcut />
         {children}
       </body>
     </html>
