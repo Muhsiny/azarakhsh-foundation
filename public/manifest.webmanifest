@@ -1,19 +1,44 @@
 {
+  "id": "/",
   "name": "بنیاد آذرخش",
   "short_name": "آذرخش",
   "description": "پژوهش، اسناد و حافظهٔ تاریخی افغانستان",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
   "background_color": "#041b16",
   "theme_color": "#0a3b2f",
-  "lang": "fa",
+  "lang": "fa-AF",
   "dir": "rtl",
+  "categories": ["education", "news", "books"],
   "icons": [
     {
       "src": "/app-icon.png",
       "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "نشرها",
+      "short_name": "نشرها",
+      "url": "/publications",
+      "icons": [{ "src": "/app-icon.png", "sizes": "1024x1024", "type": "image/png" }]
+    },
+    {
+      "name": "پرونده رهبر",
+      "short_name": "پرونده رهبر",
+      "url": "/beheshti",
+      "icons": [{ "src": "/app-icon.png", "sizes": "1024x1024", "type": "image/png" }]
+    },
+    {
+      "name": "مدیریت",
+      "short_name": "مدیریت",
+      "url": "/admin",
+      "icons": [{ "src": "/app-icon.png", "sizes": "1024x1024", "type": "image/png" }]
     }
   ]
 }
