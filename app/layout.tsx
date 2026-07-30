@@ -20,7 +20,7 @@ const nastaliq = Noto_Nastaliq_Urdu({
   weight: ["400", "500", "600", "700"],
 });
 
-const siteUrl = "https://azarakhsh-foundation.zulfiqar14.workers.dev";
+const siteUrl = "https://azarakhsh-foundation.com14.workers.dev";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -61,9 +61,15 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
   },
-  icons: { icon: "/app-icon.png", shortcut: "/app-icon.png" },
+  icons: { icon: "/app-icon.png", shortcut: "/app-icon.png", apple: "/app-icon.png" },
   manifest: "/manifest.webmanifest",
-  other: { "codex-preview": "development" },
+  appleWebApp: {
+    capable: true,
+    title: "بنیاد آذرخش",
+    statusBarStyle: "black-translucent",
+  },
+  applicationName: "بنیاد آذرخش",
+  other: { "codex-preview": "development", "mobile-web-app-capable": "yes" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
