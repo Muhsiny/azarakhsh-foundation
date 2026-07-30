@@ -1,4 +1,4 @@
-import { createDownloadPermit } from "../../../../../download-gate";
+import { createDownloadPermit } from "../../../../download-gate";
 
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   const id = Number((await context.params).id);
