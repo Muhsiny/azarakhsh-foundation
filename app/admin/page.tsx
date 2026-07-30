@@ -2,6 +2,7 @@ import { requireAdminPage } from "../admin-auth";
 import AdminDashboard from "./AdminDashboard";
 import LeaderPageManager from "./LeaderPageManager";
 import PageManager from "./PageManager";
+import PublishingHealth from "./PublishingHealth";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,7 @@ export default async function AdminPage() {
   return (
     <>
       <AdminDashboard displayName={user.displayName} signOutHref="/api/auth/logout" />
+      <PublishingHealth />
       <LeaderPageManager />
       <PageManager />
     </>
