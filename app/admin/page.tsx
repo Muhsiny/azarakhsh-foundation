@@ -1,5 +1,6 @@
 import { requireAdminPage } from "../admin-auth";
 import AdminDashboard from "./AdminDashboard";
+import AdminArchiveViewer from "./AdminArchiveViewer";
 import LeaderPageManager from "./LeaderPageManager";
 import PageManager from "./PageManager";
 import PublishingHealth from "./PublishingHealth";
@@ -30,6 +31,7 @@ export default async function AdminPage() {
     <>
       <TextFormattingTools />
       <AdminDashboard displayName={user.displayName} signOutHref="/api/auth/logout" />
+      <AdminArchiveViewer />
       <PublishingHealth />
       <LeaderPageManager />
       <PageManager />
