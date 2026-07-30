@@ -2,10 +2,17 @@ import { eq, sql } from "drizzle-orm";
 import { getDb } from "../../../../../db";
 import { ensurePlatformSchema } from "../../../../../db/platform";
 import { posts } from "../../../../../db/schema";
+import { verifyDownloadPermit } from "../../../../download-gate";
 
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   const id = Number((await context.params).id);
   if (!Number.isInteger(id)) return new Response("Not found", { status: 404 });
+
+  const token = new URL(request.url).searchParams.get("token") || "";
+  if (!token || !(await verifyDownloadPermit(token, id))) {
+    return new Response("برای دانلود، ابتدا پرسش‌های پیش از دریافت فایل را تکمیل کنید.", { status: 403 });
+  }
+
   await ensurePlatformSchema();
   const db = await getDb();
   const [item] = await db.select().from(posts).where(eq(posts.id, id)).limit(1);
