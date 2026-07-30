@@ -50,6 +50,14 @@ h6,
   line-height: 1.72;
 }
 
+/* Main landing-page title only: traditional Nastaliq, matching the requested sample. */
+.hero h1 {
+  font-family: var(--font-nastaliq), "Noto Nastaliq Urdu", serif;
+  font-weight: 500;
+  line-height: 1.95;
+  letter-spacing: 0;
+}
+
 .hero .eyebrow,
 .section-kicker,
 .knowledge-hero .section-kicker,
@@ -126,6 +134,10 @@ footer a:focus-visible,
   line-height: 1.78;
 }
 
+.hero h1 {
+  line-height: 1.95;
+}
+
 .hero-lead,
 .mission-heading p,
 .council-intro p,
@@ -167,8 +179,11 @@ footer a:focus-visible,
   h1,
   h2,
   h3,
-  .hero h1,
   .knowledge-hero h1 {
     line-height: 1.82;
+  }
+
+  .hero h1 {
+    line-height: 2;
   }
 }
