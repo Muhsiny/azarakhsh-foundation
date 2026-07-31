@@ -34,9 +34,12 @@ export default async function AdminPage() {
       {user.role === "owner" && (
         <section className="admin-access-card" style={{ margin: "18px auto", width: "min(1100px, calc(100% - 32px))" }}>
           <p className="section-kicker">پژوهش محفوظ مالک</p>
-          <h2>پاسخ‌های آزمون و دیدگاه مخاطبان</h2>
-          <p>نام، ایمیل، شغل و پاسخ‌های تحلیلی فقط در حساب مالک قابل مشاهده است.</p>
-          <a className="button button-dark" href="/admin/research-responses">مشاهدهٔ پاسخ‌ها</a>
+          <h2>پاسخ‌ها و منابع ارسالی مخاطبان</h2>
+          <p>پاسخ‌های آزمون و خاطرات، روایت‌ها و اسناد ارسالی مردم فقط در حساب مالک قابل مشاهده است.</p>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <a className="button button-dark" href="/admin/research-responses">پاسخ‌های آزمون دانلود</a>
+            <a className="button button-dark" href="/admin/contributions">خاطرات و اسناد ارسالی</a>
+          </div>
         </section>
       )}
       <AdminArchiveViewer />
