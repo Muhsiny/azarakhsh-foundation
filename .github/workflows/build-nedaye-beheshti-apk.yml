@@ -1,0 +1,36 @@
+name: Build Nedaye Beheshti APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - nedaye-beheshti-native
+    paths:
+      - 'nedaye-beheshti-native/**'
+      - '.github/workflows/build-nedaye-beheshti-apk.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: nedaye-beheshti-native
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Build debug APK
+        run: gradle :app:assembleDebug
+      - name: Rename APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/Nedaye-Beheshti.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Nedaye-Beheshti-APK
+          path: nedaye-beheshti-native/app/build/outputs/apk/debug/Nedaye-Beheshti.apk
+          if-no-files-found: error
