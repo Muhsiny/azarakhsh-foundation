@@ -1,0 +1,17 @@
+{
+  "name":"nedaye-beheshti-desktop",
+  "version":"1.2.0",
+  "description":"Nedaye Beheshti official desktop application",
+  "main":"main.js",
+  "private":true,
+  "scripts":{"dist":"electron-builder --win nsis portable"},
+  "devDependencies":{"electron":"^38.0.0","electron-builder":"^26.0.12"},
+  "build":{
+    "appId":"org.nedayebeheshti.desktop",
+    "productName":"Nedaye Beheshti",
+    "artifactName":"Nedaye-Beheshti-${version}-${arch}.${ext}",
+    "files":["main.js","package.json"],
+    "win":{"target":["nsis","portable"],"icon":"../nedaye-beheshti-native/app/src/main/res/drawable-nodpi/app_icon.png"},
+    "nsis":{"oneClick":false,"allowToChangeInstallationDirectory":true,"createDesktopShortcut":true,"createStartMenuShortcut":true,"shortcutName":"ندای بهشتی"}
+  }
+}
