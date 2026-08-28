@@ -21,7 +21,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Gravity;
-import android.view.Surface;
 import android.view.ViewGroup;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JavascriptInterface;
@@ -29,10 +28,12 @@ import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import androidx.webkit.WebViewAssetLoader;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
@@ -44,19 +45,20 @@ import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends Activity implements SensorEventListener {
-    private static final String APP_URL="https://app-hs2thc.v2.appdeploy.ai/";
+    private static final String LOCAL_APP_URL="https://appassets.androidplatform.net/app/index.html";
     private static final int REQ_LOCATION=100,REQ_FILE=101,REQ_NOTIFICATIONS=102;
     private static final String CHANNEL_PRAYER="prayer_alerts_vibrate";
-    private WebView webView; private ValueCallback<Uri[]> fileCallback; private GeolocationPermissions.Callback geoCallback; private String geoOrigin;
+    private WebView webView; private WebViewAssetLoader assetLoader; private ValueCallback<Uri[]> fileCallback; private GeolocationPermissions.Callback geoCallback; private String geoOrigin;
     private SensorManager sensorManager; private Sensor rotationSensor; private volatile double nativeHeading=0;
 
     @SuppressLint({"SetJavaScriptEnabled","JavascriptInterface"}) @Override protected void onCreate(Bundle state){super.onCreate(state);createPrayerChannel();requestNotificationPermission();startDailyWorker();
         sensorManager=(SensorManager)getSystemService(SENSOR_SERVICE);rotationSensor=sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        FrameLayout root=new FrameLayout(this);root.setBackgroundColor(Color.rgb(251,246,237));webView=new WebView(this);WebView.setWebContentsDebuggingEnabled(false);webView.setBackgroundColor(Color.rgb(251,246,237));webView.getSettings().setJavaScriptEnabled(true);webView.getSettings().setDomStorageEnabled(true);webView.getSettings().setDatabaseEnabled(true);webView.getSettings().setGeolocationEnabled(true);webView.getSettings().setMediaPlaybackRequiresUserGesture(false);webView.getSettings().setAllowFileAccess(true);webView.getSettings().setAllowContentAccess(true);webView.getSettings().setBuiltInZoomControls(false);webView.getSettings().setDisplayZoomControls(false);webView.addJavascriptInterface(new NativeBridge(getApplicationContext()),"NedayeNative");
+        FrameLayout root=new FrameLayout(this);root.setBackgroundColor(Color.rgb(251,246,237));webView=new WebView(this);WebView.setWebContentsDebuggingEnabled(false);webView.setBackgroundColor(Color.rgb(251,246,237));webView.getSettings().setJavaScriptEnabled(true);webView.getSettings().setDomStorageEnabled(true);webView.getSettings().setDatabaseEnabled(true);webView.getSettings().setGeolocationEnabled(true);webView.getSettings().setMediaPlaybackRequiresUserGesture(false);webView.getSettings().setAllowFileAccess(false);webView.getSettings().setAllowContentAccess(false);webView.getSettings().setBuiltInZoomControls(false);webView.getSettings().setDisplayZoomControls(false);webView.addJavascriptInterface(new NativeBridge(getApplicationContext()),"NedayeNative");
+        assetLoader=new WebViewAssetLoader.Builder().addPathHandler("/app/",new WebViewAssetLoader.AssetsPathHandler(this)).build();
         ImageView splash=new ImageView(this);splash.setImageResource(R.drawable.leader);splash.setScaleType(ImageView.ScaleType.CENTER_INSIDE);splash.setBackgroundColor(Color.rgb(251,246,237));splash.setPadding(40,40,40,40);FrameLayout.LayoutParams full=new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT,Gravity.CENTER);root.addView(webView,full);root.addView(splash,full);setContentView(root);
-        webView.setWebViewClient(new WebViewClient(){@Override public boolean shouldOverrideUrlLoading(WebView view,WebResourceRequest req){return false;}@Override public void onPageFinished(WebView view,String url){if(splash.getParent()!=null)splash.animate().alpha(0f).setDuration(280).withEndAction(()->root.removeView(splash)).start();}});
+        webView.setWebViewClient(new WebViewClient(){@Override public WebResourceResponse shouldInterceptRequest(WebView view,WebResourceRequest req){WebResourceResponse local=assetLoader.shouldInterceptRequest(req.getUrl());return local!=null?local:super.shouldInterceptRequest(view,req);}@Override public boolean shouldOverrideUrlLoading(WebView view,WebResourceRequest req){Uri u=req.getUrl();return "appassets.androidplatform.net".equals(u.getHost())?false:false;}@Override public void onPageFinished(WebView view,String url){if(splash.getParent()!=null)splash.animate().alpha(0f).setDuration(280).withEndAction(()->root.removeView(splash)).start();}});
         webView.setWebChromeClient(new WebChromeClient(){@Override public void onGeolocationPermissionsShowPrompt(String origin,GeolocationPermissions.Callback callback){if(Build.VERSION.SDK_INT<23||checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED)callback.invoke(origin,true,false);else{geoOrigin=origin;geoCallback=callback;requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},REQ_LOCATION);}}@Override public void onPermissionRequest(PermissionRequest request){runOnUiThread(request::deny);}@Override public boolean onShowFileChooser(WebView view,ValueCallback<Uri[]> callback,FileChooserParams params){if(fileCallback!=null)fileCallback.onReceiveValue(null);fileCallback=callback;try{startActivityForResult(params.createIntent(),REQ_FILE);return true;}catch(Exception e){fileCallback=null;return false;}}});
-        if(state==null)webView.loadUrl(APP_URL);else webView.restoreState(state);
+        if(state==null)webView.loadUrl(LOCAL_APP_URL);else webView.restoreState(state);
     }
     private void startDailyWorker(){PeriodicWorkRequest req=new PeriodicWorkRequest.Builder(DailyScheduleWorker.class,12,TimeUnit.HOURS).build();WorkManager.getInstance(this).enqueueUniquePeriodicWork("nedaye-prayer-refresh",ExistingPeriodicWorkPolicy.UPDATE,req);}
     private void createPrayerChannel(){if(Build.VERSION.SDK_INT>=26){NotificationChannel c=new NotificationChannel(CHANNEL_PRAYER,"اوقات نماز",NotificationManager.IMPORTANCE_HIGH);c.setDescription("هشدارهای نماز ندای بهشتی");c.enableVibration(true);c.setSound(null,null);getSystemService(NotificationManager.class).createNotificationChannel(c);}}
