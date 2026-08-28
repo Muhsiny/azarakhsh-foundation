@@ -25,12 +25,66 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - name: Build debug APK
+      - name: Bundle standalone web UI into Android assets
+        shell: bash
+        run: |
+          rm -rf app/src/main/assets
+          mkdir -p app/src/main/assets
+          python3 - <<'PY'
+          from pathlib import Path
+          from urllib.request import Request,urlopen
+          from urllib.parse import urljoin
+          import re
+
+          base='https://app-hs2thc.v2.appdeploy.ai/'
+          root=Path('app/src/main/assets')
+          queue=['index.html','manifest.webmanifest','sw.js','icon.svg','icon-192.png','icon-512.png','apple-touch-icon.png','generated/beheshti-approved.webp']
+          seen=set()
+
+          def norm(value):
+              value=value.split('#',1)[0].split('?',1)[0].strip()
+              if value.startswith(base): value=value[len(base):]
+              if value.startswith('./'): value=value[2:]
+              if value.startswith('/'): value=value[1:]
+              return value
+
+          while queue:
+              rel=norm(queue.pop(0))
+              if not rel or rel in seen or '://' in rel or rel.startswith('data:'): continue
+              seen.add(rel)
+              url=urljoin(base,rel)
+              try:
+                  req=Request(url,headers={'User-Agent':'Nedaye-Beheshti-Standalone-Builder/1.3'})
+                  data=urlopen(req,timeout=40).read()
+              except Exception as exc:
+                  print('skip',rel,exc)
+                  continue
+              out=root/rel
+              out.parent.mkdir(parents=True,exist_ok=True)
+              out.write_bytes(data)
+              if out.suffix.lower() not in {'.html','.js','.css','.json','.webmanifest'}: continue
+              try: text=data.decode('utf-8')
+              except UnicodeDecodeError: continue
+              found=[]
+              found += re.findall(r'''(?:src|href)=["']([^"']+)["']''',text)
+              found += re.findall(r'''(?:url\(|["'])((?:\.?/)?(?:assets|generated)/[^"')\s?#]+)''',text)
+              found += re.findall(r'''["']((?:\.?/)?(?:icon[^"']+|manifest\.webmanifest|sw\.js))''',text)
+              for item in found:
+                  item=norm(item)
+                  if item and item not in seen and not item.startswith('api/'): queue.append(item)
+          if not (root/'index.html').exists(): raise SystemExit('index.html was not bundled')
+          print('Bundled files:',len(seen))
+          PY
+      - name: Build independent APK
         run: gradle :app:assembleDebug
+      - name: Verify APK contains local app assets
+        run: |
+          unzip -l app/build/outputs/apk/debug/app-debug.apk | grep 'assets/index.html'
+          unzip -l app/build/outputs/apk/debug/app-debug.apk | grep 'assets/assets/' | head -n 1
       - name: Rename APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/Nedaye-Beheshti.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/Nedaye-Beheshti-Standalone.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Nedaye-Beheshti-APK
-          path: nedaye-beheshti-native/app/build/outputs/apk/debug/Nedaye-Beheshti.apk
+          name: Nedaye-Beheshti-Standalone-APK
+          path: nedaye-beheshti-native/app/build/outputs/apk/debug/Nedaye-Beheshti-Standalone.apk
           if-no-files-found: error
