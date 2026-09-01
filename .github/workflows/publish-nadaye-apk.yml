@@ -1,0 +1,69 @@
+name: Publish Nadaye Beheshti APK
+
+on:
+  push:
+    paths:
+      - '.github/workflows/publish-nadaye-apk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch current APK from Sayeh Library
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE='https://app-bhpp8w.v2.appdeploy.ai'
+          curl --retry 5 --retry-all-errors --connect-timeout 20 --max-time 120 -fsSL "$BASE/api/apps" -o apps.json
+          APP_ID=$(python - <<'PY'
+          import json,re
+          data=json.load(open('apps.json'))
+          apps=data.get('apps',[])
+          for app in apps:
+              title=str(app.get('title',''))
+              if re.search(r'ندای\s*بهشتی|nadaye\s*beheshti',title,re.I):
+                  print(app['id'])
+                  break
+          else:
+              raise SystemExit('Nadaye Beheshti app not found')
+          PY
+          )
+          curl --retry 5 --retry-all-errors --connect-timeout 20 --max-time 120 -fsSL "$BASE/api/apps/$APP_ID/download" -o manifest.json
+          APK_URL=$(python - <<'PY'
+          import json
+          d=json.load(open('manifest.json'))
+          u=d.get('url')
+          if not u: raise SystemExit('No direct APK URL in manifest')
+          print(u)
+          PY
+          )
+          curl --retry 5 --retry-all-errors --connect-timeout 20 --max-time 300 -fL "$APK_URL" -o Nadaye-Beheshti.apk
+          python - <<'PY'
+          import os,zipfile
+          p='Nadaye-Beheshti.apk'
+          size=os.path.getsize(p)
+          if size < 1000000:
+              raise SystemExit(f'APK unexpectedly small: {size}')
+          with zipfile.ZipFile(p) as z:
+              names=set(z.namelist())
+              if 'AndroidManifest.xml' not in names:
+                  raise SystemExit('Invalid APK: AndroidManifest.xml missing')
+          print(f'APK verified: {size} bytes')
+          PY
+      - name: Publish stable GitHub Release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG='nadaye-beheshti-latest'
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" Nadaye-Beheshti.apk --clobber
+          else
+            gh release create "$TAG" Nadaye-Beheshti.apk --title 'ندای بهشتی — آخرین نسخه' --notes 'میرور مستقیم و پایدار APK برای دانلود عمومی.'
+          fi
