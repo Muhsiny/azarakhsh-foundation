@@ -1,3 +1,5 @@
+import { SITE_URL } from "./site-url";
+
 export type SectionKey =
   | "mission"
   | "council"
@@ -97,7 +99,7 @@ export const defaultSiteSettings: SiteSettings = {
     { id: "memory", title: "خاطره", text: "روایت شاهد یا خانواده", href: "/contact" },
   ] },
   footer: { mission: "بنیاد مستقل پژوهش، اسناد و حافظهٔ تاریخی افغانستان", copyright: "تمام حقوق محفوظ است." },
-  contact: { email: "info@azarakhsh.foundation", phone: "", address: "افغانستان", website: "azarakhsh.foundation" },
+  contact: { email: "info@azarakhsh.foundation", phone: "", address: "افغانستان", website: SITE_URL },
   colors: { primary: "#173f33", dark: "#0b231d", gold: "#c7a45b", paper: "#f4efe5" },
   design: { fontFamily: "Vazirmatn, Tahoma, sans-serif", heroAlignment: "right", density: "balanced", headerStyle: "solid", imageStyle: "archival", headingScale: 1, sectionSpacing: 1, contentWidth: 1180, cardRadius: 18, customCss: "" },
   visibility: { mission: true, council: true, timeline: true, leader: true, archive: true, standards: true, method: true, contribute: true },

@@ -70,8 +70,8 @@ export default function LeaderProfile() {
       .then((data) => {
         const post = (data.posts || []).find((item) => item.tags?.split(",").map((tag) => tag.trim()).includes("leader-page"));
         if (!post) return;
-        setTitle(post.title || title);
-        setLead(post.excerpt || lead);
+        if (post.title) setTitle(post.title);
+        if (post.excerpt) setLead(post.excerpt);
         setSections(parseSections(post.content));
       })
       .catch(() => undefined);

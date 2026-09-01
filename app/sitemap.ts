@@ -1,9 +1,7 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL } from "./site-url";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    "https://azarakhsh-foundation.zulfiqar14.workers.dev";
   const pages = [
     ["", 1],
     ["/publications", 0.9],
@@ -15,8 +13,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ["/privacy", 0.5],
   ] as const;
   return pages.map(([path, priority]) => ({
-      url: `${siteUrl}${path}`,
-      lastModified: new Date("2026-07-26"),
+      url: `${SITE_URL}${path}`,
+      lastModified: new Date("2026-09-01T00:00:00Z"),
       changeFrequency: path === "" || path === "/publications" ? "weekly" : "monthly",
       priority,
     }));

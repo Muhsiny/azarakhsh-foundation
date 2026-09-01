@@ -13,6 +13,11 @@ type LegacyBlock = {
   size?: string;
 };
 
+type SelectControl = HTMLElement & {
+  options: ArrayLike<{ value: string }>;
+  value: string;
+};
+
 const legacySelector = [
   "main h1",
   "main h2",
@@ -85,7 +90,10 @@ export default function LegacyInlineEditCompatibility() {
     };
 
     const ensureJustifyButton = () => {
-      document.querySelectorAll<HTMLSelectElement>("[data-inline-ui] select").forEach((select) => {
+      const selects = Array.from(
+        document.querySelectorAll("[data-inline-ui] select"),
+      ) as unknown as SelectControl[];
+      selects.forEach((select) => {
         const hasJustify = Array.from(select.options).some((option) => option.value === "justify");
         if (!hasJustify || select.dataset.justifyButtonReady === "true") return;
         select.dataset.justifyButtonReady = "true";
@@ -110,8 +118,8 @@ export default function LegacyInlineEditCompatibility() {
     };
 
     fetch("/api/inline-edits", { cache: "no-store" })
-      .then((response) => response.json())
-      .then((data: { overrides?: Record<string, string> }) => {
+      .then(async (response) => (await response.json()) as { overrides?: Record<string, string> })
+      .then((data) => {
         overrides = data.overrides || {};
         restoreLegacyValues();
       })

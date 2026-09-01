@@ -8,6 +8,7 @@ import SiteEnhancer from "./SiteEnhancer";
 import UniversalInlineEditorV2 from "./components/UniversalInlineEditorV2";
 import LegacyInlineEditCompatibility from "./components/LegacyInlineEditCompatibility";
 import PublicContributionLink from "./components/PublicContributionLink";
+import { SITE_URL } from "./site-url";
 
 const naskh = Noto_Naskh_Arabic({
   subsets: ["arabic"],
@@ -23,10 +24,8 @@ const nastaliq = Noto_Nastaliq_Urdu({
   weight: ["400", "500", "600", "700"],
 });
 
-const siteUrl = "https://azarakhsh-foundation.com14.workers.dev";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "بنیاد آذرخش | آذرخش؛ قاتل تاریکی و سایه‌یی سایه!",
     template: "%s | بنیاد آذرخش",
@@ -72,7 +71,7 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
   },
   applicationName: "بنیاد آذرخش",
-  other: { "codex-preview": "development", "mobile-web-app-capable": "yes" },
+  other: { "mobile-web-app-capable": "yes" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -81,8 +80,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     "@type": "ResearchOrganization",
     name: "بنیاد آذرخش",
     alternateName: "Azarakhsh Research Foundation",
-    url: siteUrl,
-    logo: `${siteUrl}/azarakhsh-logo-web.png`,
+    url: SITE_URL,
+    logo: `${SITE_URL}/azarakhsh-logo-web.png`,
     description: "بنیاد مستقل برای پژوهش عمیق تاریخ افغانستان، گردآوری اسناد و بازتاب مسئولانهٔ حقیقت‌های تاریخی.",
     areaServed: "Afghanistan",
     knowsAbout: ["تاریخ افغانستان", "حکومت شورای اتفاق اسلامی افغانستان", "حضرت آیت‌الله العظمی بهشتی", "تاریخ هزاره‌جات", "تاریخ شفاهی"],

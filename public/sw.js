@@ -1,4 +1,4 @@
-const CACHE = "azarakhsh-v4";
+const CACHE = "azarakhsh-v5";
 const CORE = [
   "/",
   "/publications",
@@ -43,7 +43,7 @@ self.addEventListener("fetch", (event) => {
         .then((response) => {
           if (response.ok && isSameOrigin) {
             const copy = response.clone();
-            caches.open(CACHE).then((cache) => cache.put(event.request, copy));
+            event.waitUntil(caches.open(CACHE).then((cache) => cache.put(event.request, copy)));
           }
           return response;
         })
@@ -52,18 +52,17 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  if (!isSameOrigin) return;
+
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const network = fetch(event.request)
-        .then((response) => {
-          if (response.ok && isSameOrigin) {
-            const copy = response.clone();
-            caches.open(CACHE).then((cache) => cache.put(event.request, copy));
-          }
-          return response;
-        })
-        .catch(() => cached);
-      return cached || network;
-    }),
+    fetch(event.request)
+      .then((response) => {
+        if (response.ok) {
+          const copy = response.clone();
+          event.waitUntil(caches.open(CACHE).then((cache) => cache.put(event.request, copy)));
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request).then((cached) => cached || Response.error())),
   );
 });

@@ -236,7 +236,7 @@ export default function AdminEditShortcut() {
           <select value={textAlign} onChange={(e) => setTextAlign(e.target.value)} style={toolStyle}><option value="right">راست</option><option value="center">وسط</option><option value="left">چپ</option><option value="justify">دوطرفه</option></select>
         </div>
 
-        <div ref={editorRef} contentEditable suppressContentEditableWarning style={{ minHeight: 180, padding: 14, border: "1px solid #c7a45b", borderRadius: 8, lineHeight: 1.9, direction, textAlign: textAlign as "right" | "center" | "left" | "justify", fontFamily: fontFamily || undefined, fontSize: fontSize || undefined, background: "white" }} />
+        <div ref={editorRef} contentEditable suppressContentEditableWarning style={{ minHeight: 180, padding: 14, border: "1px solid #c7a45b", borderRadius: 8, lineHeight: 1.9, direction: direction as "rtl" | "ltr", textAlign: textAlign as "right" | "center" | "left" | "justify", fontFamily: fontFamily || undefined, fontSize: fontSize || undefined, background: "white" }} />
 
         <div style={{ marginTop: 18, paddingTop: 16, borderTop: "1px solid #ddd" }}>
           <strong>تصاویر و PDFها</strong>

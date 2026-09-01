@@ -1,10 +1,13 @@
-"use client";
-
-import { Fragment, ReactNode, useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { Fragment, type ReactNode } from "react";
+import { and, eq, inArray } from "drizzle-orm";
+import { notFound } from "next/navigation";
+import { getDb } from "../../../db";
+import { ensurePlatformSchema } from "../../../db/platform";
+import { posts } from "../../../db/schema";
+import { getAdminUser } from "../../admin-auth";
 import DownloadQuizGate from "../../components/DownloadQuizGate";
 
-type Post = { id:number; slug:string; title:string; excerpt:string; content:string; category:string; contentType:string; language:string; authorName:string; coverImage:string|null; fileUrl:string|null; fileName:string|null; sourceNote:string; downloads:number; publishedAt:string|null; updatedAt:string };
+export const dynamic = "force-dynamic";
 
 function inlineFormatting(value: string): ReactNode[] {
   return value.split(/(\*\*[^*]+\*\*)/g).filter(Boolean).map((part, index) =>
@@ -36,18 +39,26 @@ function formattedParagraph(value: string, index: number) {
   return <p key={index} style={style}>{formattedLines(text)}</p>;
 }
 
-export default function ArticlePage() {
-  const params = useParams<{ slug: string }>();
-  const [post, setPost] = useState<Post | null>(null);
-  const [missing, setMissing] = useState(false);
-  useEffect(() => {
-    fetch(`/api/posts?slug=${encodeURIComponent(params.slug)}`)
-      .then(async (response) => response.ok ? response.json() : Promise.reject())
-      .then((data:{post:Post}) => setPost(data.post))
-      .catch(() => setMissing(true));
-  }, [params.slug]);
-  if (missing) return <main className="article-page"><p className="section-kicker">۴۰۴</p><h1>مطلب یافت نشد</h1><a href="/publications">بازگشت به نشرها</a></main>;
-  if (!post) return <main className="article-page"><p>در حال دریافت مطلب…</p></main>;
+export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+  await ensurePlatformSchema();
+  const { slug } = await params;
+  const user = await getAdminUser();
+  const visibility = user ? ["public", "members"] : ["public"];
+  const db = await getDb();
+  const [post] = await db
+    .select()
+    .from(posts)
+    .where(
+      and(
+        eq(posts.slug, slug),
+        eq(posts.status, "published"),
+        inArray(posts.visibility, visibility),
+      ),
+    )
+    .limit(1);
+
+  if (!post) notFound();
+
   const paragraphs = post.content.split(/\n{2,}/).filter(Boolean);
   return (
     <main className="article-page">

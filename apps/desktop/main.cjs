@@ -1,7 +1,7 @@
 const { app, BrowserWindow, shell } = require("electron");
 const path = require("path");
 
-const SITE_ORIGIN = "https://azarakhsh-foundation.zulfiqar14.workers.dev";
+const SITE_ORIGIN = "https://azarakhsh-foundation.com14.workers.dev";
 const START_URL = SITE_ORIGIN;
 
 function createWindow() {

@@ -110,7 +110,9 @@ export default function UniversalInlineEditorV2() {
   useEffect(() => {
     Promise.all([
       fetch("/api/admin/posts", { cache: "no-store" }).then((r) => r.ok).catch(() => false),
-      fetch("/api/inline-edits", { cache: "no-store" }).then((r) => r.json()).catch(() => ({ overrides: {} })),
+      fetch("/api/inline-edits", { cache: "no-store" })
+        .then(async (r) => (await r.json()) as { overrides?: Record<string, string> })
+        .catch((): { overrides?: Record<string, string> } => ({ overrides: {} })),
     ]).then(([isAdmin, data]) => {
       setAdmin(isAdmin);
       const map = data.overrides || {};
