@@ -1,3 +1,5 @@
+import { safeOriginalFileName } from "./security";
+
 type RuntimeEnv = { DB?: D1Database; MEDIA?: KVNamespace };
 
 export type ContributionRecord = {
@@ -72,13 +74,19 @@ export async function saveContribution(input: Omit<ContributionRecord, "id" | "s
     ).run();
 }
 
-export async function storeContributionFile(file: File) {
+export async function storeContributionFile(
+  file: File,
+  verified: { mime: string; extension: string },
+) {
   const env = await runtimeEnv();
   if (!env.MEDIA) throw new Error("فضای ذخیره‌سازی فایل به سایت متصل نیست.");
-  const extension = file.name.split(".").pop()?.toLowerCase() || "bin";
-  const key = `public-contributions/${Date.now()}-${crypto.randomUUID()}.${extension}`;
+  const key = `public-contributions/${Date.now()}-${crypto.randomUUID()}.${verified.extension}`;
   await env.MEDIA.put(key, await file.arrayBuffer(), {
-    metadata: { contentType: file.type, fileName: file.name },
+    metadata: {
+      contentType: verified.mime,
+      fileName: safeOriginalFileName(file.name),
+      verified: "magic-bytes-v1",
+    },
   });
   return key;
 }
@@ -107,7 +115,8 @@ export async function updateContributionStatus(id: number, status: "pending" | "
 }
 
 export async function readContributionFile(key: string) {
+  if (!key.startsWith("public-contributions/")) return null;
   const env = await runtimeEnv();
   if (!env.MEDIA) return null;
-  return env.MEDIA.getWithMetadata<{ contentType?: string; fileName?: string }>(key, "arrayBuffer");
+  return env.MEDIA.getWithMetadata<{ contentType?: string; fileName?: string; verified?: string }>(key, "arrayBuffer");
 }
