@@ -11,7 +11,7 @@ const REAL_AFGHAN_ARCHIVES_IMAGE =
   "https://upload.wikimedia.org/wikipedia/commons/3/30/National_Archives%2C_Afghanistan.jpg";
 const REAL_HAZARA_HISTORY_IMAGE =
   "https://upload.wikimedia.org/wikipedia/commons/d/d1/Hazaras_of_Afghanistan_in_1879-80.jpg";
-const PRIOR_SITE_BEHESHTI_PORTRAIT = "/api/media/site%2Fayatollah-beheshti.webp";
+const PRIOR_SITE_BEHESHTI_PORTRAIT = "/media/beheshti-original.webp";
 const FALLBACK_BEHESHTI_PORTRAIT =
   "https://commons.wikishia.net/w/images/c/c2/%D8%B3%DB%8C%D8%AF_%D8%B9%D9%84%DB%8C_%D8%A8%D9%87%D8%B4%D8%AA%DB%8C_%D9%88%D8%B1%D8%B3%DB%8C_%DB%B2.jpg";
 
