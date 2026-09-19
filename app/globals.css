@@ -3818,3 +3818,31 @@ nav a {
     grid-row: 2;
   }
 }
+
+
+/* Public contribution shortcut: desktop-only floating action to avoid covering mobile CTAs. */
+.public-contribution-link {
+  background: #173f33;
+  border-radius: 999px;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+  color: #fff;
+  direction: rtl;
+  font-weight: 700;
+  left: 18px;
+  padding: 11px 16px;
+  position: fixed;
+  text-decoration: none;
+  z-index: 12000;
+}
+
+.public-contribution-link:focus-visible {
+  outline: 3px solid #d8ad4f;
+  outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+  .public-contribution-link {
+    display: none;
+  }
+}
