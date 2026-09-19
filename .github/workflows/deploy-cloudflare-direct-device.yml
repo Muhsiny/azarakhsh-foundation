@@ -1,0 +1,154 @@
+name: Direct Cloudflare device deploy
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-direct-device-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: contains(github.event.head_commit.message, '[cf-direct-device]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify production build
+        run: npm run verify
+
+      - name: Request Cloudflare device authorization
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const clientId = '54d11594-84e4-41aa-b438-e81b8fa78ee7';
+          const scopes = [
+            'account:read',
+            'user:read',
+            'workers:write',
+            'workers_kv:write',
+            'workers_scripts:write',
+            'd1:write'
+          ];
+          const body = new URLSearchParams({
+            client_id: clientId,
+            scope: [...scopes, 'offline_access'].join(' ')
+          });
+          const res = await fetch('https://dash.cloudflare.com/oauth2/device/auth', {
+            method: 'POST',
+            headers: {'content-type':'application/x-www-form-urlencoded'},
+            body
+          });
+          const data = await res.json();
+          if (!res.ok || !data.device_code || !data.user_code) {
+            console.error(JSON.stringify(data));
+            process.exit(1);
+          }
+          fs.writeFileSync('device-state.json', JSON.stringify(data));
+          fs.writeFileSync('device-user.json', JSON.stringify({
+            user_code: data.user_code,
+            verification_uri: data.verification_uri,
+            verification_uri_complete: data.verification_uri_complete || null,
+            expires_in: data.expires_in
+          }));
+          console.log('Cloudflare device authorization requested successfully.');
+          NODE
+
+      - name: Publish approval code
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflare-approval-code
+          path: device-user.json
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Wait for Cloudflare approval and obtain token
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const clientId = '54d11594-84e4-41aa-b438-e81b8fa78ee7';
+          const state = JSON.parse(fs.readFileSync('device-state.json','utf8'));
+          const deadline = Date.now() + Math.min(Number(state.expires_in || 300), 300) * 1000;
+          let interval = Math.max(Number(state.interval || 1), 1) * 1000;
+
+          while (Date.now() < deadline) {
+            const body = new URLSearchParams({
+              grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
+              device_code: state.device_code,
+              client_id: clientId
+            });
+            const res = await fetch('https://dash.cloudflare.com/oauth2/token', {
+              method: 'POST',
+              headers: {'content-type':'application/x-www-form-urlencoded'},
+              body
+            });
+            const data = await res.json();
+
+            if (data.access_token) {
+              console.log('::add-mask::' + data.access_token);
+              fs.appendFileSync(process.env.GITHUB_ENV, 'CLOUDFLARE_API_TOKEN=' + data.access_token + '\n');
+
+              const accountsRes = await fetch('https://api.cloudflare.com/client/v4/accounts?per_page=50', {
+                headers: {Authorization: 'Bearer ' + data.access_token}
+              });
+              const accountsJson = await accountsRes.json();
+              const accounts = Array.isArray(accountsJson.result) ? accountsJson.result : [];
+              const databaseId = '130db9f3-ff76-4d0d-bccb-196af0248e15';
+              let selected = null;
+
+              for (const account of accounts) {
+                const check = await fetch(
+                  'https://api.cloudflare.com/client/v4/accounts/' + account.id + '/d1/database/' + databaseId,
+                  {headers:{Authorization:'Bearer ' + data.access_token}}
+                );
+                if (check.ok) {
+                  selected = account;
+                  break;
+                }
+              }
+              if (!selected && accounts.length === 1) selected = accounts[0];
+              if (!selected) {
+                console.error('Could not uniquely identify the Cloudflare account containing the configured D1 database.');
+                process.exit(1);
+              }
+
+              fs.appendFileSync(process.env.GITHUB_ENV, 'CLOUDFLARE_ACCOUNT_ID=' + selected.id + '\n');
+              console.log('Cloudflare approval received and target account identified.');
+              process.exit(0);
+            }
+
+            if (data.error === 'authorization_pending') {
+              await new Promise(r => setTimeout(r, interval));
+              continue;
+            }
+            if (data.error === 'slow_down') {
+              interval += 5000;
+              await new Promise(r => setTimeout(r, interval));
+              continue;
+            }
+            console.error('Cloudflare authorization failed:', data.error || JSON.stringify(data));
+            process.exit(1);
+          }
+          console.error('Cloudflare approval timed out.');
+          process.exit(1);
+          NODE
+
+      - name: Deploy Worker
+        run: npx wrangler deploy
