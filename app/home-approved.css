@@ -1935,3 +1935,57 @@ body:has(.azarakhsh-approved) .public-contribution-link {
     grid-column: auto;
   }
 }
+
+
+/* Reference alignment corrections after live visual QA */
+@media (min-width: 821px) {
+  .az-hero {
+    direction: ltr;
+  }
+
+  .az-hero > * {
+    direction: rtl;
+  }
+
+  .az-feature-grid {
+    direction: ltr;
+  }
+
+  .az-feature-card {
+    direction: ltr;
+  }
+
+  .az-feature-copy,
+  .az-leader-copy,
+  .az-council-visual,
+  .az-leader-visual {
+    direction: rtl;
+  }
+}
+
+@media (max-width: 820px) {
+  .az-hero-landscape,
+  .az-hero-archive {
+    opacity: .48;
+    filter: saturate(.82) contrast(.96);
+  }
+
+  .az-hero::after {
+    background:
+      linear-gradient(90deg,
+        rgba(247,242,231,.78),
+        rgba(247,242,231,.87) 28%,
+        rgba(247,242,231,.98) 50%,
+        rgba(247,242,231,.87) 72%,
+        rgba(247,242,231,.78));
+  }
+
+  .az-hero-landscape blockquote {
+    opacity: .55;
+  }
+
+  .az-book-stack,
+  .az-identity-book {
+    opacity: .72;
+  }
+}
