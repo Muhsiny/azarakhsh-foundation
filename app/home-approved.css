@@ -379,3 +379,5 @@ body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
   .az-footer-column:last-of-type{grid-column:1/-1}.az-footer-quote{display:none}
   .az-footer-bottom{padding:7px 10px;font-size:5.1px;gap:6px;text-align:center}
 }
+
+/* final root redesign visual QA */
