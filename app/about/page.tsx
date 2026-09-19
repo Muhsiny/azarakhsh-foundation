@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import InstitutionalPage from "../components/InstitutionalPage";
 
-export const metadata: Metadata = { title: "دربارهٔ بنیاد", description: "مأموریت، چشم‌انداز، استقلال و ساختار علمی بنیاد آذرخش." };
+export const metadata: Metadata = {
+  title: "دربارهٔ بنیاد",
+  description: "مأموریت، چشم‌انداز، استقلال و ساختار علمی بنیاد آذرخش.",
+  alternates: { canonical: "/about" },
+  openGraph: { url: "/about", title: "دربارهٔ بنیاد آذرخش", description: "مأموریت، چشم‌انداز، استقلال و ساختار علمی بنیاد آذرخش." },
+};
 const sections = [
   { title: "مأموریت", text: "بنیاد آذرخش برای گردآوری، حفاظت، نقد و انتشار مسئولانهٔ منابع تاریخی ایجاد شده است؛ با تمرکز ویژه بر حکومت شورای اتفاق اسلامی افغانستان و میراث آیت‌الله بهشتی." },
   { title: "چشم‌انداز", text: "تبدیل‌شدن به مرجع قابل اعتماد فارسی‌زبان برای پژوهش تاریخ سیاسی و اجتماعی افغانستان، با آرشیوی چندرسانه‌ای و قابل استناد." },
