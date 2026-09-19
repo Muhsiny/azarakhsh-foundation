@@ -94,6 +94,67 @@ async function equalSecret(left: string, right: string, secret: string) {
   return equalBytes(leftHash, rightHash);
 }
 
+const PBKDF2_ITERATIONS = 210_000;
+
+async function derivePasswordHash(
+  password: string,
+  salt: string,
+  secret: string,
+  iterations = PBKDF2_ITERATIONS,
+) {
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(`${secret}:${password}`),
+    "PBKDF2",
+    false,
+    ["deriveBits"],
+  );
+  const bits = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      hash: "SHA-256",
+      salt: new TextEncoder().encode(salt),
+      iterations,
+    },
+    keyMaterial,
+    256,
+  );
+  return `pbkdf2${iterations}${bytesToBase64Url(new Uint8Array(bits))}`;
+}
+
+async function verifyStoredPassword(
+  password: string,
+  stored: StoredAdmin,
+  secret: string,
+) {
+  if (stored.password_hash.startsWith("pbkdf2$")) {
+    const [, iterationsValue, expected] = stored.password_hash.split("$");
+    const iterations = Number(iterationsValue);
+    if (!expected || !Number.isInteger(iterations) || iterations < 100_000) {
+      return { valid: false, needsUpgrade: false };
+    }
+    const actual = await derivePasswordHash(
+      password,
+      stored.password_salt,
+      secret,
+      iterations,
+    );
+    return {
+      valid: await equalSecret(actual, stored.password_hash, secret),
+      needsUpgrade: iterations < PBKDF2_ITERATIONS,
+    };
+  }
+
+  // Compatibility with accounts created before PBKDF2 hardening.
+  const legacyHash = bytesToBase64Url(
+    await hmac(`password:${stored.password_salt}:${password}`, secret),
+  );
+  return {
+    valid: await equalSecret(legacyHash, stored.password_hash, secret),
+    needsUpgrade: true,
+  };
+}
+
 async function createSessionToken(user: AdminUser, secret: string) {
   const payload = bytesToBase64Url(
     new TextEncoder().encode(
@@ -170,10 +231,25 @@ export async function authenticateAdmin(emailValue: string, password: string) {
     .first<StoredAdmin>();
 
   if (!stored || stored.status !== "active") return null;
-  const passwordHash = bytesToBase64Url(
-    await hmac(`password:${stored.password_salt}:${normalizedPassword}`, secret),
+  const passwordCheck = await verifyStoredPassword(
+    normalizedPassword,
+    stored,
+    secret,
   );
-  if (!(await equalSecret(passwordHash, stored.password_hash, secret))) return null;
+  if (!passwordCheck.valid) return null;
+
+  if (passwordCheck.needsUpgrade) {
+    const upgraded = await derivePasswordHash(
+      normalizedPassword,
+      stored.password_salt,
+      secret,
+    );
+    await env.DB.prepare(
+      "UPDATE admin_users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+    )
+      .bind(upgraded, stored.id)
+      .run();
+  }
 
   const user: AdminUser = {
     id: stored.id,
@@ -287,8 +363,10 @@ export async function createAdminUser(input: {
   if (email === ownerEmail) throw new Error("ایمیل مالک قابل افزودن نیست.");
 
   const salt = crypto.randomUUID();
-  const passwordHash = bytesToBase64Url(
-    await hmac(`password:${salt}:${input.password}`, env.SESSION_SECRET),
+  const passwordHash = await derivePasswordHash(
+    input.password.normalize("NFKC"),
+    salt,
+    env.SESSION_SECRET,
   );
   await env.DB.prepare(
     `INSERT INTO admin_users
@@ -323,8 +401,10 @@ export async function updateAdminUser(
       throw new Error("رمز همکار باید حداقل ۱۲ نویسه داشته باشد.");
     }
     const salt = crypto.randomUUID();
-    const passwordHash = bytesToBase64Url(
-      await hmac(`password:${salt}:${input.password}`, env.SESSION_SECRET),
+    const passwordHash = await derivePasswordHash(
+      input.password.normalize("NFKC"),
+      salt,
+      env.SESSION_SECRET,
     );
     await env.DB.prepare(
       `UPDATE admin_users
