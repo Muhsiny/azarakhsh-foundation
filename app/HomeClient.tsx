@@ -160,7 +160,18 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
           </div>
         </div>
         <figure className="az-hero-leader">
-          <img className="az-hero-image az-hero-image-right" src={PRIOR_SITE_BEHESHTI_PORTRAIT} alt="پرترهٔ آیت‌الله سید علی بهشتی" />
+          <img
+            className="az-hero-image az-hero-image-right"
+            src={PRIOR_SITE_BEHESHTI_PORTRAIT}
+            alt="پرترهٔ آیت‌الله سید علی بهشتی"
+            onError={(event) => {
+              const target = event.currentTarget;
+              if (target.dataset.fallback !== "1") {
+                target.dataset.fallback = "1";
+                target.src = FALLBACK_BEHESHTI_PORTRAIT;
+              }
+            }}
+          />
           <figcaption>
             <strong>آیت‌الله سید علی بهشتی</strong>
             <span>فقیه، مدرس و رئیس شورای انقلابی اتفاق اسلامی افغانستان</span>
