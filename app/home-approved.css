@@ -302,3 +302,5 @@ body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
   .az-hero{height:270px}.az-hero-copy h1{font-size:22.5px}.az-hero-lead{max-width:195px}
   .az-feature-card{grid-template-columns:58% 42%}.az-feature-copy h2,.az-leader-copy h2{font-size:16.5px}
 }
+
+/* final visual audit trigger */
