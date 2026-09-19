@@ -40,27 +40,43 @@ export default function PublicationsClient({ initialPosts }: { initialPosts: Pos
   const [query, setQuery] = useState("");
   const [language, setLanguage] = useState("all");
   const [type, setType] = useState("all");
+  const [topic, setTopic] = useState("");
 
   useEffect(() => {
-    const topic = new URLSearchParams(window.location.search).get("topic");
-    if (topic === "life") window.location.replace("/beheshti");
+    const params = new URLSearchParams(window.location.search);
+    const incomingTopic = params.get("topic") || "";
+    const incomingQuery = params.get("q") || "";
+    const incomingType = params.get("type") || "all";
+    if (incomingTopic === "life") {
+      window.location.replace("/beheshti");
+      return;
+    }
+    setQuery(incomingQuery);
+    setType(incomingType);
+    setTopic(incomingTopic);
   }, []);
 
   const visiblePosts = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     return posts.filter((post) => {
-      const matchesQuery =
-        !normalized ||
-        `${post.title} ${post.excerpt} ${post.category} ${post.tags}`
-          .toLowerCase()
-          .includes(normalized);
+      const haystack = `${post.title} ${post.excerpt} ${post.category} ${post.tags}`.toLowerCase();
+      const matchesQuery = !normalized || haystack.includes(normalized);
+      const normalizedTopic = topic.trim().toLowerCase();
+      const topicAliases: Record<string, string[]> = {
+        council: ["شورا", "اتفاق", "council"],
+        beheshti: ["بهشتی", "beheshti"],
+        history: ["تاریخ", "معاصر", "history"],
+      };
+      const topicTerms = topicAliases[normalizedTopic] || (normalizedTopic ? [normalizedTopic] : []);
+      const matchesTopic = topicTerms.length === 0 || topicTerms.some((term) => haystack.includes(term));
       return (
         matchesQuery &&
+        matchesTopic &&
         (language === "all" || post.language === language) &&
         (type === "all" || post.contentType === type)
       );
     });
-  }, [posts, query, language, type]);
+  }, [posts, query, language, type, topic]);
 
   return (
     <main className="publications-shell">

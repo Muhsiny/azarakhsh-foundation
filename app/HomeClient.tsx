@@ -1,18 +1,27 @@
 "use client";
 
-import { type CSSProperties, useMemo, useState } from "react";
+import { type CSSProperties, useMemo } from "react";
 import type { SiteSettings } from "./site-settings";
 
+const timeline = [
+  { label: "ریشه‌ها و زمینه‌ها", note: "پیش از تحولات معاصر" },
+  { label: "تحولات معاصر", note: "دگرگونی‌های سیاسی و اجتماعی" },
+  { label: "جهاد و مقاومت", note: "سال‌های بحران و مقاومت" },
+  { label: "دورهٔ جدید", note: "میراث، روایت و بازخوانی" },
+];
+
 export default function HomeClient({ settings }: { settings: SiteSettings }) {
-  const [guideOpen, setGuideOpen] = useState(false);
-
-  const sectionOrder = Object.fromEntries(settings.sectionOrder.map((key, index) => [key, index + 3]));
-
   const highlightedTitle = useMemo(() => {
     const word = settings.hero.highlightedWord.trim();
     if (!word || !settings.hero.title.includes(word)) return settings.hero.title;
     const [before, ...after] = settings.hero.title.split(word);
-    return <>{before}<em>{word}</em>{after.join(word)}</>;
+    return (
+      <>
+        {before}
+        <em>{word}</em>
+        {after.join(word)}
+      </>
+    );
   }, [settings.hero.highlightedWord, settings.hero.title]);
 
   const siteStyle = {
@@ -25,234 +34,230 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
     "--paper": settings.colors.paper,
     "--font-persian": settings.design.fontFamily,
     "--heading-scale": settings.design.headingScale,
-    "--section-space": settings.design.sectionSpacing,
     "--content-width": `${settings.design.contentWidth}px`,
-    "--card-radius": `${settings.design.cardRadius}px`,
-    "--order-mission": sectionOrder.mission,
-    "--order-council": sectionOrder.council,
-    "--order-leader": sectionOrder.leader,
-    "--order-archive": sectionOrder.archive,
-    "--order-standards": sectionOrder.standards,
-    "--order-contribute": sectionOrder.contribute,
   } as CSSProperties;
 
-  const hiddenSections = Object.entries(settings.visibility)
-    .filter(([, visible]) => !visible)
-    .map(([section]) => `hide-${section}`)
-    .join(" ");
-
   return (
-    <main
-      className={`site-root hero-align-${settings.design.heroAlignment} density-${settings.design.density} header-${settings.design.headerStyle} image-${settings.design.imageStyle} ${hiddenSections}`}
-      style={siteStyle}
-    >
+    <main className="site-root azarakhsh-v3" style={siteStyle} dir="rtl">
       {settings.design.customCss && <style>{settings.design.customCss}</style>}
 
-      <header className="site-header">
-        <a className="brand" href="#top" aria-label={`صفحهٔ نخست ${settings.identity.siteName}`}>
-          <span className="brand-mark">
-            <img src={settings.identity.logoUrl} alt={`لوگوی ${settings.identity.siteName}`} width={92} height={62} />
+      <header className="v3-header">
+        <a className="v3-brand" href="#top" aria-label={settings.identity.siteName}>
+          <img src={settings.identity.logoUrl} alt={`لوگوی ${settings.identity.siteName}`} />
+          <span>
+            <strong>{settings.identity.siteName}</strong>
+            <small>بنیاد مستقل تاریخ‌پژوهی افغانستان</small>
           </span>
-          <span><strong>{settings.identity.siteName}</strong><small>{settings.identity.tagline}</small></span>
         </a>
 
-        <nav aria-label="فهرست اصلی">
-          <a href="/about">{settings.navigation.about}</a>
-          <a href="#council">{settings.navigation.council}</a>
-          <a href="/beheshti">{settings.navigation.leader}</a>
-          <a href="/archive">{settings.navigation.archive}</a>
-          <a href="/publications">{settings.navigation.publications}</a>
-          <a href="/join">عضویت</a>
+        <nav className="v3-nav" aria-label="فهرست اصلی">
+          <a className="is-active" href="#top">صفحهٔ اصلی</a>
+          <a href="/archive">آرشیف</a>
+          <a href="/about">دربارهٔ بنیاد</a>
+          <a href="/publications">نشریات</a>
+          <a href="/standards">پژوهش‌ها</a>
+          <a href="/contact">تماس با ما</a>
         </nav>
 
-        <a className="header-cta" href="#contribute">
-          {settings.navigation.contribute}<span aria-hidden="true">←</span>
-        </a>
+        <div className="v3-header-tools">
+          <a className="v3-icon-link" href="/publications" aria-label="جست‌وجو">⌕</a>
+          <a className="v3-login" href="/login">ثبت نام / ورود</a>
+        </div>
 
-        <details className="mobile-menu">
-          <summary aria-label="بازکردن فهرست">فهرست</summary>
+        <details className="v3-mobile-menu">
+          <summary>فهرست</summary>
           <div>
-            <a href="/about">{settings.navigation.about}</a>
-            <a href="#council">{settings.navigation.council}</a>
-            <a href="/beheshti">{settings.navigation.leader}</a>
-            <a href="/archive">{settings.navigation.archive}</a>
-            <a href="/publications">{settings.navigation.publications}</a>
-            <a href="#contribute">{settings.navigation.contribute}</a>
-            <a href="/join">عضویت</a>
+            <a href="/archive">آرشیف</a>
+            <a href="/about">دربارهٔ بنیاد</a>
+            <a href="/publications">نشریات</a>
+            <a href="/standards">پژوهش‌ها</a>
+            <a href="/contact">تماس با ما</a>
+            <a href="/login">ورود اعضا</a>
           </div>
         </details>
       </header>
 
-      <section className="hero" id="top">
-        <img className="hero-logo-watermark" src={settings.identity.logoUrl} alt="" aria-hidden="true" />
-        <div className="hero-noise" />
-        <div className="hero-copy">
-          <p className="eyebrow"><span />{settings.hero.eyebrow}</p>
+      <section className="v3-hero" id="top">
+        <div className="v3-hero-scenery" aria-hidden="true">
+          <span className="v3-mountain v3-mountain-one" />
+          <span className="v3-mountain v3-mountain-two" />
+          <span className="v3-fortress">
+            <i /><i /><i /><i /><i />
+          </span>
+          <p>«میراث گذشته، سرمایهٔ آیندهٔ ماست.»</p>
+        </div>
+
+        <div className="v3-hero-copy">
+          <p className="v3-eyebrow">{settings.hero.eyebrow}</p>
           <h1>{highlightedTitle}</h1>
-          <p className="hero-lead">{settings.hero.description}</p>
-          <div className="hero-actions">
-            <a className="button button-gold" href="#council">{settings.hero.primaryButton}<span aria-hidden="true">←</span></a>
-            <a className="button button-ghost" href="#contribute">{settings.hero.secondaryButton}</a>
-          </div>
-          <div className="editorial-note">
-            <span className="note-number">اصل بنیاد</span>
-            <p>{settings.hero.principle}</p>
-          </div>
-        </div>
-        <div className="hero-foot">
-          <span>پژوهش تاریخی</span><span>آرشیو اسناد</span><span>تاریخ شفاهی</span><span>نقد و تحلیل</span>
-        </div>
-      </section>
-
-      <section className="mission-strip" id="mission">
-        <p className="section-kicker">{settings.mission.kicker}</p>
-        <div className="mission-heading">
-          <h2>{settings.mission.title}</h2>
-          <p>{settings.mission.text}</p>
-        </div>
-        <div className="archive-grid">
-          {settings.mission.cards.slice(0, 3).map((card, index) => (
-            <a className="archive-card" href={card.href} key={card.id}>
-              <span className="card-index">{["۰۱", "۰۲", "۰۳"][index]}</span>
-              <span className="card-line" />
-              <h3>{card.title}</h3>
-              <p>{card.text}</p>
-              <span className="card-link">{card.label || "ورود به بخش"} <b aria-hidden="true">←</b></span>
+          <p className="v3-hero-lead">
+            ما در بنیاد آذرخش، متعهد به حفظ مسئولانه، نقد علمی و انتشار منابع تاریخی هستیم.
+          </p>
+          <div className="v3-hero-actions">
+            <a className="v3-button v3-button-primary" href="#archive-search">
+              جستجوی آرشیف <span aria-hidden="true">⌕</span>
             </a>
-          ))}
+            <a className="v3-button v3-button-secondary" href="/about">
+              دربارهٔ بنیاد <span aria-hidden="true">←</span>
+            </a>
+          </div>
+        </div>
+
+        <div className="v3-archive-still" aria-hidden="true">
+          <div className="v3-arch" />
+          <div className="v3-book-stack">
+            <span /><span /><span />
+          </div>
+          <div className="v3-book-title">
+            <b>تاریخ</b><b>هویت</b><b>آگاهی</b><b>آینده</b>
+          </div>
+          <div className="v3-manuscript" />
         </div>
       </section>
 
-      <section className="council-section" id="council">
-        <div className="section-rail" aria-hidden="true"><span>پروندهٔ محوری</span><b>۰۱</b></div>
-        <div className="council-intro">
-          <p className="section-kicker section-kicker-light">{settings.council.kicker}</p>
-          <h2>{settings.council.title}</h2>
-          <p>{settings.council.text}</p>
-          <a className="text-link" href="/archive">ورود به پرونده‌های شورای اتفاق <span aria-hidden="true">←</span></a>
-        </div>
-        <div className="council-visuals">
-          <figure className="council-emblem-card">
-            <div className="historical-image-frame">
+      <section className="v3-feature-stage">
+        <section className="v3-council-feature" id="council">
+          <div className="v3-feature-copy">
+            <p className="v3-kicker">{settings.council.kicker}</p>
+            <h2>{settings.council.title}</h2>
+            <p>{settings.council.text}</p>
+            <a className="v3-button v3-button-primary" href="/archive">
+              ورود به پرونده <span aria-hidden="true">←</span>
+            </a>
+          </div>
+          <figure className="v3-council-art">
+            <div className="v3-paper-layer v3-paper-a" />
+            <div className="v3-paper-layer v3-paper-b" />
+            <div className="v3-council-emblem-wrap">
               <img src={settings.media.councilEmblemUrl} alt={settings.media.councilEmblemAlt} />
             </div>
-            <figcaption>
-              <span>سند تصویری</span>
-              <strong>{settings.media.councilEmblemAlt}</strong>
-              <small>{settings.media.councilEmblemCaption}</small>
-            </figcaption>
+            <figcaption>{settings.media.councilEmblemCaption}</figcaption>
           </figure>
-          <div className="council-map" aria-label="محورهای پژوهش شورای اتفاق">
-            <div className="map-center"><span>{settings.council.mapTitle}</span><small>{settings.council.mapStatus}</small></div>
-            {settings.council.axes.slice(0, 4).map((axis, index) => (
-              <div className={`map-item map-item-${["one", "two", "three", "four"][index]}`} key={axis.id}>
-                <b>{axis.title}</b><span>{axis.text}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="beheshti-section" id="beheshti">
-        <figure className="beheshti-portrait">
-          <div className="portrait-frame">
-            <img src={settings.media.leaderImageUrl} alt={settings.media.leaderImageAlt} />
-            <span className="portrait-glow" aria-hidden="true" />
-          </div>
-          <figcaption><span>پروندهٔ رهبر</span><strong>{settings.media.leaderImageAlt}</strong></figcaption>
-        </figure>
-        <div className="beheshti-copy">
-          <p className="section-kicker">{settings.leader.kicker}</p>
-          <h2>{settings.leader.title}</h2>
-          <p className="beheshti-lead">{settings.leader.lead}</p>
-          <div className="inquiry-list">
-            {settings.leader.inquiries.slice(0, 3).map((item, index) => (
-              <div key={item.id}><span>{["الف", "ب", "ج"][index]}</span><p><strong>{item.title}:</strong> {item.text}</p></div>
-            ))}
-          </div>
-          <blockquote>{settings.leader.quote}<cite>{settings.leader.quoteSource}</cite></blockquote>
-          <div className="beheshti-library" aria-label="گنجینهٔ آیت‌الله بهشتی">
-            {settings.leader.collections.slice(0, 4).map((item, index) => (
-              <a className="legacy-card" href={item.href} key={item.id}>
-                <span>{["۰۱", "۰۲", "۰۳", "۰۴"][index]}</span>
-                <div><strong>{item.title}</strong><small>{item.text}</small></div><b aria-hidden="true">←</b>
-              </a>
-            ))}
-          </div>
-          <a className="text-link" href="/beheshti">مشاهدهٔ پروندهٔ کامل <span aria-hidden="true">←</span></a>
-        </div>
-      </section>
-
-      <section className="archive-section" id="archive">
-        <div className="archive-header">
-          <div><p className="section-kicker">{settings.archive.kicker}</p><h2>{settings.archive.title}</h2></div>
-          <a className="button button-dark" href="/archive">مشاهدهٔ آرشیو کامل</a>
-        </div>
-        <div className="research-grid">
-          {settings.archive.items.slice(0, 4).map((item) => (
-            <a className="research-card" href="/archive" key={item.code}>
-              <span className="research-meta"><b>{item.category}</b><small>{item.code}</small></span>
-              <h3>{item.title}</h3><p>{item.text}</p>
-              <span className="research-status"><i />{item.status}</span><span className="research-open" aria-hidden="true">↖</span>
+        <section className="v3-leader-feature" id="beheshti">
+          <div className="v3-leader-copy">
+            <p className="v3-kicker">پروندهٔ ویژه</p>
+            <h2>{settings.leader.title}</h2>
+            <div className="v3-leader-subtitle">{settings.leader.kicker}</div>
+            <p>{settings.leader.lead}</p>
+            <a className="v3-button v3-button-outline" href="/beheshti">
+              مطالعهٔ پرونده <span aria-hidden="true">←</span>
             </a>
-          ))}
-        </div>
-      </section>
-
-      <section className="standards-section" id="standards">
-        <div className="standards-heading">
-          <p className="section-kicker">{settings.standards.kicker}</p>
-          <h2>{settings.standards.title}</h2>
-          <p>{settings.standards.text}</p>
-        </div>
-        <div className="standards-grid">
-          {settings.standards.items.slice(0, 4).map((item, index) => (
-            <article key={item.id}><span>{["۰۱", "۰۲", "۰۳", "۰۴"][index]}</span><h3>{item.title}</h3><p>{item.text}</p></article>
-          ))}
-        </div>
-        <p><a className="text-link" href="/standards">مطالعهٔ منشور کامل پژوهش <span aria-hidden="true">←</span></a></p>
-      </section>
-
-      <section className="contribute-section" id="contribute">
-        <div className="contribute-copy">
-          <p className="section-kicker">{settings.contribute.kicker}</p>
-          <h2>{settings.contribute.title}</h2>
-          <p>{settings.contribute.text}</p>
-          <button className="button button-dark" onClick={() => setGuideOpen((open) => !open)} type="button">
-            {guideOpen ? "بستن راهنما" : settings.contribute.button}<span aria-hidden="true">{guideOpen ? "×" : "←"}</span>
-          </button>
-        </div>
-        <div className="contribute-types">
-          {settings.contribute.types.slice(0, 4).map((item) => <div key={item.id}><span>✦</span><h3>{item.title}</h3><p>{item.text}</p></div>)}
-        </div>
-        {guideOpen && (
-          <div className="submission-guide" id="submission-note">
-            <div><span>۱</span><p>نام یا عنوان منبع و نسبت خود با آن را روشن بنویسید.</p></div>
-            <div><span>۲</span><p>زمان، مکان و اشخاص حاضر را تا حد ممکن مشخص کنید.</p></div>
-            <div><span>۳</span><p>اصل فایل را نگه دارید و تغییرات احتمالی را توضیح دهید.</p></div>
-            <div><span>۴</span><p>پیش از انتشار، رضایت صاحب منبع و شیوهٔ ذکر نام او مشخص می‌شود.</p></div>
           </div>
-        )}
-        <div className="contact-details" aria-label="راه‌های ارتباط رسمی">
-          {settings.contact.email && <a href={`mailto:${settings.contact.email}`}>{settings.contact.email}</a>}
-          {settings.contact.phone && <a href={`tel:${settings.contact.phone}`}>{settings.contact.phone}</a>}
-          <span>{settings.contact.address}</span>
-          {settings.contact.website && <a href={settings.contact.website}>شبکهٔ رسمی بنیاد</a>}
-          <a href="/join">درخواست عضویت پژوهشی ←</a>
+          <figure className="v3-leader-portrait">
+            <img src={settings.media.leaderImageUrl} alt={settings.media.leaderImageAlt} />
+            <figcaption>{settings.media.leaderImageAlt}</figcaption>
+          </figure>
+        </section>
+      </section>
+
+      <section className="v3-search-strip" id="archive-search">
+        <div className="v3-search-intro">
+          <span className="v3-search-book" aria-hidden="true">▤</span>
+          <div>
+            <h2>جستجوی مرکزی آرشیف</h2>
+            <p>در اسناد، اشخاص، رویدادها و پژوهش‌های منتشرشده جست‌وجو کنید.</p>
+          </div>
+        </div>
+
+        <form className="v3-search-form" action="/publications" method="get">
+          <label className="v3-search-box">
+            <span aria-hidden="true">⌕</span>
+            <input name="q" type="search" placeholder="جستجو در اسناد، اشخاص، رویدادها…" />
+          </label>
+          <select name="topic" defaultValue="">
+            <option value="">همه موضوعات</option>
+            <option value="council">شورای اتفاق</option>
+            <option value="beheshti">آیت‌الله بهشتی</option>
+            <option value="history">تاریخ معاصر</option>
+          </select>
+          <select name="type" defaultValue="all">
+            <option value="all">همه انواع</option>
+            <option value="article">مقاله و پژوهش</option>
+            <option value="document">سند</option>
+            <option value="book">کتاب</option>
+            <option value="oral-history">تاریخ شفاهی</option>
+          </select>
+          <button type="submit">جستجو</button>
+        </form>
+      </section>
+
+      <section className="v3-timeline" aria-labelledby="v3-timeline-title">
+        <div className="v3-timeline-heading">
+          <h2 id="v3-timeline-title">گزیده‌ای از مسیر تاریخ و پژوهش</h2>
+          <a href="/archive">بیشتر بدانید ←</a>
+        </div>
+        <div className="v3-timeline-track">
+          {timeline.map((item) => (
+            <div className="v3-timeline-item" key={item.label}>
+              <span />
+              <strong>{item.label}</strong>
+              <small>{item.note}</small>
+            </div>
+          ))}
         </div>
       </section>
 
-      <footer>
-        <div className="footer-brand">
-          <img src={settings.identity.logoUrl} alt={`لوگوی ${settings.identity.siteName}`} width="120" height="80" />
-          <div><strong>{settings.identity.siteName}</strong><p>{settings.identity.tagline}</p></div>
+      <section className="v3-contribute" id="contribute">
+        <div className="v3-contribute-art" aria-hidden="true">
+          <span className="v3-old-book" />
+          <span className="v3-old-photo" />
+          <span className="v3-old-paper" />
         </div>
-        <p className="footer-mission">{settings.footer.mission}</p>
-        <div className="footer-links">
-          <a href="/about">دربارهٔ بنیاد</a><a href="/archive">پرونده‌ها</a><a href="/publications">نشرها</a>
-          <a href="#contribute">همکاری و تماس</a><a href="/join">عضویت</a><a href="/login">ورود اعضا</a><a href="#top">بازگشت به بالا ↑</a>
+        <div className="v3-contribute-copy">
+          <h2>اسناد و خاطرات خود را با ما به اشتراک بگذارید</h2>
+          <p>
+            اگر سند، تصویر، خاطره یا روایت تاریخی در اختیار دارید، در حفظ حافظهٔ تاریخی با ما همکاری کنید.
+          </p>
+          <a className="v3-button v3-button-primary" href="/contribute">
+            ارسال سند یا خاطره <span aria-hidden="true">↥</span>
+          </a>
         </div>
-        <small>{settings.footer.copyright}</small>
+        <blockquote>
+          هر سند، روایتی است از ما و زمان ما.
+        </blockquote>
+      </section>
+
+      <footer className="v3-footer">
+        <div className="v3-footer-brand">
+          <img src={settings.identity.logoUrl} alt={`لوگوی ${settings.identity.siteName}`} />
+          <div>
+            <strong>{settings.identity.siteName}</strong>
+            <p>بنیاد مستقل تاریخ‌پژوهی افغانستان</p>
+            <small>تاریخ برای آگاهی، جامعه برای فردا</small>
+          </div>
+        </div>
+
+        <div className="v3-footer-column">
+          <strong>دسترسی سریع</strong>
+          <a href="#top">صفحهٔ اصلی</a>
+          <a href="/about">دربارهٔ بنیاد</a>
+          <a href="/archive">آرشیف</a>
+          <a href="/publications">نشریات</a>
+        </div>
+
+        <div className="v3-footer-column">
+          <strong>منابع پژوهشی</strong>
+          <a href="/publications?type=article">مقالات</a>
+          <a href="/publications?type=book">کتاب‌ها</a>
+          <a href="/publications?type=document">اسناد</a>
+          <a href="/standards">روش پژوهش</a>
+        </div>
+
+        <div className="v3-footer-column">
+          <strong>با ما در ارتباط باشید</strong>
+          {settings.contact.email && <a href={`mailto:${settings.contact.email}`}>{settings.contact.email}</a>}
+          <span>{settings.contact.address}</span>
+          <a href="/contact">ارسال پیام</a>
+        </div>
+
+        <div className="v3-footer-quote">
+          <p>گذشته چراغ راه آینده است.</p>
+          <span />
+        </div>
+
+        <small className="v3-copyright">© بنیاد آذرخش — {settings.footer.copyright}</small>
       </footer>
     </main>
   );
