@@ -20,7 +20,10 @@ jobs:
           set -euo pipefail
           URL="https://azarakhsh-foundation.com14.workers.dev/"
           html=$(curl -fsSL --retry 5 --retry-delay 3 --max-time 30 "$URL")
-          echo "$html" | grep -q 'azarakhsh-approved'
+          if [[ "$html" != *"azarakhsh-approved"* ]]; then
+            echo "Approved homepage marker not found."
+            exit 1
+          fi
           echo "Approved homepage marker is live."
 
       - name: Capture desktop and mobile live screenshots
