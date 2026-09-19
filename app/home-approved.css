@@ -535,3 +535,33 @@ body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
   .azarakhsh-approved .az-council-visual figcaption{font-size:6.6px;padding:4px 7px}
   .azarakhsh-approved .az-photo-credit{font-size:6.6px;padding-inline:8px}
 }
+
+/* AUTHENTIC_MOBILE_CONTRIBUTE_FIX_2026_09_19 */
+@media(max-width:820px){
+  .azarakhsh-approved .az-contribute{
+    background:#eee6d7!important;
+    grid-template-columns:27% 46% 27%!important
+  }
+  .azarakhsh-approved .az-contribute-art,
+  .azarakhsh-approved .az-contribute-side{
+    opacity:1!important;
+    display:block!important
+  }
+  .azarakhsh-approved .az-contribute-art,
+  .azarakhsh-approved .az-contribute-side{
+    height:100%!important
+  }
+  .azarakhsh-approved .az-contribute-image{
+    position:absolute!important;
+    inset:0!important;
+    width:100%!important;
+    height:100%!important;
+    object-fit:cover!important;
+    opacity:.88!important
+  }
+  .azarakhsh-approved .az-contribute-left{object-position:center top!important}
+  .azarakhsh-approved .az-contribute-right{object-position:center!important}
+  .azarakhsh-approved .az-contribute-copy{
+    background:linear-gradient(180deg,rgba(250,247,239,.98),rgba(244,238,224,.98))!important
+  }
+}
