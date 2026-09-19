@@ -42,11 +42,9 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "بنیاد آذرخش" }],
   creator: "بنیاد آذرخش",
-  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "fa_AF",
-    url: "/",
     siteName: "بنیاد آذرخش",
     title: "بنیاد آذرخش",
     description: "آذرخش؛ قاتل تاریکی و سایه‌یی سایه!",

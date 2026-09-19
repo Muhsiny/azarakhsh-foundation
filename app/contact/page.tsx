@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import InstitutionalPage from "../components/InstitutionalPage";
 
-export const metadata: Metadata = { title: "تماس و ارسال سند", description: "راهنمای همکاری پژوهشی و ارسال اسناد و روایت‌ها به بنیاد آذرخش." };
+export const metadata: Metadata = {
+  title: "تماس و ارسال سند",
+  description: "راهنمای همکاری پژوهشی و ارسال اسناد و روایت‌ها به بنیاد آذرخش.",
+  alternates: { canonical: "/contact" },
+  openGraph: { url: "/contact", title: "تماس و ارسال سند | بنیاد آذرخش", description: "راهنمای همکاری پژوهشی، اهدای سند و ارسال روایت به بنیاد آذرخش." },
+};
 const sections = [
   { title: "ارسال سند", text: "پیش از ارسال، نوع سند، مالک فعلی، منشأ، تاریخ تقریبی، اشخاص یا مکان‌های مرتبط و اجازهٔ نشر را یادداشت کنید." },
   { title: "ارسال روایت", text: "روایت باید مشخص کند گوینده شاهد مستقیم است یا ناقل، واقعه در چه زمان و مکانی رخ داده و کدام بخش‌ها قطعی یا تقریبی‌اند." },

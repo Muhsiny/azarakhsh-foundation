@@ -1,4 +1,5 @@
-import { Fragment, type ReactNode } from "react";
+import { Fragment, cache, type ReactNode } from "react";
+import type { Metadata } from "next";
 import { and, eq, inArray } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { getDb } from "../../../db";
@@ -8,6 +9,59 @@ import { getAdminUser } from "../../admin-auth";
 import DownloadQuizGate from "../../components/DownloadQuizGate";
 
 export const dynamic = "force-dynamic";
+
+
+const loadArticle = cache(async (slug: string) => {
+  await ensurePlatformSchema();
+  const user = await getAdminUser();
+  const visibility = user ? ["public", "members"] : ["public"];
+  const db = await getDb();
+  const [post] = await db
+    .select()
+    .from(posts)
+    .where(
+      and(
+        eq(posts.slug, slug),
+        eq(posts.status, "published"),
+        inArray(posts.visibility, visibility),
+      ),
+    )
+    .limit(1);
+  return post ?? null;
+});
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await loadArticle(slug);
+  if (!post) {
+    return {
+      title: "مطلب یافت نشد",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const description = (post.excerpt || post.content || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 180);
+
+  return {
+    title: post.title,
+    description,
+    alternates: { canonical: `/publications/${post.slug}` },
+    openGraph: {
+      type: "article",
+      url: `/publications/${post.slug}`,
+      title: post.title,
+      description,
+      images: post.coverImage ? [{ url: post.coverImage, alt: post.title }] : undefined,
+    },
+  };
+}
 
 function inlineFormatting(value: string): ReactNode[] {
   return value.split(/(\*\*[^*]+\*\*)/g).filter(Boolean).map((part, index) =>
@@ -40,22 +94,8 @@ function formattedParagraph(value: string, index: number) {
 }
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
-  await ensurePlatformSchema();
   const { slug } = await params;
-  const user = await getAdminUser();
-  const visibility = user ? ["public", "members"] : ["public"];
-  const db = await getDb();
-  const [post] = await db
-    .select()
-    .from(posts)
-    .where(
-      and(
-        eq(posts.slug, slug),
-        eq(posts.status, "published"),
-        inArray(posts.visibility, visibility),
-      ),
-    )
-    .limit(1);
+  const post = await loadArticle(slug);
 
   if (!post) notFound();
 

@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import InstitutionalPage from "../components/InstitutionalPage";
-export const metadata: Metadata = { title: "حریم خصوصی و حقوق نشر" };
+export const metadata: Metadata = {
+  title: "حریم خصوصی و حقوق نشر",
+  description: "چارچوب حفاظت از اطلاعات کاربران، اسناد، روایت‌ها و مالکیت فکری در بنیاد آذرخش.",
+  alternates: { canonical: "/privacy" },
+  openGraph: { url: "/privacy", title: "حریم خصوصی و حقوق نشر | بنیاد آذرخش", description: "چارچوب حفاظت از اطلاعات، اسناد و مالکیت فکری در بنیاد آذرخش." },
+};
 const sections = [
   { title: "اطلاعات کاربران", text: "تنها اطلاعات لازم برای مدیریت، همکاری و بررسی مواد ارسالی نگهداری می‌شود و برای تبلیغات فروخته نخواهد شد." },
   { title: "حقوق اسناد و تصاویر", text: "مالکیت یک نسخهٔ دیجیتال الزاماً به معنای مالکیت حقوق نشر نیست. نام مالک، اجازه و محدودیت استفاده باید ثبت شود." },

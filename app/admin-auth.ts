@@ -26,8 +26,9 @@ type StoredAdmin = {
   status: string;
 };
 
-const COOKIE_NAME = "azarakhsh_admin";
-const SESSION_SECONDS = 60 * 60 * 12;
+const COOKIE_NAME = "__Host-azarakhsh_admin";
+const LEGACY_COOKIE_NAME = "azarakhsh_admin";
+const SESSION_SECONDS = 60 * 60 * 8;
 
 async function runtimeEnv() {
   const { env } = await import("cloudflare:workers");
@@ -94,6 +95,67 @@ async function equalSecret(left: string, right: string, secret: string) {
   return equalBytes(leftHash, rightHash);
 }
 
+const PBKDF2_ITERATIONS = 210_000;
+
+async function derivePasswordHash(
+  password: string,
+  salt: string,
+  secret: string,
+  iterations = PBKDF2_ITERATIONS,
+) {
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(`${secret}:${password}`),
+    "PBKDF2",
+    false,
+    ["deriveBits"],
+  );
+  const bits = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      hash: "SHA-256",
+      salt: new TextEncoder().encode(salt),
+      iterations,
+    },
+    keyMaterial,
+    256,
+  );
+  return `pbkdf2${iterations}${bytesToBase64Url(new Uint8Array(bits))}`;
+}
+
+async function verifyStoredPassword(
+  password: string,
+  stored: StoredAdmin,
+  secret: string,
+) {
+  if (stored.password_hash.startsWith("pbkdf2$")) {
+    const [, iterationsValue, expected] = stored.password_hash.split("$");
+    const iterations = Number(iterationsValue);
+    if (!expected || !Number.isInteger(iterations) || iterations < 100_000) {
+      return { valid: false, needsUpgrade: false };
+    }
+    const actual = await derivePasswordHash(
+      password,
+      stored.password_salt,
+      secret,
+      iterations,
+    );
+    return {
+      valid: await equalSecret(actual, stored.password_hash, secret),
+      needsUpgrade: iterations < PBKDF2_ITERATIONS,
+    };
+  }
+
+  // Compatibility with accounts created before PBKDF2 hardening.
+  const legacyHash = bytesToBase64Url(
+    await hmac(`password:${stored.password_salt}:${password}`, secret),
+  );
+  return {
+    valid: await equalSecret(legacyHash, stored.password_hash, secret),
+    needsUpgrade: true,
+  };
+}
+
 async function createSessionToken(user: AdminUser, secret: string) {
   const payload = bytesToBase64Url(
     new TextEncoder().encode(
@@ -127,11 +189,19 @@ async function readSessionToken(token: string, secret: string) {
 }
 
 export function sessionCookie(token: string) {
-  return `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${SESSION_SECONDS}`;
+  return `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${SESSION_SECONDS}; Priority=High`;
 }
 
+export function expiredSessionCookies() {
+  return [
+    `${COOKIE_NAME}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Priority=High`,
+    `${LEGACY_COOKIE_NAME}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Priority=High`,
+  ];
+}
+
+// Compatibility for any older route importing the singular helper.
 export function expiredSessionCookie() {
-  return `${COOKIE_NAME}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`;
+  return expiredSessionCookies()[0];
 }
 
 export async function authenticateAdmin(emailValue: string, password: string) {
@@ -170,10 +240,25 @@ export async function authenticateAdmin(emailValue: string, password: string) {
     .first<StoredAdmin>();
 
   if (!stored || stored.status !== "active") return null;
-  const passwordHash = bytesToBase64Url(
-    await hmac(`password:${stored.password_salt}:${normalizedPassword}`, secret),
+  const passwordCheck = await verifyStoredPassword(
+    normalizedPassword,
+    stored,
+    secret,
   );
-  if (!(await equalSecret(passwordHash, stored.password_hash, secret))) return null;
+  if (!passwordCheck.valid) return null;
+
+  if (passwordCheck.needsUpgrade) {
+    const upgraded = await derivePasswordHash(
+      normalizedPassword,
+      stored.password_salt,
+      secret,
+    );
+    await env.DB.prepare(
+      "UPDATE admin_users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+    )
+      .bind(upgraded, stored.id)
+      .run();
+  }
 
   const user: AdminUser = {
     id: stored.id,
@@ -189,7 +274,10 @@ export async function getAdminUser(): Promise<AdminUser | null> {
   const secret = env.SESSION_SECRET ?? "";
   if (!secret) return null;
 
-  const token = (await cookies()).get(COOKIE_NAME)?.value;
+  const cookieStore = await cookies();
+  const token =
+    cookieStore.get(COOKIE_NAME)?.value ||
+    cookieStore.get(LEGACY_COOKIE_NAME)?.value;
   if (!token) return null;
   const email = await readSessionToken(token, secret);
   if (!email) return null;
@@ -287,8 +375,10 @@ export async function createAdminUser(input: {
   if (email === ownerEmail) throw new Error("ایمیل مالک قابل افزودن نیست.");
 
   const salt = crypto.randomUUID();
-  const passwordHash = bytesToBase64Url(
-    await hmac(`password:${salt}:${input.password}`, env.SESSION_SECRET),
+  const passwordHash = await derivePasswordHash(
+    input.password.normalize("NFKC"),
+    salt,
+    env.SESSION_SECRET,
   );
   await env.DB.prepare(
     `INSERT INTO admin_users
@@ -323,8 +413,10 @@ export async function updateAdminUser(
       throw new Error("رمز همکار باید حداقل ۱۲ نویسه داشته باشد.");
     }
     const salt = crypto.randomUUID();
-    const passwordHash = bytesToBase64Url(
-      await hmac(`password:${salt}:${input.password}`, env.SESSION_SECRET),
+    const passwordHash = await derivePasswordHash(
+      input.password.normalize("NFKC"),
+      salt,
+      env.SESSION_SECRET,
     );
     await env.DB.prepare(
       `UPDATE admin_users

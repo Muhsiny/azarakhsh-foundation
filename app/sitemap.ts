@@ -1,21 +1,64 @@
 import type { MetadataRoute } from "next";
+import { and, desc, eq } from "drizzle-orm";
+import { getDb } from "../db";
+import { ensurePlatformSchema } from "../db/platform";
+import { posts } from "../db/schema";
 import { SITE_URL } from "./site-url";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const pages = [
-    ["", 1],
-    ["/publications", 0.9],
-    ["/beheshti", 0.95],
-    ["/archive", 0.9],
-    ["/about", 0.7],
-    ["/standards", 0.75],
-    ["/contact", 0.6],
-    ["/privacy", 0.5],
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const staticPages = [
+    ["", 1, "weekly"],
+    ["/publications", 0.9, "weekly"],
+    ["/beheshti", 0.95, "monthly"],
+    ["/archive", 0.9, "weekly"],
+    ["/about", 0.7, "monthly"],
+    ["/standards", 0.75, "monthly"],
+    ["/contact", 0.6, "monthly"],
+    ["/privacy", 0.5, "monthly"],
+    ["/join", 0.55, "monthly"],
+    ["/contribute", 0.6, "monthly"],
   ] as const;
-  return pages.map(([path, priority]) => ({
+
+  const staticLastModified = new Date("2026-09-19T00:00:00Z");
+  const result: MetadataRoute.Sitemap = staticPages.map(
+    ([path, priority, changeFrequency]) => ({
       url: `${SITE_URL}${path}`,
-      lastModified: new Date("2026-09-01T00:00:00Z"),
-      changeFrequency: path === "" || path === "/publications" ? "weekly" : "monthly",
+      lastModified: staticLastModified,
+      changeFrequency,
       priority,
-    }));
+    }),
+  );
+
+  try {
+    await ensurePlatformSchema();
+    const db = await getDb();
+    const publicPosts = await db
+      .select({
+        slug: posts.slug,
+        updatedAt: posts.updatedAt,
+        publishedAt: posts.publishedAt,
+      })
+      .from(posts)
+      .where(
+        and(
+          eq(posts.status, "published"),
+          eq(posts.visibility, "public"),
+        ),
+      )
+      .orderBy(desc(posts.updatedAt))
+      .limit(5000);
+
+    for (const post of publicPosts) {
+      result.push({
+        url: `${SITE_URL}/publications/${encodeURIComponent(post.slug)}`,
+        lastModified: new Date(post.updatedAt || post.publishedAt || staticLastModified),
+        changeFrequency: "monthly",
+        priority: 0.7,
+      });
+    }
+  } catch (error) {
+    console.error("sitemap post listing failed", error);
+  }
+
+  return result;
 }

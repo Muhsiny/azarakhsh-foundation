@@ -250,7 +250,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
         <p className="footer-mission">{settings.footer.mission}</p>
         <div className="footer-links">
           <a href="/about">دربارهٔ بنیاد</a><a href="/archive">پرونده‌ها</a><a href="/publications">نشرها</a>
-          <a href="#contribute">همکاری و تماس</a><a href="/join">عضویت</a><a href="/admin">مدیریت سایت</a><a href="#top">بازگشت به بالا ↑</a>
+          <a href="#contribute">همکاری و تماس</a><a href="/join">عضویت</a><a href="/login">ورود اعضا</a><a href="#top">بازگشت به بالا ↑</a>
         </div>
         <small>{settings.footer.copyright}</small>
       </footer>

@@ -12,11 +12,7 @@ export default function PublicContributionLink() {
     <a
       href="/contribute"
       aria-label="ثبت خاطره، روایت یا سند تاریخی"
-      style={{
-        position: "fixed", left: 18, bottom: 18, zIndex: 12000, padding: "11px 16px",
-        borderRadius: 999, background: "#173f33", color: "#fff", textDecoration: "none",
-        boxShadow: "0 10px 30px rgba(0,0,0,.22)", fontWeight: 700, direction: "rtl",
-      }}
+      className="public-contribution-link"
     >
       ثبت خاطره و سند
     </a>
