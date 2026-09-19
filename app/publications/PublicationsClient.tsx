@@ -71,7 +71,7 @@ export default function PublicationsClient({ initialPosts }: { initialPosts: Pos
         </a>
         <div className="archive-account-links">
           <a href="/join">درخواست عضویت</a>
-          <a href="/admin/login?returnTo=/publications">ورود اعضا</a>
+          <a href="/login?returnTo=/publications">ورود اعضا</a>
           <a href="/">صفحهٔ نخست ←</a>
         </div>
       </header>
