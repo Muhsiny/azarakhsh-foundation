@@ -139,7 +139,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
           <div className="v3-leader-copy">
             <p className="v3-kicker">پروندهٔ ویژه</p>
             <h2>{settings.leader.title}</h2>
-            <p className="v3-leader-subtitle">رهبر، عالم، متفکر و مجاهد</p>
+            <p className="v3-leader-subtitle">{settings.leader.kicker}</p>
             <p>{settings.leader.lead}</p>
             <a className="v3-button v3-button-outline" href="/beheshti">
               مطالعهٔ پرونده <span aria-hidden="true">←</span>
