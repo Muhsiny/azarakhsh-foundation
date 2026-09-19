@@ -48,9 +48,10 @@ function UploadIcon() {
 
 export default function HomeClient({ settings }: { settings: SiteSettings }) {
   const highlightedTitle = useMemo(() => {
+    const displayTitle = settings.hero.title.replace(/سخن بگوید\.؟?$/u, "سخن بگویند.");
     const word = settings.hero.highlightedWord.trim();
-    if (!word || !settings.hero.title.includes(word)) return settings.hero.title;
-    const [before, ...after] = settings.hero.title.split(word);
+    if (!word || !displayTitle.includes(word)) return displayTitle;
+    const [before, ...after] = displayTitle.split(word);
     return (
       <>
         {before}
@@ -171,8 +172,9 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
       <section className="az-feature-grid">
         <article className="az-feature-card az-council-card" id="council">
           <div className="az-feature-copy">
-            <p className="az-kicker">{settings.council.kicker}</p>
-            <h2>{settings.council.title}</h2>
+            <p className="az-kicker">پرونده محوری</p>
+            <h2>{settings.council.kicker}</h2>
+            <span className="sr-only">{settings.council.title}</span>
             <p>{settings.council.text}</p>
             <a className="az-btn az-btn-primary az-btn-small" href="/archive">
               ورود به پرونده <ArrowLeft />
