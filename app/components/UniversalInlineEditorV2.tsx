@@ -126,7 +126,7 @@ export default function UniversalInlineEditorV2() {
     let timer = 0;
     const scan = () => {
       setArticleRoot(document.querySelector<HTMLElement>(".knowledge-article"));
-      const all = Array.from(document.querySelectorAll<HTMLElement>(editableSelector)).filter((el) => !el.closest("[data-inline-ui]") && !el.closest("[data-custom-subsection]"));
+      const all = Array.from(document.querySelectorAll<HTMLElement>(editableSelector)).filter((el) => !el.closest("[data-inline-ui]") && !el.closest("[data-custom-subsection]") && !el.closest(".azarakhsh-approved"));
       all.forEach((element) => {
         const key = stableKey(element, all);
         const raw = overrides[key];
