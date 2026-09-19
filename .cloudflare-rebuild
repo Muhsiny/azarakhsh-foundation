@@ -3,3 +3,5 @@ Fresh production rebuild requested after removing the unsupported Google font an
 retry-device-auth-after-user-granted
 
 approved-design-production-deploy
+
+visual-qa-after-approved-live-deploy
