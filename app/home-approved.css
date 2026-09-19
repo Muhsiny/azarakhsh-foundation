@@ -434,3 +434,5 @@ body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
   .azarakhsh-approved .az-feature-copy h2,
   .azarakhsh-approved .az-leader-copy h2{font-size:29px!important}
 }
+
+/* deploy pixel-locked audited build */
