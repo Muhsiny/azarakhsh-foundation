@@ -145,3 +145,5 @@ body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
     linear-gradient(180deg,rgba(250,247,239,.79),rgba(241,234,218,.76)),
     url("/reference-v2/hero-left.webp") center 5%/cover no-repeat}
 }
+
+/* cloudflare direct deploy trigger */
