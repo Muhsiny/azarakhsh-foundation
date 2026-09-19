@@ -70,6 +70,7 @@ export default function LegacyInlineEditCompatibility() {
       if (stopped) return;
       const elements = Array.from(document.querySelectorAll<HTMLElement>(legacySelector))
         .filter((element) => !element.closest("[data-inline-ui]"))
+        .filter((element) => !element.closest(".azarakhsh-approved"))
         .filter((element) => element.textContent?.trim());
 
       elements.forEach((element, index) => {
