@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import InstitutionalPage from "../components/InstitutionalPage";
 
-export const metadata: Metadata = { title: "اصول پژوهش و نشر", description: "سیاست منابع، بازبینی، اصلاحات و اخلاق نشر بنیاد آذرخش." };
+export const metadata: Metadata = {
+  title: "اصول پژوهش و نشر",
+  description: "سیاست منابع، بازبینی، اصلاحات، تعارض منافع و اخلاق نشر بنیاد آذرخش.",
+  alternates: { canonical: "/standards" },
+  openGraph: { url: "/standards", title: "اصول پژوهش و نشر بنیاد آذرخش", description: "معیارهای اعتبار، راستی‌آزمایی، اصلاح و اخلاق نشر در بنیاد آذرخش." },
+};
 const sections = [
   { title: "سلسله‌مراتب شواهد", text: "سند هم‌زمان با واقعه، نسخهٔ اصل، شهادت مستقیم، منبع ثانوی و تحلیل متأخر وزن یکسان ندارند. نوع و محدودیت هر شاهد باید آشکار باشد." },
   { title: "بازبینی و داوری", text: "مطالب تحلیلی پیش از انتشار از نظر منبع، انسجام استدلال، زبان و تعارض منافع بررسی می‌شوند." },
