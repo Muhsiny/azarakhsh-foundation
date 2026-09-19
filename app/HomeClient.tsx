@@ -169,7 +169,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             </a>
           </div>
           <figure className="az-leader-visual">
-            <img src="/reference-v2/leader-visual.webp" alt={settings.media.leaderImageAlt} />
+            <img src="/reference-v2/leader-clean.webp" alt={settings.media.leaderImageAlt} />
             <blockquote>«اندیشه‌ها<br />ماندگارند.»<span /></blockquote>
           </figure>
         </article>
