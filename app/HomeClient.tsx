@@ -11,6 +11,8 @@ const REAL_AFGHAN_ARCHIVES_IMAGE =
   "https://upload.wikimedia.org/wikipedia/commons/3/30/National_Archives%2C_Afghanistan.jpg";
 const REAL_HAZARA_HISTORY_IMAGE =
   "https://upload.wikimedia.org/wikipedia/commons/d/d1/Hazaras_of_Afghanistan_in_1879-80.jpg";
+const REAL_BEHESHTI_PORTRAIT =
+  "https://commons.wikishia.net/w/images/c/c2/%D8%B3%DB%8C%D8%AF_%D8%B9%D9%84%DB%8C_%D8%A8%D9%87%D8%B4%D8%AA%DB%8C_%D9%88%D8%B1%D8%B3%DB%8C_%DB%B2.jpg";
 
 const timeline = [
   { date: "قبل از ۱۳۰۰", label: "دوران کلاسیک" },
@@ -189,7 +191,17 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             </a>
           </div>
           <figure className="az-leader-visual">
-            <img src={settings.media.leaderImageUrl} alt={settings.media.leaderImageAlt} />
+            <img
+              src={settings.media.leaderImageUrl || REAL_BEHESHTI_PORTRAIT}
+              alt={settings.media.leaderImageAlt}
+              onError={(event) => {
+                const target = event.currentTarget;
+                if (target.dataset.fallback !== "1") {
+                  target.dataset.fallback = "1";
+                  target.src = REAL_BEHESHTI_PORTRAIT;
+                }
+              }}
+            />
             <blockquote>«اندیشه‌ها<br />ماندگارند.»<span /></blockquote>
           </figure>
         </article>
@@ -299,7 +311,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
 
         <div className="az-footer-quote"><p>گذشته چراغ راه آینده است.</p><span /></div>
         <small className="az-photo-credit">
-          تصاویر عمومی: بامیان — Eric Sutphin / CC BY 2.0؛ آرشیف ملی افغانستان — Michal Hvorecky / CC BY 2.0؛ عکس تاریخی هزاره‌ها — John Burke / Public Domain؛ کتاب‌های قدیمی — Public Domain / Wikimedia Commons.
+          تصاویر عمومی: بامیان — Eric Sutphin / CC BY 2.0؛ آرشیف ملی افغانستان — Michal Hvorecky / CC BY 2.0؛ عکس تاریخی هزاره‌ها — John Burke / Public Domain؛ کتاب‌های قدیمی — Public Domain / Wikimedia Commons. پرترهٔ بهشتی: آرشیف بنیاد؛ در صورت عدم دسترسی، نسخهٔ مرجع ویکی‌شیعه.
         </small>
         <small className="az-copyright">© بنیاد آذرخش — {settings.footer.copyright}</small>
       </footer>
