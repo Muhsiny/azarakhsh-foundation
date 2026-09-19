@@ -145,6 +145,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             <p>
               مروری بر اسناد، شخصیت‌ها، زمینه‌های تاریخی و تلاش‌های حکومت شورای اتفاق اسلامی افغانستان در یک مجموعه پژوهشی.
             </p>
+            <img className="az-council-copy-seal" src={settings.media.councilEmblemUrl} alt="" aria-hidden="true" />
             <a className="az-btn az-btn-primary az-btn-small" href="/archive">
               ورود به پرونده <ArrowLeft />
             </a>
