@@ -32,7 +32,11 @@ export default async function AdminLoginPage({
             ورود به پنل
           </button>
         </form>
-        {error && <p className="admin-message">ایمیل یا رمز عبور درست نیست.</p>}
+        {error === "rate" ? (
+          <p className="admin-message">تلاش‌های ورود بیش از حد مجاز شده است. چند دقیقه بعد دوباره تلاش کنید.</p>
+        ) : error ? (
+          <p className="admin-message">ایمیل یا رمز عبور درست نیست.</p>
+        ) : null}
         <a href="/">بازگشت به سایت</a>
       </section>
     </main>
