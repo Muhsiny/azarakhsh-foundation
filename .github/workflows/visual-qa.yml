@@ -14,34 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
-      - name: Wait for Cloudflare Workers Build
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          SHA: ${{ github.sha }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          for i in $(seq 1 72); do
-            status=$(gh api -H "Accept: application/vnd.github+json" \
-              "/repos/$GH_REPO/commits/$SHA/check-runs" \
-              --jq '[.check_runs[] | select(.name=="Workers Builds: azarakhsh-foundation")][0].status // ""' || true)
-            conclusion=$(gh api -H "Accept: application/vnd.github+json" \
-              "/repos/$GH_REPO/commits/$SHA/check-runs" \
-              --jq '[.check_runs[] | select(.name=="Workers Builds: azarakhsh-foundation")][0].conclusion // ""' || true)
-            echo "Cloudflare: status=$status conclusion=$conclusion"
-            if [[ "$status" == "completed" && "$conclusion" == "success" ]]; then
-              exit 0
-            fi
-            if [[ "$status" == "completed" && "$conclusion" != "success" && -n "$conclusion" ]]; then
-              echo "Cloudflare build failed: $conclusion"
-              exit 1
-            fi
-            sleep 5
-          done
-          echo "Timed out waiting for Cloudflare build"
-          exit 1
-
       - name: Verify approved homepage is live
         shell: bash
         run: |
