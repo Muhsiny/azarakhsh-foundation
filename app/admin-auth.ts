@@ -26,8 +26,9 @@ type StoredAdmin = {
   status: string;
 };
 
-const COOKIE_NAME = "azarakhsh_admin";
-const SESSION_SECONDS = 60 * 60 * 12;
+const COOKIE_NAME = "__Host-azarakhsh_admin";
+const LEGACY_COOKIE_NAME = "azarakhsh_admin";
+const SESSION_SECONDS = 60 * 60 * 8;
 
 async function runtimeEnv() {
   const { env } = await import("cloudflare:workers");
@@ -188,11 +189,14 @@ async function readSessionToken(token: string, secret: string) {
 }
 
 export function sessionCookie(token: string) {
-  return `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${SESSION_SECONDS}`;
+  return `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${SESSION_SECONDS}; Priority=High`;
 }
 
-export function expiredSessionCookie() {
-  return `${COOKIE_NAME}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`;
+export function expiredSessionCookies() {
+  return [
+    `${COOKIE_NAME}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Priority=High`,
+    `${LEGACY_COOKIE_NAME}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Priority=High`,
+  ];
 }
 
 export async function authenticateAdmin(emailValue: string, password: string) {
@@ -265,7 +269,10 @@ export async function getAdminUser(): Promise<AdminUser | null> {
   const secret = env.SESSION_SECRET ?? "";
   if (!secret) return null;
 
-  const token = (await cookies()).get(COOKIE_NAME)?.value;
+  const cookieStore = await cookies();
+  const token =
+    cookieStore.get(COOKIE_NAME)?.value ||
+    cookieStore.get(LEGACY_COOKIE_NAME)?.value;
   if (!token) return null;
   const email = await readSessionToken(token, secret);
   if (!email) return null;
