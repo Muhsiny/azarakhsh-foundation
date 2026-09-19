@@ -1,4 +1,9 @@
 import type { Metadata } from "next";
+import { and, desc, eq, inArray } from "drizzle-orm";
+import { getDb } from "../../db";
+import { ensurePlatformSchema } from "../../db/platform";
+import { posts } from "../../db/schema";
+import { getAdminUser } from "../admin-auth";
 import InstitutionalPage from "../components/InstitutionalPage";
 import ArchiveBrowser from "./ArchiveBrowser";
 
@@ -18,10 +23,25 @@ const sections = [
   { title: "دسترسی و حقوق", text: "نمایش عمومی، دسترسی پژوهشی یا محدودیت زمانی بر اساس حقوق صاحب اثر، حریم خصوصی و حساسیت تاریخی تعیین می‌شود." },
 ];
 
-export default function ArchivePage() {
+export default async function ArchivePage() {
+  await ensurePlatformSchema();
+  const user = await getAdminUser();
+  const visibility = user ? ["public", "members"] : ["public"];
+  const db = await getDb();
+  const archivePosts = await db
+    .select()
+    .from(posts)
+    .where(
+      and(
+        eq(posts.status, "published"),
+        inArray(posts.visibility, visibility),
+      ),
+    )
+    .orderBy(desc(posts.publishedAt), desc(posts.id))
+    .limit(200);
   return (
     <InstitutionalPage kicker="حافظهٔ مستند" title="آرشیو تاریخی آذرخش" lead="زیرساختی برای نگهداری، توصیف، راستی‌آزمایی و دسترسی مسئولانه به اسناد حکومت شورای اتفاق و تاریخ معاصر هزاره‌جات." sections={sections}>
-      <ArchiveBrowser />
+      <ArchiveBrowser posts={archivePosts} />
     </InstitutionalPage>
   );
 }
