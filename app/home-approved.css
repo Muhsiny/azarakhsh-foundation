@@ -1,3 +1,71 @@
+/* HARD HOMEPAGE ISOLATION: neutralize legacy global CSS */
+.azarakhsh-approved.site-root{
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  overflow-x:hidden!important;
+}
+.azarakhsh-approved,
+.azarakhsh-approved button,
+.azarakhsh-approved input,
+.azarakhsh-approved textarea,
+.azarakhsh-approved select,
+.azarakhsh-approved p,
+.azarakhsh-approved li,
+.azarakhsh-approved a,
+.azarakhsh-approved span,
+.azarakhsh-approved small,
+.azarakhsh-approved label,
+.azarakhsh-approved blockquote,
+.azarakhsh-approved strong,
+.azarakhsh-approved h1,
+.azarakhsh-approved h2,
+.azarakhsh-approved h3,
+.azarakhsh-approved h4,
+.azarakhsh-approved h5,
+.azarakhsh-approved h6{
+  font-family:var(--font-vazir),Tahoma,Arial,sans-serif!important;
+  letter-spacing:0;
+}
+.azarakhsh-approved .az-bismillah{
+  font-family:var(--font-naskh),serif!important;
+}
+.azarakhsh-approved .az-nav,
+.azarakhsh-approved .az-nav a{
+  margin:0;
+  padding:0;
+}
+.azarakhsh-approved .az-nav a::after{box-sizing:border-box}
+.azarakhsh-approved .az-header,
+.azarakhsh-approved .az-hero,
+.azarakhsh-approved .az-research-strip,
+.azarakhsh-approved .az-search-spotlight,
+.azarakhsh-approved .az-featured,
+.azarakhsh-approved .az-timeline,
+.azarakhsh-approved .az-contribute,
+.azarakhsh-approved .az-footer{
+  order:initial!important;
+}
+.azarakhsh-approved .az-footer{
+  display:block!important;
+  grid-template-columns:none!important;
+  gap:0!important;
+  align-items:initial!important;
+  padding:0!important;
+  color:var(--ink)!important;
+  background:#f1efe9!important;
+}
+.azarakhsh-approved .az-footer a{padding:0}
+.azarakhsh-approved .az-footer-top,
+.azarakhsh-approved .az-footer-bottom{box-sizing:border-box}
+.azarakhsh-approved select,
+.azarakhsh-approved input,
+.azarakhsh-approved button{
+  appearance:auto;
+  -webkit-appearance:auto;
+}
+
 /* Azarakhsh Foundation — research-first editorial system */
 body:has(.azarakhsh-approved){margin:0;background:#f8f7f3}
 body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
