@@ -11,7 +11,8 @@ const REAL_AFGHAN_ARCHIVES_IMAGE =
   "https://upload.wikimedia.org/wikipedia/commons/3/30/National_Archives%2C_Afghanistan.jpg";
 const REAL_HAZARA_HISTORY_IMAGE =
   "https://upload.wikimedia.org/wikipedia/commons/d/d1/Hazaras_of_Afghanistan_in_1879-80.jpg";
-const REAL_BEHESHTI_PORTRAIT =
+const PRIOR_SITE_BEHESHTI_PORTRAIT = "/api/media/site%2Fayatollah-beheshti.webp";
+const FALLBACK_BEHESHTI_PORTRAIT =
   "https://commons.wikishia.net/w/images/c/c2/%D8%B3%DB%8C%D8%AF_%D8%B9%D9%84%DB%8C_%D8%A8%D9%87%D8%B4%D8%AA%DB%8C_%D9%88%D8%B1%D8%B3%DB%8C_%DB%B2.jpg";
 
 const timeline = [
@@ -159,7 +160,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
           </div>
         </div>
         <figure className="az-hero-leader">
-          <img className="az-hero-image az-hero-image-right" src={REAL_BEHESHTI_PORTRAIT} alt="پرترهٔ آیت‌الله سید علی بهشتی" />
+          <img className="az-hero-image az-hero-image-right" src={PRIOR_SITE_BEHESHTI_PORTRAIT} alt="پرترهٔ آیت‌الله سید علی بهشتی" />
           <figcaption>
             <strong>آیت‌الله سید علی بهشتی</strong>
             <span>فقیه، مدرس و رئیس شورای انقلابی اتفاق اسلامی افغانستان</span>
@@ -201,13 +202,13 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
           </div>
           <figure className="az-leader-visual">
             <img
-              src={REAL_BEHESHTI_PORTRAIT}
+              src={PRIOR_SITE_BEHESHTI_PORTRAIT}
               alt={settings.media.leaderImageAlt}
               onError={(event) => {
                 const target = event.currentTarget;
                 if (target.dataset.fallback !== "1") {
                   target.dataset.fallback = "1";
-                  target.src = REAL_BEHESHTI_PORTRAIT;
+                  target.src = FALLBACK_BEHESHTI_PORTRAIT;
                 }
               }}
             />
