@@ -199,6 +199,21 @@ const worker = {
       return secureResponse(await directMediaUpload(request, env), url.pathname);
     }
 
+    // Serve build/public assets directly from the Cloudflare ASSETS binding.
+    // Vinext handles application routes, but the approved homepage uses several
+    // reference images from public/reference that must bypass the RSC router.
+    if (
+      (request.method === "GET" || request.method === "HEAD") &&
+      !url.pathname.startsWith("/api/") &&
+      !url.pathname.startsWith("/_vinext/") &&
+      /\\.(?:css|js|mjs|png|jpe?g|webp|avif|gif|svg|ico|woff2?|json|webmanifest)$/i.test(url.pathname)
+    ) {
+      const assetResponse = await env.ASSETS.fetch(request);
+      if (assetResponse.status !== 404) {
+        return secureResponse(assetResponse, url.pathname);
+      }
+    }
+
     if (url.pathname === "/_vinext/image") {
       const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];
       const imageResponse = await handleImageOptimization(request, {
