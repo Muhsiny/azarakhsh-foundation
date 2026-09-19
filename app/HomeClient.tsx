@@ -5,8 +5,6 @@ import type { SiteSettings } from "./site-settings";
 
 const REAL_BOOKS_IMAGE =
   "https://upload.wikimedia.org/wikipedia/commons/c/c1/Old_Books_in_the_library.jpg";
-const REAL_AFGHAN_ARCHIVES_IMAGE =
-  "https://upload.wikimedia.org/wikipedia/commons/3/30/National_Archives%2C_Afghanistan.jpg";
 const REAL_HAZARA_HISTORY_IMAGE =
   "https://upload.wikimedia.org/wikipedia/commons/d/d1/Hazaras_of_Afghanistan_in_1879-80.jpg";
 const PRIOR_SITE_BEHESHTI_PORTRAIT = "/media/beheshti-original.webp";
@@ -18,6 +16,13 @@ const timeline = [
   { date: "۱۳۰۰–۱۳۵۷", label: "تحولات معاصر" },
   { date: "۱۳۵۷–۱۳۷۱", label: "جهاد و مقاومت" },
   { date: "۱۳۷۱–۱۴۰۰", label: "دورهٔ جدید" },
+];
+
+const standards = [
+  "منبع‌سنجی",
+  "ارجاع روشن",
+  "حفظ اصل سند",
+  "تفکیک سند و روایت",
 ];
 
 function SearchIcon() {
@@ -42,33 +47,6 @@ function MenuIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M4 6h16M4 12h16M4 18h16" />
-    </svg>
-  );
-}
-
-function ArchiveIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M4 5h16v4H4zM6 9v10h12V9" />
-      <path d="M9 13h6" />
-    </svg>
-  );
-}
-
-function DocumentIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M7 3h7l4 4v14H7z" />
-      <path d="M14 3v5h5M10 12h5M10 16h5" />
-    </svg>
-  );
-}
-
-function ResearchIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M5 19V9M12 19V5M19 19v-7" />
-      <path d="M3 19h18" />
     </svg>
   );
 }
@@ -121,14 +99,14 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
         <nav className="az-nav" aria-label="فهرست اصلی">
           <a className="is-active" href="#top">صفحه اصلی</a>
           <a href="/archive">آرشیف</a>
-          <a href="/about">درباره بنیاد</a>
           <a href="/publications">نشریات</a>
           <a href="/standards">پژوهش‌ها</a>
+          <a href="/about">درباره بنیاد</a>
           <a href="/contact">تماس</a>
         </nav>
 
         <div className="az-header-tools">
-          <a className="az-search-trigger" href="#archive-search" aria-label="جست‌وجو"><SearchIcon /></a>
+          <a className="az-header-search" href="#archive-search" aria-label="جست‌وجو"><SearchIcon /></a>
           <a className="az-login" href="/login">ورود / عضویت</a>
         </div>
 
@@ -137,11 +115,10 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
           <div>
             <a href="#top">صفحه اصلی</a>
             <a href="/archive">آرشیف</a>
-            <a href="/about">درباره بنیاد</a>
             <a href="/publications">نشریات</a>
             <a href="/standards">پژوهش‌ها</a>
+            <a href="/about">درباره بنیاد</a>
             <a href="/contact">تماس</a>
-            <a href="/login">ورود / عضویت</a>
           </div>
         </details>
         <a className="az-mobile-search" href="#archive-search" aria-label="جست‌وجو"><SearchIcon /></a>
@@ -157,50 +134,42 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
           </p>
           <div className="az-hero-actions">
             <a className="az-btn az-btn-primary" href="#archive-search">جستجوی آرشیف <SearchIcon /></a>
-            <a className="az-btn az-btn-secondary" href="/about">شناخت بنیاد <ArrowLeft /></a>
-          </div>
-          <div className="az-hero-meta">
-            <span>اسناد تاریخی</span>
-            <span>تاریخ شفاهی</span>
-            <span>پژوهش مستقل</span>
+            <a className="az-link-arrow" href="/about">شناخت بنیاد <ArrowLeft /></a>
           </div>
         </div>
 
         <figure className="az-leader-stage">
-          <div className="az-leader-halo" />
           <LeaderPortrait className="az-leader-main" />
           <figcaption>
+            <span>پروندهٔ رهبری</span>
             <strong>آیت‌الله سید علی بهشتی</strong>
-            <span>فقیه، مدرس و رئیس شورای انقلابی اتفاق اسلامی افغانستان</span>
+            <small>فقیه، مدرس و رئیس شورای انقلابی اتفاق اسلامی افغانستان</small>
           </figcaption>
         </figure>
       </section>
 
-      <section className="az-pillars" aria-label="محورهای اصلی بنیاد">
-        <a href="/archive">
-          <span><ArchiveIcon /></span>
-          <div><strong>آرشیف</strong><small>اسناد، تصاویر و منابع تاریخی</small></div>
-        </a>
-        <a href="#council">
-          <span><DocumentIcon /></span>
-          <div><strong>پرونده‌های تاریخی</strong><small>مطالعهٔ مستند موضوعات محوری</small></div>
-        </a>
-        <a href="/standards">
-          <span><ResearchIcon /></span>
-          <div><strong>پژوهش</strong><small>مقاله، تحلیل و روش‌شناسی</small></div>
-        </a>
+      <section className="az-research-strip" aria-label="معیارهای پژوهش">
+        <div className="az-research-strip-title">
+          <span>روش پژوهش</span>
+          <a href="/standards">معیارهای پژوهش <ArrowLeft /></a>
+        </div>
+        <div className="az-research-principles">
+          {standards.map((item, index) => (
+            <div key={item}><b>{String(index + 1).padStart(2, "0")}</b><span>{item}</span></div>
+          ))}
+        </div>
       </section>
 
       <section className="az-search-spotlight" id="archive-search">
         <div className="az-search-heading">
           <p>آرشیف دیجیتال بنیاد</p>
-          <h2>هرچه می‌خواهید، در آرشیف جستجو کنید.</h2>
-          <span>نام، سند، شخص، مکان یا رویداد را وارد کنید.</span>
+          <h2>جستجو، نقطهٔ آغاز پژوهش است.</h2>
+          <span>نام، سند، شخص، مکان یا رویداد را جستجو کنید.</span>
         </div>
         <form className="az-search-form" action="/publications" method="get">
           <label className="az-search-field">
             <SearchIcon />
-            <input name="q" type="search" placeholder="جستجو در آرشیف آذرخش..." />
+            <input name="q" type="search" placeholder="در آرشیف آذرخش جستجو کنید..." />
           </label>
           <select name="topic" defaultValue="">
             <option value="">همه موضوعات</option>
@@ -216,50 +185,60 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             <option value="oral-history">تاریخ شفاهی</option>
           </select>
         </form>
+        <div className="az-search-links">
+          <a href="/archive">مرور کامل آرشیف <ArrowLeft /></a>
+          <a href="/publications">تازه‌ترین منابع <ArrowLeft /></a>
+        </div>
       </section>
 
-      <section className="az-dossiers" aria-labelledby="dossiers-title">
-        <div className="az-section-title">
+      <section className="az-featured" aria-labelledby="featured-title">
+        <div className="az-section-heading">
           <p>پرونده‌های منتخب</p>
-          <h2 id="dossiers-title">تاریخ در متنِ سند</h2>
+          <h2 id="featured-title">دو مسیر برای خواندن تاریخ</h2>
+          <span>نه از روی روایت‌های پراکنده؛ از دل سند، زمینه و منبع.</span>
         </div>
 
-        <div className="az-dossier-grid">
-          <article className="az-dossier-card" id="council">
-            <figure>
-              <img src={REAL_AFGHAN_ARCHIVES_IMAGE} alt="نمای آرشیف ملی افغانستان در کابل" />
-              <figcaption>آرشیف ملی افغانستان، کابل</figcaption>
-            </figure>
-            <div className="az-dossier-copy">
-              <p>پرونده محوری</p>
-              <h3>حکومت شورای اتفاق اسلامی افغانستان</h3>
-              <span>شکل‌گیری، ساختار، اسناد و روایت‌های شورای انقلابی اتفاق اسلامی افغانستان در بستر تاریخ معاصر کشور.</span>
-              <a href="/archive">ورود به پرونده <ArrowLeft /></a>
-            </div>
-          </article>
+        <article className="az-feature-row az-council-feature">
+          <div className="az-feature-visual az-council-plate">
+            <img src={settings.media.councilEmblemUrl} alt={settings.media.councilEmblemAlt} />
+            <div className="az-council-rule" />
+            <span>پروندهٔ محوری</span>
+            <strong>شورای اتفاق اسلامی افغانستان</strong>
+            <small>اسناد، ساختار، شخصیت‌ها و روایت‌ها</small>
+          </div>
+          <div className="az-feature-copy">
+            <p>پرونده محوری</p>
+            <h3>حکومت شورای اتفاق اسلامی افغانستان</h3>
+            <span>
+              بازخوانی شکل‌گیری، ساختار، اسناد و روایت‌های شورای انقلابی اتفاق اسلامی افغانستان در بستر تاریخ معاصر کشور؛ با تفکیک میان سند، روایت و تحلیل.
+            </span>
+            <a className="az-link-arrow" href="/archive">ورود به پرونده <ArrowLeft /></a>
+          </div>
+        </article>
 
-          <article className="az-dossier-card az-dossier-card-reverse">
-            <figure>
-              <img src={REAL_BOOKS_IMAGE} alt="کتاب‌های قدیمی آرشیفی" />
-              <figcaption>منابع مکتوب و آرشیفی</figcaption>
-            </figure>
-            <div className="az-dossier-copy">
-              <p>پرونده ویژه</p>
-              <h3>آیت‌الله سید علی بهشتی</h3>
-              <span>زندگی، تحصیلات حوزوی، فعالیت‌های علمی، رهبری شورای اتفاق و میراث فکری بر پایهٔ منابع و اسناد قابل ارزیابی.</span>
-              <a href="/beheshti">مطالعه پرونده <ArrowLeft /></a>
-            </div>
-          </article>
-        </div>
+        <article className="az-feature-row az-beheshti-feature">
+          <figure className="az-feature-visual az-books-visual">
+            <img src={REAL_BOOKS_IMAGE} alt="کتاب‌ها و منابع آرشیفی" />
+            <figcaption>منابع مکتوب و آرشیفی</figcaption>
+          </figure>
+          <div className="az-feature-copy">
+            <p>پرونده ویژه</p>
+            <h3>آیت‌الله سید علی بهشتی</h3>
+            <span>
+              زندگی، تحصیلات حوزوی، فعالیت‌های علمی، رهبری شورای اتفاق و میراث فکری؛ بر پایهٔ منابع، اسناد و روایت‌های قابل ارزیابی.
+            </span>
+            <a className="az-link-arrow" href="/beheshti">مطالعه پرونده <ArrowLeft /></a>
+          </div>
+        </article>
       </section>
 
       <section className="az-timeline">
-        <div className="az-section-title az-section-title-inline">
+        <div className="az-section-heading az-section-heading-row">
           <div>
             <p>مسیر تاریخ</p>
-            <h2>گزیده‌ای از دوره‌های تاریخی افغانستان</h2>
+            <h2>دوره‌ها را مرور کنید</h2>
           </div>
-          <a href="/archive">مشاهدهٔ آرشیف <ArrowLeft /></a>
+          <a className="az-link-arrow" href="/archive">مشاهدهٔ آرشیف <ArrowLeft /></a>
         </div>
         <div className="az-timeline-track">
           {timeline.map((item) => (
@@ -279,8 +258,10 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
         <div className="az-contribute-copy">
           <p>حافظهٔ مشترک</p>
           <h2>هر سند می‌تواند بخشی از حافظهٔ تاریخی را حفظ کند.</h2>
-          <span>اگر سند، عکس، دست‌نوشته یا روایت تاریخی در اختیار دارید، می‌توانید آن را برای ارزیابی، ثبت و نگهداری پژوهشی با بنیاد آذرخش شریک کنید.</span>
-          <a className="az-btn az-btn-primary" href="/contribute">ارسال سند یا خاطره <UploadIcon /></a>
+          <span>
+            اگر سند، عکس، دست‌نوشته یا روایت تاریخی در اختیار دارید، می‌توانید آن را برای ارزیابی، ثبت و نگهداری پژوهشی با بنیاد آذرخش شریک کنید.
+          </span>
+          <a className="az-btn az-btn-light" href="/contribute">ارسال سند یا خاطره <UploadIcon /></a>
         </div>
       </section>
 
