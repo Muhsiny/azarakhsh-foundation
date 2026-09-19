@@ -33,10 +33,10 @@ jobs:
         run: npm run verify
 
       - name: Authenticate Cloudflare with device flow
-        run: npx wrangler login --device --browser=false
+        run: npx -y wrangler@4.119.0 login --device --browser=false
 
       - name: Show authenticated account
-        run: npx wrangler whoami
+        run: npx -y wrangler@4.119.0 whoami
 
       - name: Deploy Worker
-        run: npx wrangler deploy
+        run: npx -y wrangler@4.119.0 deploy
