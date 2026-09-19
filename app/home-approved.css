@@ -147,3 +147,5 @@ body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
 }
 
 /* cloudflare direct deploy trigger */
+
+/* live visual QA after Cloudflare device deploy */
