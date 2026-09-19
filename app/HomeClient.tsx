@@ -192,7 +192,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
           </div>
           <figure className="az-leader-visual">
             <img
-              src={settings.media.leaderImageUrl || REAL_BEHESHTI_PORTRAIT}
+              src={REAL_BEHESHTI_PORTRAIT}
               alt={settings.media.leaderImageAlt}
               onError={(event) => {
                 const target = event.currentTarget;
