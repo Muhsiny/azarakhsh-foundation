@@ -184,6 +184,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             <option value="book">کتاب‌ها</option>
             <option value="oral-history">تاریخ شفاهی</option>
           </select>
+          <button className="az-search-submit" type="submit">جستجو</button>
         </form>
         <div className="az-search-links">
           <a href="/archive">مرور کامل آرشیف <ArrowLeft /></a>
