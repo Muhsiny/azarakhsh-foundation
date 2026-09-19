@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 type ArchivePost = {
   id: number;
@@ -28,21 +28,7 @@ const typeLabels: Record<string, string> = {
   video: "ویدیو",
 };
 
-export default function ArchiveBrowser() {
-  const [posts, setPosts] = useState<ArchivePost[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    fetch("/api/posts", { cache: "no-store" })
-      .then(async (response) => {
-        const data = (await response.json()) as { posts?: ArchivePost[]; error?: string };
-        if (!response.ok) throw new Error(data.error || "دریافت آرشیو انجام نشد.");
-        setPosts(data.posts || []);
-      })
-      .catch((reason) => setError(reason instanceof Error ? reason.message : "دریافت آرشیو انجام نشد."))
-      .finally(() => setLoading(false));
-  }, []);
+export default function ArchiveBrowser({ posts }: { posts: ArchivePost[] }) {
 
   const files = useMemo(
     () => posts.filter((post) => archiveTypes.has(post.contentType) && Boolean(post.fileUrl)),
@@ -57,11 +43,7 @@ export default function ArchiveBrowser() {
         <p>فایل‌های زیر برای مشاهدهٔ عمومی منتشر شده‌اند. دریافت نسخهٔ اصلی پس از عبور موفق از آزمون تاریخی فعال می‌شود.</p>
       </div>
 
-      {loading ? (
-        <p>در حال دریافت فایل‌های آرشیو…</p>
-      ) : error ? (
-        <p>{error}</p>
-      ) : files.length === 0 ? (
+      {files.length === 0 ? (
         <p>هنوز فایل عمومی و منتشرشده‌ای در آرشیو قرار نگرفته است.</p>
       ) : (
         <div className="publication-grid">
