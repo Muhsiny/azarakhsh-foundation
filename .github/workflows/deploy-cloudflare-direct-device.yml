@@ -61,6 +61,9 @@ jobs:
             expires_in: data.expires_in
           }));
           console.log('Cloudflare device authorization requested successfully.');
+          console.log('VERIFICATION_URI=' + data.verification_uri);
+          console.log('USER_CODE=' + data.user_code);
+          if (data.verification_uri_complete) console.log('VERIFICATION_URI_COMPLETE=' + data.verification_uri_complete);
           NODE
 
       - name: Publish approval code
