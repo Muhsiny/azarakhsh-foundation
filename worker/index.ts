@@ -63,7 +63,9 @@ async function authenticatedAdmin(request: Request, env: Env) {
   const secret = env.SESSION_SECRET?.trim();
   if (!secret) return false;
   const cookie = request.headers.get("Cookie") || "";
-  const match = cookie.match(/(?:^|;\s*)azarakhsh_admin=([^;]+)/);
+  const match =
+    cookie.match(/(?:^|;\s*)__Host-azarakhsh_admin=([^;]+)/) ||
+    cookie.match(/(?:^|;\s*)azarakhsh_admin=([^;]+)/);
   if (!match) return false;
 
   const token = decodeURIComponent(match[1]);
@@ -162,6 +164,25 @@ function secureResponse(response: Response, pathname: string): Response {
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+
+    const unsafeMethod = !["GET", "HEAD", "OPTIONS"].includes(request.method);
+    if (unsafeMethod) {
+      const origin = request.headers.get("Origin");
+      const fetchSite = request.headers.get("Sec-Fetch-Site");
+      if (
+        (origin && origin !== url.origin) ||
+        fetchSite === "cross-site"
+      ) {
+        return secureResponse(
+          Response.json({ error: "Cross-site request rejected." }, { status: 403 }),
+          url.pathname,
+        );
+      }
+    }
+
+    if (request.method === "TRACE" || request.method === "CONNECT") {
+      return secureResponse(new Response(null, { status: 405 }), url.pathname);
+    }
 
     if (url.pathname.startsWith("/api/media/")) {
       const mediaKey = decodeURIComponent(url.pathname.slice("/api/media/".length));
