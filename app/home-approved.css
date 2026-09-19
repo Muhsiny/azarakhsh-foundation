@@ -237,15 +237,24 @@ body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
   border-left:1px solid var(--line);
 }
 .az-research-principles>div:last-child{border-left:0}
-.az-research-principles b{
-  color:#b49556;
-  font-size:11px;
-  font-weight:500;
-}
+.az-research-principles b{display:none}
 .az-research-principles span{
+  position:relative;
   color:#3d554d;
   font-size:13px;
   font-weight:600;
+  padding-right:13px;
+}
+.az-research-principles span:before{
+  content:"";
+  position:absolute;
+  right:0;
+  top:50%;
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  background:var(--gold);
+  transform:translateY(-50%);
 }
 
 /* Archive search: the functional heart */
@@ -409,10 +418,13 @@ body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
   color:#fff;
 }
 .az-council-plate img{
-  width:112px;
-  height:112px;
+  width:106px;
+  height:106px;
   object-fit:contain;
-  filter:drop-shadow(0 8px 22px rgba(0,0,0,.12));
+  padding:10px;
+  background:#f4efe4;
+  border:1px solid rgba(202,165,90,.42);
+  box-shadow:0 10px 26px rgba(0,0,0,.10);
 }
 .az-council-rule{
   width:70px;
@@ -762,8 +774,7 @@ body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
     border-bottom:1px solid var(--line);
   }
   .az-research-principles>div:nth-child(2n){border-left:0}
-  .az-research-principles b{font-size:9px}
-  .az-research-principles span{font-size:11px}
+  .az-research-principles span{font-size:11px;padding-right:11px}
 
   .az-search-spotlight{
     width:100%;
