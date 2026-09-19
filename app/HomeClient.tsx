@@ -115,7 +115,13 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
       </header>
 
       <section className="az-hero" id="top">
-        <img className="az-hero-image az-hero-image-left" src="/reference/hero-left.jpg" alt="" />
+        <div className="az-hero-landscape" aria-hidden="true">
+          <div className="az-snow-range az-snow-range-a" />
+          <div className="az-snow-range az-snow-range-b" />
+          <div className="az-hill" />
+          <div className="az-fortress"><i /><i /><i /><i /><i /></div>
+          <blockquote>«میراث گذشته،<br />سرمایه آینده ماست»<span /></blockquote>
+        </div>
         <div className="az-hero-copy">
           <p className="az-eyebrow">بنیاد مستقل تاریخ‌پژوهی افغانستان</p>
           <h1>
@@ -134,7 +140,15 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             </a>
           </div>
         </div>
-        <img className="az-hero-image az-hero-image-right" src="/reference/hero-right.jpg" alt="" />
+        <div className="az-hero-archive" aria-hidden="true">
+          <div className="az-stone-arch" />
+          <div className="az-book-stack"><i /><i /><i /><i /></div>
+          <div className="az-identity-book">
+            <span>تاریخ</span><span>هویت</span><span>آگاهی</span><span>آینده</span><b />
+          </div>
+          <div className="az-manuscript" />
+          <div className="az-side-motto">از<br />گذشته<br />برای<br />آینده<br />روشن‌تر<span /></div>
+        </div>
       </section>
 
       <section className="az-feature-grid">
@@ -149,10 +163,18 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
               ورود به پرونده <ArrowLeft />
             </a>
           </div>
-          <figure className="az-council-visual">
-            <img className="az-card-photo az-council-photo" src="/reference/council-photo.jpg" alt="تصویر تاریخی مرتبط با شورای اتفاق اسلامی افغانستان" />
+          <figure className="az-council-visual" aria-label="تصویر آرشیوی شورای اتفاق اسلامی افغانستان">
+            <div className="az-archive-photo" aria-hidden="true">
+              <div className="az-photo-building">
+                <span className="az-photo-flag" />
+                <i /><i /><i /><i /><i /><i /><i />
+              </div>
+              <div className="az-photo-crowd">
+                {Array.from({ length: 18 }).map((_, index) => <i key={index} />)}
+              </div>
+            </div>
             <img className="az-council-seal" src={settings.media.councilEmblemUrl} alt={settings.media.councilEmblemAlt} />
-            <figcaption>آرشیف بنیاد آذرخش</figcaption>
+            <figcaption>کابل ـ ۱۳۵۷ | آرشیف بنیاد آذرخش</figcaption>
           </figure>
         </article>
 
@@ -170,6 +192,8 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
           </div>
           <figure className="az-leader-visual">
             <img src={settings.media.leaderImageUrl} alt={settings.media.leaderImageAlt} />
+            <div className="az-leader-paper" aria-hidden="true" />
+            <div className="az-face-mask" aria-hidden="true" />
             <blockquote>«اندیشه‌ها<br />ماندگارند.»<span /></blockquote>
           </figure>
         </article>
