@@ -1005,3 +1005,5 @@ body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
   .az-photo-credit{font-size:5.3px;line-height:1.5}
   .az-copyright{font-size:5.7px}
 }
+
+/* visual QA trigger */
