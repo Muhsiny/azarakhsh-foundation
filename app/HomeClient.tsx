@@ -132,7 +132,6 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
 
   return (
     <main className="site-root azarakhsh-approved" style={siteStyle} dir="rtl">
-      {settings.design.customCss && <style>{settings.design.customCss}</style>}
 
       <header className="az-header">
         <a className="az-brand" href="#top" aria-label={settings.identity.siteName}>
@@ -190,8 +189,8 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
           <div className="az-hero-kicker"><span /><p>بنیاد مستقل تاریخ‌پژوهی افغانستان</p><span /></div>
           <h1>تاریخ، آنگاه روشن می‌شود<br /><em>که اسناد سخن بگویند.</em></h1>
           <p className="az-hero-lead">
-            بنیاد آذرخش، بستر مستقل گردآوری، حفاظت، ارزیابی و انتشار اسناد و روایت‌های تاریخ افغانستان است؛
-            با تمرکز بر پژوهش مسئولانه، آرشیف دیجیتال و دسترسی عمومی به منابع.
+            بنیاد آذرخش برای گردآوری، حفاظت، نقد منبع و انتشار مسئولانهٔ اسناد و روایت‌های تاریخ افغانستان فعالیت می‌کند؛
+            با تمرکز بر آرشیف دیجیتال، تاریخ شفاهی و پژوهش مستند.
           </p>
           <div className="az-hero-actions">
             <a className="az-btn az-btn-primary" href="#archive-search">جستجوی آرشیف <SearchIcon /></a>
@@ -213,7 +212,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
           <div><strong>شورای اتفاق</strong><small>پروندهٔ محوری تاریخ سیاسی و اجتماعی</small></div>
         </a>
         <a className="az-entry-card" href="/beheshti">
-          <span className="az-entry-icon az-entry-portrait"><LeaderPortrait /></span>
+          <span className="az-entry-icon"><DocumentIcon /></span>
           <div><strong>آیت‌الله بهشتی</strong><small>زندگی، اندیشه، اسناد و میراث فکری</small></div>
         </a>
         <a className="az-entry-card" href="/standards">
@@ -226,14 +225,14 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
         <div className="az-section-heading">
           <p>پرونده‌های منتخب</p>
           <h2 id="az-dossiers-title">تاریخ در متنِ سند</h2>
-          <span>دو محور اصلی برای مطالعهٔ عمیق‌تر تاریخ معاصر افغانستان</span>
+          <span>دو پروندهٔ پژوهشی برای مطالعهٔ مستند تاریخ معاصر افغانستان</span>
         </div>
 
         <div className="az-dossier-grid">
           <article className="az-dossier-card az-council-card" id="council">
             <figure className="az-dossier-media">
               <img src={REAL_AFGHAN_ARCHIVES_IMAGE} alt="نمای واقعی آرشیف ملی افغانستان در کابل" />
-              <figcaption>آرشیف ملی افغانستان — تصویر زمینهٔ پرونده پژوهشی</figcaption>
+              <figcaption>آرشیف ملی افغانستان، کابل — تصویر زمینهٔ آرشیفی</figcaption>
             </figure>
             <div className="az-dossier-copy">
               <p className="az-kicker">پرونده محوری</p>
@@ -253,7 +252,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             </div>
             <figure className="az-dossier-book">
               <img src={REAL_BOOKS_IMAGE} alt="کتاب‌های قدیمی آرشیفی" />
-              <blockquote>«اندیشه‌ها ماندگارند؛ اگر اسناد، امانت‌دارِ زمان باشند.»</blockquote>
+              <blockquote>اندیشه ماندگار می‌شود، وقتی سند امانت‌دار زمان باشد.</blockquote>
             </figure>
           </article>
         </div>
@@ -265,13 +264,13 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
           <div>
             <p>آرشیف دیجیتال</p>
             <h2>جستجوی مرکزی آرشیف</h2>
-            <span>اسناد، تصاویر، کتاب‌ها و روایت‌های ثبت‌شده</span>
+            <span>جستجو در اسناد، تصاویر، کتاب‌ها و روایت‌های ثبت‌شده</span>
           </div>
         </div>
         <form className="az-search-form" action="/publications" method="get">
           <label className="az-search-field">
             <SearchIcon />
-            <input name="q" type="search" placeholder="جستجو در اسناد، اشخاص و رویدادها..." />
+            <input name="q" type="search" placeholder="نام، سند، شخص، مکان یا رویداد را جستجو کنید..." />
           </label>
           <select name="topic" defaultValue="">
             <option value="">همه موضوعات</option>
@@ -312,8 +311,8 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
         </figure>
         <div className="az-contribute-copy">
           <p>حافظهٔ مشترک</p>
-          <h2>یک سند می‌تواند جای خالی یک نسل را پُر کند.</h2>
-          <span>اگر سند، عکس، دست‌نوشته یا روایت تاریخی در اختیار دارید، آن را برای بررسی و نگهداری پژوهشی با بنیاد آذرخش شریک کنید.</span>
+          <h2>هر سند می‌تواند بخشی از حافظهٔ تاریخی را حفظ کند.</h2>
+          <span>اگر سند، عکس، دست‌نوشته یا روایت تاریخی در اختیار دارید، می‌توانید آن را برای ارزیابی، ثبت و نگهداری پژوهشی با بنیاد آذرخش شریک کنید.</span>
           <a className="az-btn az-btn-primary" href="/contribute">ارسال سند یا خاطره <UploadIcon /></a>
         </div>
         <figure className="az-contribute-image-wrap">
@@ -348,8 +347,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
           <div className="az-footer-column">
             <strong>ارتباط با ما</strong>
             {settings.contact.email && <a href={`mailto:${settings.contact.email}`}>{settings.contact.email}</a>}
-            <span>{settings.contact.address}</span>
-            <a href="/contact">ارسال پیام</a>
+             <a href="/contact">ارسال پیام</a>
           </div>
           <div className="az-footer-quote">
             <p>«گذشته چراغ راه آینده است.»</p>
@@ -357,7 +355,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
           </div>
         </div>
         <div className="az-footer-bottom">
-          <small>© بنیاد آذرخش — {settings.footer.copyright}</small>
+          <small>{settings.footer.copyright}</small>
           <small>تصاویر عمومی با ذکر منبع و مجوز در صفحهٔ مربوطه استفاده شده‌اند.</small>
         </div>
       </footer>
