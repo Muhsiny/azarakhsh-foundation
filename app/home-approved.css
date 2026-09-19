@@ -292,3 +292,5 @@ body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
   .az-footer-top>div:last-child{grid-column:1/-1}
   .az-footer-bottom{padding:7px 10px;gap:5px;text-align:center;font-size:4.9px;flex-direction:column}
 }
+
+/* final apple-grade visual QA */
