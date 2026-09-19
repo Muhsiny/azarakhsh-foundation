@@ -136,7 +136,10 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
       </header>
 
       <section className="az-hero" id="top">
-        <img className="az-hero-image az-hero-image-left" src={REAL_BAMYAN_IMAGE} alt="نمای واقعی از دره بامیان، افغانستان" />
+        <figure className="az-hero-scenery">
+          <img className="az-hero-image az-hero-image-left" src={REAL_BAMYAN_IMAGE} alt="نمای واقعی از دره بامیان، افغانستان" />
+          <figcaption>بامیان، افغانستان</figcaption>
+        </figure>
         <div className="az-hero-copy">
           <p className="az-eyebrow">بنیاد مستقل تاریخ‌پژوهی افغانستان</p>
           <h1>
@@ -155,7 +158,13 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             </a>
           </div>
         </div>
-        <img className="az-hero-image az-hero-image-right" src={REAL_BOOKS_IMAGE} alt="تصویر واقعی از کتاب‌های قدیمی آرشیفی" />
+        <figure className="az-hero-leader">
+          <img className="az-hero-image az-hero-image-right" src={REAL_BEHESHTI_PORTRAIT} alt="پرترهٔ آیت‌الله سید علی بهشتی" />
+          <figcaption>
+            <strong>آیت‌الله سید علی بهشتی</strong>
+            <span>فقیه، مدرس و رئیس شورای انقلابی اتفاق اسلامی افغانستان</span>
+          </figcaption>
+        </figure>
       </section>
 
       <section className="az-feature-grid">
@@ -174,7 +183,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
           <figure className="az-council-visual" aria-label="تصویر واقعی آرشیف ملی افغانستان">
             <img className="az-card-photo az-council-photo" src={REAL_AFGHAN_ARCHIVES_IMAGE} alt="نمای واقعی از آرشیف ملی افغانستان در کابل" />
             <img className="az-council-seal" src={settings.media.councilEmblemUrl} alt={settings.media.councilEmblemAlt} />
-            <figcaption>آرشیف ملی افغانستان — تصویر واقعی آرشیفی</figcaption>
+            <figcaption>آرشیف ملی افغانستان — تصویر زمینهٔ پرونده پژوهشی</figcaption>
           </figure>
         </article>
 
@@ -311,7 +320,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
 
         <div className="az-footer-quote"><p>گذشته چراغ راه آینده است.</p><span /></div>
         <small className="az-photo-credit">
-          تصاویر عمومی: بامیان — Eric Sutphin / CC BY 2.0؛ آرشیف ملی افغانستان — Michal Hvorecky / CC BY 2.0؛ عکس تاریخی هزاره‌ها — John Burke / Public Domain؛ کتاب‌های قدیمی — Public Domain / Wikimedia Commons. پرترهٔ بهشتی: آرشیف بنیاد؛ در صورت عدم دسترسی، نسخهٔ مرجع ویکی‌شیعه.
+          اعتبار تصاویر: بامیان — Eric Sutphin / CC BY 2.0؛ آرشیف ملی افغانستان — Michal Hvorecky / CC BY 2.0؛ عکس تاریخی هزاره‌ها — John Burke / Public Domain؛ پرترهٔ آیت‌الله سید علی بهشتی — نسخهٔ مرجع ویکی‌شیعه.
         </small>
         <small className="az-copyright">© بنیاد آذرخش — {settings.footer.copyright}</small>
       </footer>
