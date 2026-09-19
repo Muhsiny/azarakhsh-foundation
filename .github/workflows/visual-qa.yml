@@ -1,0 +1,82 @@
+name: Visual QA live site
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  checks: read
+
+jobs:
+  visual-qa:
+    if: contains(github.event.head_commit.message, '[visual-qa]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Wait for Cloudflare Workers Build
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 72); do
+            status=$(gh api -H "Accept: application/vnd.github+json" \
+              "/repos/$GH_REPO/commits/$SHA/check-runs" \
+              --jq '[.check_runs[] | select(.name=="Workers Builds: azarakhsh-foundation")][0].status // ""' || true)
+            conclusion=$(gh api -H "Accept: application/vnd.github+json" \
+              "/repos/$GH_REPO/commits/$SHA/check-runs" \
+              --jq '[.check_runs[] | select(.name=="Workers Builds: azarakhsh-foundation")][0].conclusion // ""' || true)
+            echo "Cloudflare: status=$status conclusion=$conclusion"
+            if [[ "$status" == "completed" && "$conclusion" == "success" ]]; then
+              exit 0
+            fi
+            if [[ "$status" == "completed" && "$conclusion" != "success" && -n "$conclusion" ]]; then
+              echo "Cloudflare build failed: $conclusion"
+              exit 1
+            fi
+            sleep 5
+          done
+          echo "Timed out waiting for Cloudflare build"
+          exit 1
+
+      - name: Verify approved homepage is live
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://azarakhsh-foundation.com14.workers.dev/"
+          html=$(curl -fsSL --retry 5 --retry-delay 3 --max-time 30 "$URL")
+          echo "$html" | grep -q 'azarakhsh-approved'
+          echo "Approved homepage marker is live."
+
+      - name: Capture desktop and mobile live screenshots
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://azarakhsh-foundation.com14.workers.dev/"
+          CHROME=""
+          for bin in google-chrome google-chrome-stable chromium chromium-browser; do
+            if command -v "$bin" >/dev/null 2>&1; then CHROME=$(command -v "$bin"); break; fi
+          done
+          if [[ -z "$CHROME" ]]; then
+            echo "No Chrome/Chromium binary found"
+            exit 1
+          fi
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars \
+            --window-size=1440,4200 --force-device-scale-factor=1 \
+            --screenshot=desktop-live.png "$URL"
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars \
+            --window-size=390,5000 --force-device-scale-factor=1 \
+            --screenshot=mobile-live.png "$URL"
+          file desktop-live.png mobile-live.png
+
+      - name: Upload visual QA screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: azarakhsh-live-visual-qa
+          path: |
+            desktop-live.png
+            mobile-live.png
+          retention-days: 2
