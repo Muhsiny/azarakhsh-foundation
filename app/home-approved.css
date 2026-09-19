@@ -304,3 +304,12 @@ body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
 }
 
 /* final visual audit trigger */
+
+/* final visual polish after screenshot audit */
+.az-council-copy-seal{display:none!important}
+.az-footer:before{opacity:.045!important}
+@media(min-width:821px){
+  .az-feature-card{min-height:252px}
+  .az-feature-copy>p:not(.az-kicker),.az-leader-copy>p:not(.az-kicker){font-size:11px;line-height:1.82}
+  .az-leader-copy strong{font-size:11px}
+}
