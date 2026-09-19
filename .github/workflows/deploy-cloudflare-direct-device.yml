@@ -36,7 +36,7 @@ jobs:
         shell: bash
         run: |
           node <<'NODE'
-          const fs = require('fs');
+          import fs from 'node:fs';
           const clientId = '54d11594-84e4-41aa-b438-e81b8fa78ee7';
           const scopes = [
             'account:read',
@@ -82,7 +82,7 @@ jobs:
         shell: bash
         run: |
           node <<'NODE'
-          const fs = require('fs');
+          import fs from 'node:fs';
           const clientId = '54d11594-84e4-41aa-b438-e81b8fa78ee7';
           const state = JSON.parse(fs.readFileSync('device-state.json','utf8'));
           const deadline = Date.now() + Math.min(Number(state.expires_in || 300), 300) * 1000;
