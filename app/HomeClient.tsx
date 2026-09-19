@@ -244,6 +244,13 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             <strong>{settings.identity.siteName}</strong>
             <p>{settings.footer.mission}</p>
             <small>تاریخ برای آگاهی، جامعه برای فردا</small>
+            <div className="az-socials" aria-label="شبکه‌های اجتماعی">
+              <span aria-hidden="true">✈</span>
+              <span aria-hidden="true">𝕏</span>
+              <span aria-hidden="true">▶</span>
+              <span aria-hidden="true">◎</span>
+              <span aria-hidden="true">f</span>
+            </div>
           </div>
         </div>
 
