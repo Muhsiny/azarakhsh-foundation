@@ -199,6 +199,11 @@ export function expiredSessionCookies() {
   ];
 }
 
+// Compatibility for any older route importing the singular helper.
+export function expiredSessionCookie() {
+  return expiredSessionCookies()[0];
+}
+
 export async function authenticateAdmin(emailValue: string, password: string) {
   const env = await runtimeEnv();
   const email = emailValue.trim().toLowerCase();
