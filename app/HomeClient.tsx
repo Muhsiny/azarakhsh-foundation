@@ -45,6 +45,16 @@ function UserIcon() {
   );
 }
 
+function BookIcon() {
+  return (
+    <svg viewBox="0 0 48 40" aria-hidden="true">
+      <path d="M24 34c-5.8-4.2-12.1-5.4-19-3.8V5.5c7-1.5 13.3.1 19 4.7v23.8Z" />
+      <path d="M24 34c5.8-4.2 12.1-5.4 19-3.8V5.5c-7-1.5-13.3.1-19 4.7v23.8Z" />
+      <path d="M8.5 10.5c4.7-.5 8.8.5 12.3 3M27.2 13.5c3.5-2.5 7.6-3.5 12.3-3" />
+    </svg>
+  );
+}
+
 function UploadIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -178,7 +188,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
 
       <section className="az-search-panel" id="archive-search">
         <div className="az-search-intro">
-          <span className="az-book-icon" aria-hidden="true">▤</span>
+          <span className="az-book-icon" aria-hidden="true"><BookIcon /></span>
           <div>
             <h2>جستجوی مرکزی آرشیف</h2>
             <p>هزاران سند تاریخی در دسترس شما</p>
