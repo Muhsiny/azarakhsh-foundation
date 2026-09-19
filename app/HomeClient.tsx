@@ -115,7 +115,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
       </header>
 
       <section className="az-hero" id="top">
-        <img className="az-hero-image az-hero-image-left" src="/reference/hero-left.jpg" alt="" />
+        <img className="az-hero-image az-hero-image-left" src="/reference-v2/hero-left.webp" alt="" />
         <div className="az-hero-copy">
           <p className="az-eyebrow">بنیاد مستقل تاریخ‌پژوهی افغانستان</p>
           <h1>
@@ -134,7 +134,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             </a>
           </div>
         </div>
-        <img className="az-hero-image az-hero-image-right" src="/reference/hero-right.jpg" alt="" />
+        <img className="az-hero-image az-hero-image-right" src="/reference-v2/hero-right.webp" alt="" />
       </section>
 
       <section className="az-feature-grid">
@@ -150,7 +150,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             </a>
           </div>
           <figure className="az-council-visual" aria-label="تصویر آرشیوی شورای اتفاق اسلامی افغانستان">
-            <img className="az-card-photo az-council-photo" src="/reference/council-photo.jpg" alt="تصویر تاریخی مرتبط با شورای اتفاق اسلامی افغانستان" />
+            <img className="az-card-photo az-council-photo" src="/reference-v2/council-photo.webp" alt="تصویر تاریخی مرتبط با شورای اتفاق اسلامی افغانستان" />
             <img className="az-council-seal" src={settings.media.councilEmblemUrl} alt={settings.media.councilEmblemAlt} />
             <figcaption>کابل ـ ۱۳۵۷ | آرشیف بنیاد آذرخش</figcaption>
           </figure>
@@ -169,7 +169,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             </a>
           </div>
           <figure className="az-leader-visual">
-            <img src="/reference/leader-portrait.jpg" alt={settings.media.leaderImageAlt} />
+            <img src="/reference-v2/leader-visual.webp" alt={settings.media.leaderImageAlt} />
             <blockquote>«اندیشه‌ها<br />ماندگارند.»<span /></blockquote>
           </figure>
         </article>
@@ -223,9 +223,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
 
       <section className="az-contribute" id="contribute">
         <div className="az-contribute-art" aria-hidden="true">
-          <div className="az-old-books"><i /><i /><i /></div>
-          <div className="az-old-paper" />
-          <div className="az-old-photo" />
+          <img className="az-contribute-image az-contribute-left" src="/reference-v2/contribute-left.webp" alt="" />
         </div>
         <div className="az-contribute-copy">
           <h2>اسناد و خاطرات خود را با ما به اشتراک بگذارید</h2>
@@ -234,7 +232,9 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             ارسال سند یا خاطره <UploadIcon />
           </a>
         </div>
-        <blockquote>«هر سند<br />روایتی است<br />از ما و زمان ما.»<span /></blockquote>
+        <div className="az-contribute-side" aria-hidden="true">
+          <img className="az-contribute-image az-contribute-right" src="/reference-v2/contribute-right.webp" alt="" />
+        </div>
       </section>
 
       <footer className="az-footer">
