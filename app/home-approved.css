@@ -1076,3 +1076,5 @@ body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
   .az-photo-credit{font-size:6px}
   .az-copyright{font-size:6.3px}
 }
+
+/* production deploy refined editorial build */
