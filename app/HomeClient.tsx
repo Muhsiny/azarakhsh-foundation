@@ -3,6 +3,15 @@
 import { type CSSProperties } from "react";
 import type { SiteSettings } from "./site-settings";
 
+const REAL_BAMYAN_IMAGE =
+  "https://upload.wikimedia.org/wikipedia/commons/a/a6/Sunrise_of_Bamyan_Valley.jpg";
+const REAL_BOOKS_IMAGE =
+  "https://upload.wikimedia.org/wikipedia/commons/c/c1/Old_Books_in_the_library.jpg";
+const REAL_AFGHAN_ARCHIVES_IMAGE =
+  "https://upload.wikimedia.org/wikipedia/commons/3/30/National_Archives%2C_Afghanistan.jpg";
+const REAL_HAZARA_HISTORY_IMAGE =
+  "https://upload.wikimedia.org/wikipedia/commons/d/d1/Hazaras_of_Afghanistan_in_1879-80.jpg";
+
 const timeline = [
   { date: "قبل از ۱۳۰۰", label: "دوران کلاسیک" },
   { date: "۱۳۰۰ – ۱۳۵۷", label: "تحولات معاصر" },
@@ -125,7 +134,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
       </header>
 
       <section className="az-hero" id="top">
-        <img className="az-hero-image az-hero-image-left" src="/reference-v2/hero-left.webp" alt="" />
+        <img className="az-hero-image az-hero-image-left" src={REAL_BAMYAN_IMAGE} alt="نمای واقعی از دره بامیان، افغانستان" />
         <div className="az-hero-copy">
           <p className="az-eyebrow">بنیاد مستقل تاریخ‌پژوهی افغانستان</p>
           <h1>
@@ -133,7 +142,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             <em>که اسناد سخن بگویند.</em>
           </h1>
           <p className="az-hero-lead">
-            ما در بنیاد آذرخش، متعهد به حفظ مسئولانه، نقد علمی و انتشار منابع تاریخی افغانستان هستیم.
+            بنیاد آذرخش یک بستر مستقل برای گردآوری، حفاظت، سنجش و انتشار اسناد و روایت‌های تاریخ افغانستان است.
           </p>
           <div className="az-hero-actions">
             <a className="az-btn az-btn-primary" href="#archive-search">
@@ -144,7 +153,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             </a>
           </div>
         </div>
-        <img className="az-hero-image az-hero-image-right" src="/reference-v2/hero-right.webp" alt="" />
+        <img className="az-hero-image az-hero-image-right" src={REAL_BOOKS_IMAGE} alt="تصویر واقعی از کتاب‌های قدیمی آرشیفی" />
       </section>
 
       <section className="az-feature-grid">
@@ -153,17 +162,17 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             <p className="az-kicker">پرونده محوری</p>
             <h2>حکومت شورای اتفاق اسلامی افغانستان</h2>
             <p>
-              مروری بر اسناد، شخصیت‌ها، زمینه‌های تاریخی و تلاش‌های حکومت شورای اتفاق اسلامی افغانستان در یک مجموعه پژوهشی.
+              پرونده‌ای درباره شکل‌گیری، ساختار، اسناد و روایت‌های شورای انقلابی اتفاق اسلامی افغانستان در بستر تاریخ معاصر کشور.
             </p>
             <img className="az-council-copy-seal" src={settings.media.councilEmblemUrl} alt="" aria-hidden="true" />
             <a className="az-btn az-btn-primary az-btn-small" href="/archive">
               ورود به پرونده <ArrowLeft />
             </a>
           </div>
-          <figure className="az-council-visual" aria-label="تصویر آرشیوی شورای اتفاق اسلامی افغانستان">
-            <img className="az-card-photo az-council-photo" src="/reference-v2/council-photo.webp" alt="تصویر تاریخی مرتبط با شورای اتفاق اسلامی افغانستان" />
+          <figure className="az-council-visual" aria-label="تصویر واقعی آرشیف ملی افغانستان">
+            <img className="az-card-photo az-council-photo" src={REAL_AFGHAN_ARCHIVES_IMAGE} alt="نمای واقعی از آرشیف ملی افغانستان در کابل" />
             <img className="az-council-seal" src={settings.media.councilEmblemUrl} alt={settings.media.councilEmblemAlt} />
-            <figcaption>کابل ـ ۱۳۵۷ | آرشیف بنیاد آذرخش</figcaption>
+            <figcaption>آرشیف ملی افغانستان — تصویر واقعی آرشیفی</figcaption>
           </figure>
         </article>
 
@@ -171,16 +180,16 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
           <div className="az-leader-copy">
             <p className="az-kicker">پرونده ویژه</p>
             <h2>آیت‌الله سید علی بهشتی</h2>
-            <strong>رهبر، متفکر و مجاهد امت</strong>
+            <strong>فقیه، مدرس و رئیس شورای انقلابی اتفاق اسلامی افغانستان</strong>
             <p>
-              مروری بر زندگی، اندیشه‌ها، مبارزات و میراث علمی آیت‌الله سید علی بهشتی، از چهره‌های برجسته نهضت اسلامی افغانستان.
+              پرونده‌ای درباره زندگی، تحصیلات حوزوی، فعالیت‌های علمی، رهبری شورای اتفاق و میراث فکری آیت‌الله سید علی بهشتی بر پایه منابع و اسناد قابل ارزیابی.
             </p>
             <a className="az-btn az-btn-outline az-btn-small" href="/beheshti">
               مطالعه پرونده <ArrowLeft />
             </a>
           </div>
           <figure className="az-leader-visual">
-            <img src="/reference-v2/leader-clean.webp" alt={settings.media.leaderImageAlt} />
+            <img src={settings.media.leaderImageUrl} alt={settings.media.leaderImageAlt} />
             <blockquote>«اندیشه‌ها<br />ماندگارند.»<span /></blockquote>
           </figure>
         </article>
@@ -191,7 +200,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
           <span className="az-book-icon" aria-hidden="true"><BookIcon /></span>
           <div>
             <h2>جستجوی مرکزی آرشیف</h2>
-            <p>هزاران سند تاریخی در دسترس شما</p>
+            <p>اسناد، تصاویر، کتاب‌ها و روایت‌های ثبت‌شده</p>
           </div>
         </div>
 
@@ -234,17 +243,17 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
 
       <section className="az-contribute" id="contribute">
         <div className="az-contribute-art" aria-hidden="true">
-          <img className="az-contribute-image az-contribute-left" src="/reference-v2/contribute-left.webp" alt="" />
+          <img className="az-contribute-image az-contribute-left" src={REAL_HAZARA_HISTORY_IMAGE} alt="عکس تاریخی واقعی از بزرگان هزاره در سده نوزدهم" />
         </div>
         <div className="az-contribute-copy">
           <h2>اسناد و خاطرات خود را با ما به اشتراک بگذارید</h2>
-          <p>اگر سند، تصویر، خاطره یا روایت تاریخی در اختیار دارید، در حفظ تاریخ افغانستان با ما همکاری کنید.</p>
+          <p>اگر سند، عکس، دست‌نوشته یا روایت تاریخی در اختیار دارید، آن را برای بررسی و نگهداری پژوهشی با بنیاد آذرخش شریک کنید.</p>
           <a className="az-btn az-btn-primary az-btn-small" href="/contribute">
             ارسال سند یا خاطره <UploadIcon />
           </a>
         </div>
         <div className="az-contribute-side" aria-hidden="true">
-          <img className="az-contribute-image az-contribute-right" src="/reference-v2/contribute-right.webp" alt="" />
+          <img className="az-contribute-image az-contribute-right" src={REAL_BOOKS_IMAGE} alt="تصویر واقعی از کتاب‌های قدیمی آرشیفی" />
         </div>
       </section>
 
@@ -289,6 +298,9 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
         </div>
 
         <div className="az-footer-quote"><p>گذشته چراغ راه آینده است.</p><span /></div>
+        <small className="az-photo-credit">
+          تصاویر عمومی: بامیان — Eric Sutphin / CC BY 2.0؛ آرشیف ملی افغانستان — Michal Hvorecky / CC BY 2.0؛ عکس تاریخی هزاره‌ها — John Burke / Public Domain؛ کتاب‌های قدیمی — Public Domain / Wikimedia Commons.
+        </small>
         <small className="az-copyright">© بنیاد آذرخش — {settings.footer.copyright}</small>
       </footer>
     </main>
