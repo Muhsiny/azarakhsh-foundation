@@ -149,3 +149,111 @@ body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
 /* cloudflare direct deploy trigger */
 
 /* live visual QA after Cloudflare device deploy */
+
+/* APPROVED_REFERENCE_GEOMETRY_LOCK_2026_09_19
+   Measured against the approved 1536×1152 desktop and phone mockup. */
+.az-feature-copy{position:relative}
+.az-council-copy-seal{
+  position:absolute;left:18px;bottom:16px;width:66px;height:66px;object-fit:contain;
+  opacity:.42;filter:sepia(.25);pointer-events:none
+}
+
+@media (min-width:821px){
+  .azarakhsh-approved .az-header{height:86px!important}
+  .azarakhsh-approved .az-hero{height:310px!important}
+  .azarakhsh-approved .az-feature-card{height:220px!important;min-height:220px!important}
+  .azarakhsh-approved .az-feature-copy,
+  .azarakhsh-approved .az-leader-copy{padding:21px 27px!important}
+  .azarakhsh-approved .az-feature-copy h2,
+  .azarakhsh-approved .az-leader-copy h2{font-size:29px!important;line-height:1.4!important}
+  .azarakhsh-approved .az-feature-copy>p:not(.az-kicker),
+  .azarakhsh-approved .az-leader-copy>p:not(.az-kicker){
+    font-size:12px!important;line-height:1.78!important;margin:8px 0 11px!important
+  }
+  .azarakhsh-approved .az-btn-small{min-height:35px!important;padding:5px 16px!important}
+  .azarakhsh-approved .az-footer{
+    min-height:202px!important;padding-top:27px!important;padding-bottom:17px!important
+  }
+}
+
+@media (max-width:820px){
+  .azarakhsh-approved .az-header{height:69px!important;min-height:69px!important;padding:0 13px!important}
+  .azarakhsh-approved .az-brand{gap:8px!important}
+  .azarakhsh-approved .az-brand img{width:62px!important;height:57px!important}
+  .azarakhsh-approved .az-brand strong{font-size:21px!important;line-height:1.05!important}
+  .azarakhsh-approved .az-brand small{font-size:8.5px!important;margin-top:4px!important}
+  .azarakhsh-approved .az-mobile-menu summary svg,
+  .azarakhsh-approved .az-mobile-search svg{width:29px!important;height:29px!important}
+
+  .azarakhsh-approved .az-hero{height:209px!important}
+  .azarakhsh-approved .az-hero-image{
+    width:auto!important;height:100%!important;max-width:none!important;object-fit:contain!important
+  }
+  .azarakhsh-approved .az-hero-image-left{left:0!important;right:auto!important}
+  .azarakhsh-approved .az-hero-image-right{right:0!important;left:auto!important}
+  .azarakhsh-approved .az-hero:after{
+    background:linear-gradient(90deg,
+      rgba(248,244,235,.15) 0%,
+      rgba(248,244,235,.42) 23%,
+      rgba(250,247,239,.93) 48%,
+      rgba(250,247,239,.93) 55%,
+      rgba(248,244,235,.40) 77%,
+      rgba(248,244,235,.12) 100%)!important
+  }
+  .azarakhsh-approved .az-hero-copy{padding:10px 43px 11px!important}
+  .azarakhsh-approved .az-eyebrow{font-size:8.5px!important;margin-bottom:4px!important}
+  .azarakhsh-approved .az-hero-copy h1{font-size:26px!important;line-height:1.37!important}
+  .azarakhsh-approved .az-hero-lead{
+    font-size:9.5px!important;line-height:1.62!important;margin-top:6px!important;max-width:255px!important
+  }
+  .azarakhsh-approved .az-hero-actions{
+    width:130px!important;display:grid!important;grid-template-columns:1fr!important;gap:5px!important;margin-top:8px!important
+  }
+  .azarakhsh-approved .az-hero-actions .az-btn{
+    width:100%!important;min-height:29px!important;padding:3px 7px!important;font-size:8.8px!important;gap:6px!important
+  }
+  .azarakhsh-approved .az-hero-actions .az-btn svg{width:15px!important;height:15px!important}
+
+  .azarakhsh-approved .az-feature-grid{padding:0 9px!important;margin-top:8px!important}
+  .azarakhsh-approved .az-council-card{height:158px!important;min-height:158px!important}
+  .azarakhsh-approved .az-leader-card{height:168px!important;min-height:168px!important}
+  .azarakhsh-approved .az-feature-card{grid-template-columns:49% 51%!important}
+  .azarakhsh-approved .az-feature-copy,
+  .azarakhsh-approved .az-leader-copy{padding:9px 10px!important}
+  .azarakhsh-approved .az-kicker{font-size:8.5px!important;margin-bottom:3px!important}
+  .azarakhsh-approved .az-feature-copy h2,
+  .azarakhsh-approved .az-leader-copy h2{font-size:19px!important;line-height:1.37!important}
+  .azarakhsh-approved .az-leader-copy strong{font-size:8.6px!important}
+  .azarakhsh-approved .az-feature-copy>p:not(.az-kicker),
+  .azarakhsh-approved .az-leader-copy>p:not(.az-kicker){
+    font-size:8.6px!important;line-height:1.55!important;margin:5px 0 7px!important
+  }
+  .azarakhsh-approved .az-feature-copy .az-btn,
+  .azarakhsh-approved .az-leader-copy .az-btn{
+    width:138px!important;max-width:100%!important;align-self:flex-start!important;
+    min-height:27px!important;padding:3px 7px!important;font-size:8.3px!important
+  }
+  .azarakhsh-approved .az-council-copy-seal{display:none!important}
+
+  .azarakhsh-approved .az-search-panel{margin:7px 9px 0!important;padding:8px 9px!important}
+  .azarakhsh-approved .az-search-intro{margin-bottom:6px!important}
+  .azarakhsh-approved .az-book-icon{font-size:35px!important}
+  .azarakhsh-approved .az-search-intro h2{font-size:18.5px!important;line-height:1.2!important}
+  .azarakhsh-approved .az-search-intro p{font-size:8px!important;margin-top:2px!important}
+  .azarakhsh-approved .az-search-form{gap:5px!important}
+  .azarakhsh-approved .az-search-field{height:30px!important;padding:0 9px!important}
+  .azarakhsh-approved .az-search-field input{font-size:8.5px!important}
+  .azarakhsh-approved .az-search-form select{height:29px!important;min-height:29px!important;font-size:8px!important}
+
+  .azarakhsh-approved .az-timeline{padding:8px 11px 11px!important}
+  .azarakhsh-approved .az-timeline-heading{margin-bottom:7px!important}
+  .azarakhsh-approved .az-timeline-heading h2{font-size:13.5px!important}
+  .azarakhsh-approved .az-timeline-heading a{font-size:7.6px!important}
+  .azarakhsh-approved .az-timeline-item{padding-top:9px!important}
+  .azarakhsh-approved .az-timeline-item strong{font-size:8.4px!important}
+  .azarakhsh-approved .az-timeline-item small{font-size:7.2px!important}
+
+  .azarakhsh-approved .az-contribute{height:112px!important;min-height:112px!important}
+  .azarakhsh-approved .az-contribute-copy h2{font-size:13.5px!important}
+  .azarakhsh-approved .az-contribute-copy p{font-size:7px!important}
+}
