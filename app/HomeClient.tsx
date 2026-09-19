@@ -200,11 +200,11 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
 
         <article className="az-feature-row az-council-feature">
           <div className="az-feature-visual az-council-plate">
-            <img src={settings.media.councilEmblemUrl} alt={settings.media.councilEmblemAlt} />
+            <img src="/media/council-emblem.webp" alt={settings.media.councilEmblemAlt} />
             <div className="az-council-rule" />
             <span>پروندهٔ محوری</span>
-            <strong>شورای اتفاق اسلامی افغانستان</strong>
-            <small>اسناد، ساختار، شخصیت‌ها و روایت‌ها</small>
+            <strong>شورای اتفاق</strong>
+            <small>اسناد، ساختار و روایت‌های تاریخی</small>
           </div>
           <div className="az-feature-copy">
             <p>پرونده محوری</p>
