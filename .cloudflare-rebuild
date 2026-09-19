@@ -8,3 +8,4 @@ visual-qa-after-approved-live-deploy
 
 [cf-direct-device] publish approved reference layout
 visual-qa-final-reference-lock
+visual-qa-after-root-reference-rebuild
