@@ -22,3 +22,5 @@ body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
 .az-footer{grid-template-columns:1fr 1fr;padding:17px 14px 11px;gap:17px}.az-footer-brand{grid-column:1/-1}.az-footer-brand img{width:56px;height:52px}.az-footer-column:last-of-type{grid-column:1/-1}.az-footer-quote{display:none}.az-copyright{font-size:7px}
 }
 @media(max-width:420px){.az-header{height:74px}.az-brand img{width:50px;height:46px}.az-brand strong{font-size:16px}.az-hero-copy{padding-inline:31px}.az-hero-copy h1{font-size:22px}.az-feature-copy h2,.az-leader-copy h2{font-size:16px}}
+
+/* visual QA trigger */
