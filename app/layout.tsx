@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Naskh_Arabic, Noto_Nastaliq_Urdu } from "next/font/google";
+import { Noto_Naskh_Arabic, Noto_Nastaliq_Urdu, Vazirmatn } from "next/font/google";
 import "./globals.css";
 import "./home-order-fix.css";
 import "./traditional-typography.css";
@@ -14,6 +14,13 @@ import { SITE_URL } from "./site-url";
 const naskh = Noto_Naskh_Arabic({
   subsets: ["arabic"],
   variable: "--font-naskh",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
+
+const vazirmatn = Vazirmatn({
+  subsets: ["arabic"],
+  variable: "--font-vazir",
   display: "swap",
   weight: ["400", "500", "600", "700"],
 });
@@ -87,7 +94,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   };
 
   return (
-    <html lang="fa" dir="rtl" className={`${naskh.variable} ${nastaliq.variable}`}>
+    <html lang="fa" dir="rtl" className={`${naskh.variable} ${nastaliq.variable} ${vazirmatn.variable}`}>
       <body>
         <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} type="application/ld+json" />
         <OfflineBootstrap />
