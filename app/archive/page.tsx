@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import InstitutionalPage from "../components/InstitutionalPage";
 import ArchiveBrowser from "./ArchiveBrowser";
 
-export const metadata: Metadata = { title: "آرشیو اسناد و تاریخ شفاهی", description: "راهنمای آرشیو تاریخی بنیاد آذرخش و معیارهای ثبت، توصیف و دسترسی به اسناد." };
+export const metadata: Metadata = {
+  title: "آرشیو اسناد و تاریخ شفاهی",
+  description: "آرشیو تاریخی بنیاد آذرخش؛ اسناد، تصاویر، صوت، ویدیو و تاریخ شفاهی با شناسنامه و معیارهای پژوهشی.",
+  alternates: { canonical: "/archive" },
+  openGraph: { url: "/archive", title: "آرشیو تاریخی آذرخش", description: "اسناد، تصاویر، صوت، ویدیو و تاریخ شفاهی بنیاد آذرخش." },
+};
 
 const sections = [
   { title: "اسناد مکتوب", text: "نامه‌ها، فرمان‌ها، اعلامیه‌ها، صورت‌جلسه‌ها و یادداشت‌ها با شناسهٔ یکتا، تاریخ، پدیدآورنده، منشأ و وضعیت اعتبار ثبت می‌شوند." },
