@@ -149,7 +149,11 @@ function secureResponse(response: Response, pathname: string): Response {
     "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; frame-src 'self'; object-src 'none'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https:; manifest-src 'self'; worker-src 'self' blob:; upgrade-insecure-requests",
   );
 
-  if (pathname.startsWith("/admin") || pathname.startsWith("/api/")) {
+  if (
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/api/") ||
+    pathname === "/login"
+  ) {
     secured.headers.set("Cache-Control", "no-store, private");
     secured.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
   } else if (/\.(?:css|js|woff2?|png|jpe?g|webp|avif|svg|ico)$/i.test(pathname)) {
