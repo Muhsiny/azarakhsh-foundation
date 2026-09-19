@@ -353,3 +353,5 @@ body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
   .az-footer-column:last-of-type{grid-column:1/-1}.az-footer-quote{display:none}
   .az-footer-bottom{padding:8px 12px;font-size:5.4px;gap:8px;text-align:center}
 }
+
+/* local visual QA — spiritual redesign */
