@@ -24,13 +24,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Verify production build
-        run: npm run verify
 
       - name: Request Cloudflare device authorization
         shell: bash
@@ -78,15 +71,39 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-      - name: Wait for Cloudflare approval and obtain token
+      - name: Wait for Cloudflare approval and identify target account
         shell: bash
         run: |
           node <<'NODE'
           import fs from 'node:fs';
+
           const clientId = '54d11594-84e4-41aa-b438-e81b8fa78ee7';
           const state = JSON.parse(fs.readFileSync('device-state.json','utf8'));
           const deadline = Date.now() + Math.min(Number(state.expires_in || 300), 300) * 1000;
           let interval = Math.max(Number(state.interval || 1), 1) * 1000;
+
+          async function cfJson(url, token) {
+            const res = await fetch(url, { headers: { Authorization: 'Bearer ' + token } });
+            let data = null;
+            try { data = await res.json(); } catch {}
+            return { res, data };
+          }
+
+          async function listAll(path, token) {
+            const out = [];
+            for (let page = 1; page <= 10; page++) {
+              const sep = path.includes('?') ? '&' : '?';
+              const {res, data} = await cfJson(
+                'https://api.cloudflare.com/client/v4' + path + sep + 'page=' + page + '&per_page=50',
+                token
+              );
+              if (!res.ok || !data?.success) break;
+              const batch = Array.isArray(data.result) ? data.result : [];
+              out.push(...batch);
+              if (!data.result_info || page >= Number(data.result_info.total_pages || 1)) break;
+            }
+            return out;
+          }
 
           while (Date.now() < deadline) {
             const body = new URLSearchParams({
@@ -102,30 +119,57 @@ jobs:
             const data = await res.json();
 
             if (data.access_token) {
-              console.log('::add-mask::' + data.access_token);
-              fs.appendFileSync(process.env.GITHUB_ENV, 'CLOUDFLARE_API_TOKEN=' + data.access_token + '\n');
+              const token = data.access_token;
+              console.log('::add-mask::' + token);
+              fs.appendFileSync(process.env.GITHUB_ENV, 'CLOUDFLARE_API_TOKEN=' + token + '\n');
 
-              const accountsRes = await fetch('https://api.cloudflare.com/client/v4/accounts?per_page=50', {
-                headers: {Authorization: 'Bearer ' + data.access_token}
-              });
-              const accountsJson = await accountsRes.json();
-              const accounts = Array.isArray(accountsJson.result) ? accountsJson.result : [];
-              const databaseId = '130db9f3-ff76-4d0d-bccb-196af0248e15';
+              const accounts = await listAll('/accounts', token);
+              const memberships = await listAll('/memberships', token);
+              const membershipIds = new Set(
+                memberships.map(m => m?.account?.id).filter(Boolean)
+              );
+              const usable = membershipIds.size
+                ? accounts.filter(a => membershipIds.has(a.id))
+                : accounts;
+
+              const candidates = usable.length ? usable : accounts;
               let selected = null;
 
-              for (const account of accounts) {
-                const check = await fetch(
-                  'https://api.cloudflare.com/client/v4/accounts/' + account.id + '/d1/database/' + databaseId,
-                  {headers:{Authorization:'Bearer ' + data.access_token}}
+              for (const account of candidates) {
+                const workerCheck = await fetch(
+                  'https://api.cloudflare.com/client/v4/accounts/' + account.id + '/workers/scripts/azarakhsh-foundation',
+                  { headers: { Authorization: 'Bearer ' + token } }
                 );
-                if (check.ok) {
+                if (workerCheck.ok) {
                   selected = account;
+                  console.log('Target account matched existing Azarakhsh Worker.');
                   break;
                 }
               }
-              if (!selected && accounts.length === 1) selected = accounts[0];
+
               if (!selected) {
-                console.error('Could not uniquely identify the Cloudflare account containing the configured D1 database.');
+                const databaseId = '130db9f3-ff76-4d0d-bccb-196af0248e15';
+                for (const account of candidates) {
+                  const d1Check = await fetch(
+                    'https://api.cloudflare.com/client/v4/accounts/' + account.id + '/d1/database/' + databaseId,
+                    { headers: { Authorization: 'Bearer ' + token } }
+                  );
+                  if (d1Check.ok) {
+                    selected = account;
+                    console.log('Target account matched configured Azarakhsh D1 database.');
+                    break;
+                  }
+                }
+              }
+
+              if (!selected && candidates.length === 1) {
+                selected = candidates[0];
+                console.log('Exactly one usable Cloudflare account is available.');
+              }
+
+              if (!selected) {
+                console.error('Could not uniquely determine the target Cloudflare account.');
+                console.error('Usable account count: ' + candidates.length);
                 process.exit(1);
               }
 
@@ -146,9 +190,16 @@ jobs:
             console.error('Cloudflare authorization failed:', data.error || JSON.stringify(data));
             process.exit(1);
           }
+
           console.error('Cloudflare approval timed out.');
           process.exit(1);
           NODE
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify production build
+        run: npm run verify
 
       - name: Deploy Worker
         run: npx wrangler deploy
