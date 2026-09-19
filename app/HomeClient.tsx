@@ -116,7 +116,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
       </section>
 
       <section className="v3-feature-stage">
-        <article className="v3-council-feature" id="council">
+        <section className="v3-council-feature" id="council">
           <div className="v3-feature-copy">
             <p className="v3-kicker">{settings.council.kicker}</p>
             <h2>{settings.council.title}</h2>
@@ -133,13 +133,13 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             </div>
             <figcaption>{settings.media.councilEmblemCaption}</figcaption>
           </figure>
-        </article>
+        </section>
 
-        <article className="v3-leader-feature" id="beheshti">
+        <section className="v3-leader-feature" id="beheshti">
           <div className="v3-leader-copy">
             <p className="v3-kicker">پروندهٔ ویژه</p>
             <h2>{settings.leader.title}</h2>
-            <p className="v3-leader-subtitle">{settings.leader.kicker}</p>
+            <div className="v3-leader-subtitle">{settings.leader.kicker}</div>
             <p>{settings.leader.lead}</p>
             <a className="v3-button v3-button-outline" href="/beheshti">
               مطالعهٔ پرونده <span aria-hidden="true">←</span>
@@ -149,7 +149,7 @@ export default function HomeClient({ settings }: { settings: SiteSettings }) {
             <img src={settings.media.leaderImageUrl} alt={settings.media.leaderImageAlt} />
             <figcaption>{settings.media.leaderImageAlt}</figcaption>
           </figure>
-        </article>
+        </section>
       </section>
 
       <section className="v3-search-strip" id="archive-search">
