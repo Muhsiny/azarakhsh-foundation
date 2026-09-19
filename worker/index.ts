@@ -1,6 +1,7 @@
 /** Cloudflare Worker entry point for the vinext application. */
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
+import { detectUploadType, safeOriginalFileName } from "../app/security";
 
 interface Env {
   ASSETS: Fetcher;
@@ -100,17 +101,28 @@ async function directMediaUpload(request: Request, env: Env) {
   try {
     const form = await request.formData();
     const file = form.get("file");
-    if (!(file instanceof File) || !allowedUploadTypes.has(file.type)) {
-      return Response.json({ error: "فقط تصویر، PDF، صوت یا ویدیوی MP4 پذیرفته می‌شود." }, { status: 400 });
+    if (!(file instanceof File)) {
+      return Response.json({ error: "فایل معتبر نیست." }, { status: 400 });
     }
     if (file.size > 20 * 1024 * 1024) {
       return Response.json({ error: "حجم فایل باید کمتر از ۲۰ مگابایت باشد." }, { status: 413 });
     }
 
-    const extension = file.name.split(".").pop()?.toLowerCase() || "bin";
-    const key = `${Date.now()}-${crypto.randomUUID()}.${extension}`;
+    const verified = await detectUploadType(file);
+    if (!verified || !allowedUploadTypes.has(verified.mime)) {
+      return Response.json(
+        { error: "نوع واقعی فایل مجاز نیست یا با قالب مورد انتظار سازگار نیست." },
+        { status: 400 },
+      );
+    }
+
+    const key = `${Date.now()}-${crypto.randomUUID()}.${verified.extension}`;
     await env.MEDIA.put(key, await file.arrayBuffer(), {
-      metadata: { contentType: file.type, fileName: file.name },
+      metadata: {
+        contentType: verified.mime,
+        fileName: safeOriginalFileName(file.name),
+        verified: "magic-bytes-v1",
+      },
     });
     return Response.json({ url: `/api/media/${encodeURIComponent(key)}` });
   } catch (error) {
@@ -132,11 +144,12 @@ function secureResponse(response: Response, pathname: string): Response {
   secured.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
   secured.headers.set(
     "Content-Security-Policy",
-    "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https:; upgrade-insecure-requests",
+    "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; frame-src 'self'; object-src 'none'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https:; manifest-src 'self'; worker-src 'self' blob:; upgrade-insecure-requests",
   );
 
   if (pathname.startsWith("/admin") || pathname.startsWith("/api/")) {
     secured.headers.set("Cache-Control", "no-store, private");
+    secured.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
   } else if (/\.(?:css|js|woff2?|png|jpe?g|webp|avif|svg|ico)$/i.test(pathname)) {
     secured.headers.set("Cache-Control", "public, max-age=31536000, immutable");
   } else if (!secured.headers.has("Cache-Control")) {
@@ -149,6 +162,13 @@ function secureResponse(response: Response, pathname: string): Response {
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+
+    if (url.pathname.startsWith("/api/media/")) {
+      const mediaKey = decodeURIComponent(url.pathname.slice("/api/media/".length));
+      if (mediaKey.startsWith("public-contributions/")) {
+        return secureResponse(new Response("Not found", { status: 404 }), url.pathname);
+      }
+    }
 
     if (url.pathname === "/api/admin/upload" && request.method === "POST") {
       return secureResponse(await directMediaUpload(request, env), url.pathname);
