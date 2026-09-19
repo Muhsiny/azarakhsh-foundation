@@ -335,3 +335,31 @@ body:has(.azarakhsh-approved) .public-contribution-link{display:none!important}
       url("/reference-v2/contribute-right.webp") center bottom/cover no-repeat!important
   }
 }
+
+/* FINAL_VISUAL_CORRECTION_2026_09_19 */
+@media (min-width:821px){
+  .azarakhsh-approved .az-hero-copy h1{font-size:42px!important;line-height:1.4!important}
+  .azarakhsh-approved .az-hero-lead{font-size:13px!important}
+}
+@media (max-width:820px){
+  .azarakhsh-approved .az-hero-image-left{
+    width:60%!important;height:100%!important;max-width:none!important;
+    object-fit:cover!important;object-position:24% center!important
+  }
+  .azarakhsh-approved .az-hero-image-right{
+    width:46%!important;height:100%!important;max-width:none!important;
+    object-fit:cover!important;object-position:right center!important
+  }
+  .azarakhsh-approved .az-hero:after{
+    background:linear-gradient(90deg,
+      rgba(248,244,235,.10) 0%,
+      rgba(248,244,235,.30) 18%,
+      rgba(250,247,239,.92) 35%,
+      rgba(250,247,239,.99) 45%,
+      rgba(250,247,239,.99) 58%,
+      rgba(248,244,235,.88) 68%,
+      rgba(248,244,235,.26) 84%,
+      rgba(248,244,235,.08) 100%)!important
+  }
+  .azarakhsh-approved .az-hero-lead{font-size:9.5px!important;line-height:1.58!important}
+}
