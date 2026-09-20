@@ -10,3 +10,12 @@ export async function GET() {
     },
   });
 }
+
+export async function HEAD() {
+  return new Response(null, {
+    headers: {
+      "content-type": "image/png",
+      "cache-control": "public, max-age=86400, s-maxage=604800, immutable",
+    },
+  });
+}
