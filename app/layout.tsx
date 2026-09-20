@@ -3,7 +3,6 @@ import { Noto_Naskh_Arabic, Vazirmatn } from "next/font/google";
 import "./globals.css";
 
 import "./redesign.css";
-import "./final-pass.css";
 import OfflineBootstrap from "./OfflineBootstrap";
 import SiteEnhancer from "./SiteEnhancer";
 import UniversalInlineEditorV2 from "./components/UniversalInlineEditorV2";
