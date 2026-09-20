@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import LeaderProfile from "./LeaderProfile";
+import { loadSiteSettings } from "../load-site-settings";
 
 export const metadata: Metadata = {
   title: "پروندهٔ رهبر ۱ | زندگی و زمانهٔ آیت‌الله سید علی بهشتی",
@@ -8,6 +9,12 @@ export const metadata: Metadata = {
   openGraph: { url: "/beheshti", title: "پروندهٔ آیت‌الله سید علی بهشتی", description: "زندگی، اندیشه، رهبری، آثار، اسناد و روایت‌های مربوط به آیت‌الله سید علی بهشتی." },
 };
 
-export default function BeheshtiPage() {
-  return <LeaderProfile />;
+export default async function BeheshtiPage() {
+  const settings = await loadSiteSettings();
+  return (
+    <LeaderProfile
+      imageUrl={settings.media.leaderImageUrl}
+      imageAlt={settings.media.leaderImageAlt}
+    />
+  );
 }
