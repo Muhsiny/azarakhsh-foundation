@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Noto_Naskh_Arabic, Noto_Nastaliq_Urdu, Vazirmatn } from "next/font/google";
+import { Noto_Naskh_Arabic, Vazirmatn } from "next/font/google";
 import "./globals.css";
 
-import "./traditional-typography.css";
 import "./redesign.css";
+import "./final-pass.css";
 import OfflineBootstrap from "./OfflineBootstrap";
 import SiteEnhancer from "./SiteEnhancer";
 import UniversalInlineEditorV2 from "./components/UniversalInlineEditorV2";
@@ -26,12 +26,6 @@ const vazirmatn = Vazirmatn({
   weight: ["400", "500", "600", "700"],
 });
 
-const nastaliq = Noto_Nastaliq_Urdu({
-  subsets: ["arabic"],
-  variable: "--font-nastaliq",
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -57,13 +51,13 @@ export const metadata: Metadata = {
     siteName: "بنیاد آذرخش",
     title: "بنیاد آذرخش | آرشیف و پژوهش تاریخ افغانستان",
     description: "نهاد مستقل برای گردآوری، حفاظت و انتشار مسئولانهٔ اسناد و روایت‌های تاریخ افغانستان.",
-    images: [{ url: "/azarakhsh-logo-web.png", width: 1536, height: 1024, alt: "نشان بنیاد آذرخش" }],
+    images: [{ url: "/azarakhsh-og.png", width: 1200, height: 630, alt: "بنیاد آذرخش؛ پژوهش، سند و حافظهٔ تاریخی افغانستان" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "بنیاد آذرخش | آرشیف و پژوهش تاریخ افغانستان",
     description: "نهاد مستقل برای گردآوری، حفاظت و انتشار مسئولانهٔ اسناد و روایت‌های تاریخ افغانستان.",
-    images: ["/azarakhsh-logo-web.png"],
+    images: ["/azarakhsh-og.png"],
   },
   robots: {
     index: true,
@@ -96,7 +90,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   };
 
   return (
-    <html lang="fa" dir="rtl" className={`${naskh.variable} ${nastaliq.variable} ${vazirmatn.variable}`}>
+    <html lang="fa" dir="rtl" className={`${naskh.variable} ${vazirmatn.variable}`}>
       <body>
         <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} type="application/ld+json" />
         <OfflineBootstrap />
