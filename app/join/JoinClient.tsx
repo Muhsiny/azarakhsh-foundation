@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import "./join.css";
 
 export default function JoinClient() {
   const [message, setMessage] = useState("");
@@ -40,7 +39,7 @@ export default function JoinClient() {
           </p>
         </div>
         <form className="membership-form" onSubmit={submit}>
-          <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }} />
+          <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none", clipPath: "inset(50%)", overflow: "hidden" }} />
           <label>نام کامل<input autoComplete="name" name="fullName" required /></label>
           <label>ایمیل<input autoComplete="email" inputMode="email" name="email" required type="email" /></label>
           <label>سازمان یا حوزهٔ فعالیت<input autoComplete="organization" name="organization" /></label>
