@@ -12,3 +12,4 @@
 
 <!-- visual QA trigger: desktop/footer/nav repair 2026-09-21 -->
 <!-- visual QA run: desktop repair verified -->
+<!-- cloudflare direct deploy trigger: desktop repair 2026-09-21 -->
