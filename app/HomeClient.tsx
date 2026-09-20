@@ -130,6 +130,32 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
           </section>
         )}
 
+        {latest.length === 0 && (
+          <section className="az-section az-latest" aria-labelledby="current-title">
+            <div className="az-section-title">
+              <div>
+                <span className="az-overline">اکنون در آذرخش</span>
+                <h2 id="current-title">پرونده‌های فعال پژوهشی</h2>
+              </div>
+              <a className="az-small-link" href="/publications">گنجینهٔ پژوهش ←</a>
+            </div>
+            <div className="az-latest-grid">
+              <article className="az-latest-card">
+                <div className="az-latest-mark" aria-hidden="true">۰۱</div>
+                <div className="az-latest-body"><span className="az-meta">پروندهٔ محوری</span><h3><a href="/council">حکومت شورای اتفاق اسلامی افغانستان</a></h3><p>زمینه‌ها، ساختار، حکومت‌داری و شواهد تاریخی در یک مسیر پژوهشی منظم.</p><a className="az-card-link" href="/council">مطالعهٔ پرونده <span aria-hidden="true">←</span></a></div>
+              </article>
+              <article className="az-latest-card">
+                <div className="az-latest-mark" aria-hidden="true">۰۲</div>
+                <div className="az-latest-body"><span className="az-meta">پروندهٔ شخصیت</span><h3><a href="/beheshti">آیت‌الله سید علی بهشتی</a></h3><p>زندگی، اندیشه، رهبری، آثار و حافظهٔ عمومی با تفکیک سند، روایت و تحلیل.</p><a className="az-card-link" href="/beheshti">مطالعهٔ پرونده <span aria-hidden="true">←</span></a></div>
+              </article>
+              <article className="az-latest-card">
+                <div className="az-latest-mark" aria-hidden="true">۰۳</div>
+                <div className="az-latest-body"><span className="az-meta">روش پژوهش</span><h3><a href="/standards">اصول پژوهش، نشر و اصلاحات</a></h3><p>منبع‌سنجی، ارجاع، چندصدایی، اصلاحات و معیارهای انتشار در بنیاد.</p><a className="az-card-link" href="/standards">مطالعهٔ معیارها <span aria-hidden="true">←</span></a></div>
+              </article>
+            </div>
+          </section>
+        )}
+
         <section className="az-section" id="dossiers">
           <div className="az-section-title">
             <div>
