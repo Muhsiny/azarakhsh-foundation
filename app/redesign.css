@@ -997,8 +997,7 @@
     padding:34px 24px;
     border-radius:25px;
   }
-  .public-redesign .publications-hero h1,
-  .public-redesign .knowledge-hero h1,.az-info-hero h1{
+  .public-redesign .publications-hero h1,  .public-redesign .knowledge-hero h1,.az-info-hero h1{
     font-size:37px;
   }
   .az-catalogue-toolbar{
@@ -1873,4 +1872,135 @@
   .az-governance-list article{grid-template-columns:36px minmax(0,1fr);gap:12px;padding:24px 0 28px}
   .az-governance-list h2{font-size:24px}
   .az-governance-list p{font-size:17px}
+}
+
+/* =========================================================
+   FINAL COMPLETION PASS — 2026-09-21
+   Fix hero composition, navigation fit, editorial rhythm.
+   ========================================================= */
+.az-home-intro{
+  padding:clamp(34px,4.5vw,58px) clamp(32px,5vw,66px);
+}
+.az-home-intro-grid{
+  width:100%;
+  display:grid;
+  grid-template-columns:minmax(0,1.22fr) minmax(250px,.58fr);
+  gap:clamp(34px,5vw,72px);
+  align-items:center;
+}
+.az-sacred-opening{
+  min-height:0;
+  margin:0;
+  justify-content:center;
+  align-items:center;
+}
+.az-basmala-art{
+  width:clamp(190px,17vw,245px);
+  max-width:100%;
+}
+.az-hero-copy-main{max-width:760px}
+.az-hero-copy-main h1{
+  font-size:clamp(40px,3.65vw,52px);
+  line-height:1.48;
+  letter-spacing:-.018em;
+}
+.az-hero-copy-main>p{
+  max-width:690px;
+  font-size:17px;
+  line-height:2;
+}
+.az-hero-search{
+  width:100%;
+  max-width:960px;
+  margin-top:28px;
+}
+.az-hero-caption{
+  width:100%;
+  max-width:960px;
+}
+.az-featured-research{
+  grid-template-columns:minmax(280px,.7fr) minmax(0,1.3fr);
+  padding-top:46px;
+  padding-bottom:50px;
+}
+.az-featured-portrait-wrap{max-width:470px}
+.az-featured-portrait img{aspect-ratio:1/1.02}
+.az-featured-copy h2{font-size:clamp(29px,2.7vw,39px)}
+.az-featured-copy>p{font-size:17px}
+.az-masthead{padding:9px 0}
+.az-header-row{
+  min-height:62px;
+  gap:20px;
+}
+.az-primary-nav{gap:17px}
+.az-primary-nav>a,
+.az-nav-more>summary{
+  font-size:12.75px;
+}
+.az-primary-nav>a{padding:19px 0 18px}
+.az-nav-more>summary{padding:19px 0 18px}
+.az-primary-nav .az-language-link{
+  max-width:none;
+  font-size:11px!important;
+  letter-spacing:.05em;
+}
+.az-primary-nav .az-member-link{
+  padding:8px 13px;
+  white-space:nowrap;
+}
+.az-wordmark strong{font-size:20px}
+.az-wordmark small{font-size:10.5px}
+.public-redesign .knowledge-hero,
+.public-redesign .publications-hero,
+.az-info-hero{
+  padding:52px 58px;
+}
+.public-redesign .knowledge-hero h1,
+.public-redesign .publications-hero h1,
+.az-info-hero h1{
+  font-size:clamp(38px,3.7vw,52px);
+  line-height:1.45;
+}
+.public-redesign .knowledge-hero>p:last-child,
+.public-redesign .publications-hero>p:last-child,
+.az-info-hero>p{
+  font-size:16.5px;
+  line-height:2;
+}
+.az-flagship-hero-grid,.az-leader-hero-grid{
+  min-height:520px;
+  padding:clamp(36px,4.2vw,58px);
+}
+.az-flagship-copy h1,.az-leader-copy h1{
+  font-size:clamp(40px,4vw,56px);
+  line-height:1.42;
+}
+.az-leader-portrait img{height:390px}
+.az-section{padding:68px 0}
+.az-section-title h2{font-size:clamp(30px,2.8vw,40px)}
+.az-latest-body h3{font-size:22px}
+.az-dossier-body h3{font-size:clamp(26px,2.2vw,33px)}
+.az-collection-grid h3{font-size:20px}
+@media(max-width:1080px){
+  .az-home-intro-grid{grid-template-columns:minmax(0,1fr) 230px;gap:30px}
+  .az-basmala-art{width:205px}
+  .az-primary-nav{gap:11px}
+  .az-primary-nav>a,.az-nav-more>summary{font-size:12px}
+  .az-wordmark small{display:none}
+}
+@media(max-width:860px){
+  .az-home-intro-grid{grid-template-columns:1fr}
+  .az-sacred-opening{order:-1;justify-content:center}
+  .az-basmala-art{width:190px}
+  .az-hero-copy-main{width:100%;max-width:none}
+  .az-hero-copy-main h1{font-size:clamp(35px,7vw,46px)}
+  .az-featured-portrait-wrap{max-width:560px}
+}
+@media(max-width:620px){  .az-home-intro{padding:24px 20px 28px}
+  .az-home-intro-grid{gap:18px}
+  .az-basmala-art{width:160px}
+  .az-hero-copy-main h1{font-size:33px;line-height:1.55}
+  .az-hero-copy-main>p{font-size:16px}
+  .az-hero-search{margin-top:22px}
+  .az-featured-copy h2{font-size:28px}
 }
