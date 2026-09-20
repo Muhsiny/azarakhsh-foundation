@@ -86,7 +86,7 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
                 ))}
               </div>
             </details>
-            <a className="az-language-link" href="/en" lang="en" dir="ltr">English overview</a>
+            <a className="az-language-link" href="/en" lang="en" dir="ltr" aria-label="English overview" title="English overview">EN</a>
             <a className="az-member-link" href="/login">ورود اعضا</a>
           </nav>
         </div>
