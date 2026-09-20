@@ -8,6 +8,7 @@ export default function ExpandableSectionText({ text }: { text: string }) {
   return (
     <>
       <p
+        className="az-expanded-copy"
         style={
           expanded
             ? undefined
@@ -22,19 +23,11 @@ export default function ExpandableSectionText({ text }: { text: string }) {
         {text}
       </p>
       <button
+        className="az-expand-button"
         type="button"
         onClick={() => setExpanded((current) => !current)}
         aria-expanded={expanded}
-        style={{
-          marginTop: 8,
-          padding: 0,
-          border: 0,
-          background: "transparent",
-          color: "var(--gold-500, #c7a45b)",
-          font: "inherit",
-          fontWeight: 700,
-          cursor: "pointer",
-        }}
+
       >
         {expanded ? "کمتر" : "بیشتر"}
       </button>

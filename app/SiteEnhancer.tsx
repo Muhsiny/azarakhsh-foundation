@@ -13,9 +13,9 @@ export default function SiteEnhancer() {
         if (cancelled) return;
         const pages = (data.posts || []).filter((post) => post.contentType === "page" && post.status === "published" && post.featured);
         const targets = [
-          document.querySelector(".site-header nav"),
-          document.querySelector(".mobile-menu > div"),
-          document.querySelector("footer .footer-links"),
+          document.querySelector(".az-primary-nav"),
+          
+          
         ].filter(Boolean) as HTMLElement[];
         for (const target of targets) {
           target.querySelectorAll("[data-managed-page-link]").forEach((node) => node.remove());

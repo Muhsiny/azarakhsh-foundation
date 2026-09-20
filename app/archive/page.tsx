@@ -4,8 +4,8 @@ import { getDb } from "../../db";
 import { ensurePlatformSchema } from "../../db/platform";
 import { posts } from "../../db/schema";
 import { getAdminUser } from "../admin-auth";
-import InstitutionalPage from "../components/InstitutionalPage";
-import ArchiveBrowser from "./ArchiveBrowser";
+import PublicationsClient from "../publications/PublicationsClient";
+import { readFilters } from "../publications/search";
 
 export const metadata: Metadata = {
   title: "آرشیو اسناد و تاریخ شفاهی",
@@ -23,7 +23,10 @@ const sections = [
   { title: "دسترسی و حقوق", text: "نمایش عمومی، دسترسی پژوهشی یا محدودیت زمانی بر اساس حقوق صاحب اثر، حریم خصوصی و حساسیت تاریخی تعیین می‌شود." },
 ];
 
-export default async function ArchivePage() {
+export default async function ArchivePage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const raw = await searchParams;
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(raw)) if (typeof value === "string") params.set(key, value);
   await ensurePlatformSchema();
   const user = await getAdminUser();
   const visibility = user ? ["public", "members"] : ["public"];
@@ -39,9 +42,11 @@ export default async function ArchivePage() {
     )
     .orderBy(desc(posts.publishedAt), desc(posts.id))
     .limit(200);
+  const files = archivePosts.filter(post => ["book", "document", "oral-history", "image", "audio", "video"].includes(post.contentType) && Boolean(post.fileUrl));
   return (
-    <InstitutionalPage kicker="حافظهٔ مستند" title="آرشیو تاریخی آذرخش" lead="زیرساختی برای نگهداری، توصیف، راستی‌آزمایی و دسترسی مسئولانه به اسناد حکومت شورای اتفاق و تاریخ معاصر هزاره‌جات." sections={sections}>
-      <ArchiveBrowser posts={archivePosts} />
-    </InstitutionalPage>
+    <>
+      <PublicationsClient initialPosts={files} initialFilters={readFilters(params)} archive />
+      <details className="az-archive-guide" data-inline-static><summary>دربارهٔ آرشیف، شناسه‌گذاری و شرایط دسترسی</summary><div>{sections.map(section => <section key={section.title}><h2>{section.title}</h2><p>{section.text}</p>{section.points && <ul>{section.points.map(point => <li key={point}>{point}</li>)}</ul>}</section>)}</div><p>دریافت فایل تابع شرایط دسترسی و آزمون تاریخی موجود در صفحهٔ هر منبع است.</p></details>
+    </>
   );
 }

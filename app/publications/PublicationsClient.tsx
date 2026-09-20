@@ -1,146 +1,44 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { emptyFilters, matchesFilters, readFilters, typeLabels, type SearchFilters } from "./search";
 
-type Post = {
-  id: number;
-  slug: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  category: string;
-  contentType: string;
-  language: string;
-  visibility: string;
-  authorName: string;
-  coverImage: string | null;
-  fileUrl: string | null;
-  fileName: string | null;
-  sourceNote: string;
-  tags: string;
-  views: number;
-  downloads: number;
-  publishedAt: string | null;
-};
+type Post = { id: number; slug: string; title: string; excerpt: string; content: string; category: string; contentType: string; language: string; visibility: string; authorName: string; coverImage: string | null; fileUrl: string | null; fileName: string | null; sourceNote: string; tags: string; views: number; downloads: number; publishedAt: string | null };
+const languageLabels: Record<string, string> = { fa: "فارسی", ps: "پښتو", en: "English" };
 
-const typeLabels: Record<string, string> = {
-  article: "مقالات و پژوهش‌ها",
-  book: "کتاب‌ها",
-  document: "اسناد PDF",
-  biography: "زندگی‌نامه",
-  "oral-history": "تاریخ شفاهی",
-  image: "گالری تصویر",
-  video: "ویدیو",
-  audio: "صوت",
-  news: "اخبار بنیاد",
-};
-
-export default function PublicationsClient({ initialPosts }: { initialPosts: Post[] }) {
-  const [posts] = useState<Post[]>(initialPosts);
-  const [query, setQuery] = useState("");
-  const [language, setLanguage] = useState("all");
-  const [type, setType] = useState("all");
-  const [topic, setTopic] = useState("");
-
+export default function PublicationsClient({ initialPosts, initialFilters = emptyFilters, archive = false }: { initialPosts: Post[]; initialFilters?: SearchFilters; archive?: boolean }) {
+  const [filters, setFilters] = useState(initialFilters);
+  const [page, setPage] = useState(1);
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const incomingTopic = params.get("topic") || "";
-    const incomingQuery = params.get("q") || "";
-    const incomingType = params.get("type") || "all";
-    if (incomingTopic === "life") {
-      window.location.replace("/beheshti");
-      return;
-    }
-    setQuery(incomingQuery);
-    setType(incomingType);
-    setTopic(incomingTopic);
+    const restore = () => { setFilters(readFilters(new URLSearchParams(location.search))); setPage(1); };
+    window.addEventListener("popstate", restore);
+    return () => window.removeEventListener("popstate", restore);
   }, []);
-
-  const visiblePosts = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    return posts.filter((post) => {
-      const haystack = `${post.title} ${post.excerpt} ${post.category} ${post.tags}`.toLowerCase();
-      const matchesQuery = !normalized || haystack.includes(normalized);
-      const normalizedTopic = topic.trim().toLowerCase();
-      const topicAliases: Record<string, string[]> = {
-        council: ["شورا", "اتفاق", "council"],
-        beheshti: ["بهشتی", "beheshti"],
-        history: ["تاریخ", "معاصر", "history"],
-      };
-      const topicTerms = topicAliases[normalizedTopic] || (normalizedTopic ? [normalizedTopic] : []);
-      const matchesTopic = topicTerms.length === 0 || topicTerms.some((term) => haystack.includes(term));
-      return (
-        matchesQuery &&
-        matchesTopic &&
-        (language === "all" || post.language === language) &&
-        (type === "all" || post.contentType === type)
-      );
-    });
-  }, [posts, query, language, type, topic]);
-
+  function update(next: SearchFilters) {
+    setFilters(next); setPage(1);
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(next)) if (value && value !== "all") params.set(key, value);
+    window.history.replaceState(null, "", `${location.pathname}${params.size ? `?${params}` : ""}`);
+  }
+  const visiblePosts = useMemo(() => initialPosts.filter(post => matchesFilters(post, filters)), [initialPosts, filters]);
+  const shown = visiblePosts.slice(0, page * 12);
+  const active = filters.q || filters.topic || filters.type !== "all" || filters.language !== "all";
   return (
-    <main className="publications-shell">
-      <header className="publication-nav">
-        <a className="brand" href="/">
-          <span className="brand-mark"><img src="/azarakhsh-logo-web.png" alt="" /></span>
-          <span><strong>بنیاد آذرخش</strong><small>گنجینهٔ جهانی پژوهش</small></span>
-        </a>
-        <div className="archive-account-links">
-          <a href="/join">درخواست عضویت</a>
-          <a href="/login?returnTo=/publications">ورود اعضا</a>
-          <a href="/">صفحهٔ نخست ←</a>
-        </div>
-      </header>
+    <main className="publications-shell" data-inline-static>
       <section className="publications-hero">
-        <p className="section-kicker section-kicker-light">آرشیو دیجیتال آذرخش</p>
-        <h1>پژوهش، سند، کتاب و حافظهٔ تاریخی</h1>
-        <p>محتوای عمومی و منابع ویژهٔ اعضای تأییدشده در سه زبان.</p>
+        <p className="section-kicker">{archive ? "حافظهٔ مستند" : "گنجینهٔ پژوهش"}</p>
+        <h1>{archive ? "آرشیف تاریخی آذرخش" : "نشریات و منابع پژوهشی"}</h1>
+        <p>{archive ? "کتاب، سند، تصویر و روایت؛ فایل‌های منتشرشده را بر اساس موضوع، نوع و زبان پیدا کنید." : "مقالات، کتاب‌ها و روایت‌های منتشرشدهٔ بنیاد؛ با مسیر روشن برای مطالعه و مراجعه به منابع."}</p>
       </section>
-      <section className="publications-body">
-        <div className="archive-toolbar">
-          <label className="archive-search">
-            <span className="sr-only">جست‌وجو</span>
-            <input onChange={(event) => setQuery(event.target.value)} placeholder="جست‌وجو در عنوان، موضوع و برچسب..." type="search" value={query} />
-            <span aria-hidden="true">⌕</span>
-          </label>
-          <select aria-label="زبان" value={language} onChange={(event) => setLanguage(event.target.value)}>
-            <option value="all">همهٔ زبان‌ها</option>
-            <option value="fa">فارسی</option>
-            <option value="ps">پښتو</option>
-            <option value="en">English</option>
-          </select>
-          <select aria-label="نوع آرشیو" value={type} onChange={(event) => setType(event.target.value)}>
-            <option value="all">همهٔ آرشیو</option>
-            {Object.entries(typeLabels).map(([value, label]) => <option value={value} key={value}>{label}</option>)}
-          </select>
+      <section className="publications-body" aria-label="جست‌وجو و نتایج">
+        <div className="az-catalogue-toolbar" role="search">
+          <label>جست‌وجو در منابع<input type="search" value={filters.q} placeholder="نام، عنوان، موضوع یا برچسب…" onChange={e => update({ ...filters, q: e.target.value })} /></label>
+          <label>موضوع<select value={filters.topic} onChange={e => update({ ...filters, topic: e.target.value })}><option value="">همهٔ موضوعات</option><option value="council">شورای اتفاق</option><option value="beheshti">آیت‌الله بهشتی</option><option value="history">تاریخ معاصر</option>{filters.topic && !["council", "beheshti", "history"].includes(filters.topic) && <option value={filters.topic}>{filters.topic}</option>}</select></label>
+          <label>نوع منبع<select value={filters.type} onChange={e => update({ ...filters, type: e.target.value })}><option value="all">همهٔ منابع</option>{Object.entries(typeLabels).map(([key,label]) => <option key={key} value={key}>{label}</option>)}</select></label>
+          <label>زبان<select value={filters.language} onChange={e => update({ ...filters, language: e.target.value })}><option value="all">همهٔ زبان‌ها</option><option value="fa">فارسی</option><option value="ps">پښتو</option><option value="en">English</option></select></label>
         </div>
-        {visiblePosts.length === 0 ? (
-          <p className="publication-empty">محتوایی با این مشخصات یافت نشد.</p>
-        ) : (
-          <div className="publication-grid">
-            {visiblePosts.map((post) => (
-              <article key={post.id}>
-                {post.coverImage ? <img src={post.coverImage} alt="" /> : <div className="archive-placeholder">آ</div>}
-                <div>
-                  <span>{typeLabels[post.contentType] ?? post.category} · {post.language.toUpperCase()}</span>
-                  <h2>{post.title}</h2>
-                  <p
-                    style={{
-                      display: "-webkit-box",
-                      WebkitBoxOrient: "vertical",
-                      WebkitLineClamp: 3,
-                      overflow: "hidden",
-                    }}
-                  >
-                    {post.excerpt || post.content}
-                  </p>
-                  <small>{post.authorName || "تیم پژوهشی بنیاد"} · {post.views} بازدید</small>
-                  <a className="publication-read" href={`/publications/${post.slug}`}>بیشتر ←</a>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
+        <div className="az-results-info"><span role="status" aria-live="polite">{visiblePosts.length.toLocaleString("fa-AF")} نتیجه در مجموعهٔ قابل‌دسترسی</span>{active && <button onClick={() => update(emptyFilters)} type="button">پاک‌کردن جست‌وجو و فیلترها</button>}<a href="/join">عضویت پژوهشی ↗</a></div>
+        {!visiblePosts.length ? <div className="az-empty"><h2>{initialPosts.length ? "منبعی با این مشخصات پیدا نشد." : "هنوز منبعی در این مجموعه در دسترس نیست."}</h2><p>{initialPosts.length ? "عبارت کوتاه‌تری بنویسید یا یکی از فیلترها را بردارید." : "می‌توانید پرونده‌های پژوهشی بنیاد را مطالعه کنید یا برای تکمیل آرشیف، سند و روایت خود را بفرستید."}</p><div className="az-actions">{active && <button className="az-action" type="button" onClick={() => update(emptyFilters)}>نمایش همهٔ منابع</button>}<a className="az-small-link" href="/beheshti">پروندهٔ آیت‌الله بهشتی ←</a><a className="az-small-link" href="/council">پروندهٔ شورای اتفاق ←</a><a className="az-small-link" href="/contribute">ارسال منبع ←</a></div></div> : <><div className="publication-grid">{shown.map(post => <article key={post.id}>{post.coverImage ? <img src={post.coverImage} alt={`تصویر ${post.title}`} loading="lazy" width="600" height="400" /> : <div className="archive-placeholder" aria-hidden="true">آ</div>}<div><span className="az-post-type">{typeLabels[post.contentType] || post.category} · {languageLabels[post.language] || post.language}</span><h2>{post.title}</h2><p style={{display:"-webkit-box",WebkitBoxOrient:"vertical",WebkitLineClamp:3,overflow:"hidden"}}>{post.excerpt || (post.contentType === "page" ? "برای مطالعهٔ متن کامل، پرونده را باز کنید." : post.content)}</p><small>{post.authorName || "تحریریهٔ بنیاد"}{post.visibility === "members" ? " · ویژهٔ اعضا" : ""}</small><a className="publication-read" href={post.tags.split(",").map(t=>t.trim()).includes("leader-page") ? "/beheshti" : post.contentType === "page" ? `/pages/${post.slug}` : `/publications/${post.slug}`}>مطالعه و مشخصات منبع ←</a></div></article>)}</div>{shown.length < visiblePosts.length && <div className="az-actions"><button className="az-action" type="button" onClick={() => setPage(page+1)}>نمایش منابع بیشتر</button></div>}</>}
       </section>
     </main>
   );
