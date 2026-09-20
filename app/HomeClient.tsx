@@ -1,6 +1,7 @@
 "use client";
 
 import type { SiteSettings } from "./site-settings";
+import { BISMILLAH_ART } from "./bismillah-data";
 
 export type LatestItem = {
   id: number;
@@ -31,7 +32,7 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
         <div className="az-container az-hero-grid">
           <div className="az-hero-text">
             <span className="az-overline">{settings.hero.eyebrow}</span>
-            <div className="az-basmala">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+            <img className="az-basmala-art" src={BISMILLAH_ART} alt="بسم الله الرحمن الرحیم" width="1000" height="1000" />
             <h1>{settings.hero.title}</h1>
             <p>{settings.hero.description}</p>
             <div className="az-actions">

@@ -1492,3 +1492,233 @@
 .az-wordmark small{display:none!important}
 .az-primary-nav{gap:26px}
 @media(max-width:1080px){.az-primary-nav{gap:18px}}
+/* =========================================================
+   TYPOGRAPHIC HIERARCHY 2026.09.21
+   Meaning first: sacred mark > page title > section > card > body > meta.
+   ========================================================= */
+.public-redesign{
+  --az-type-ui:var(--font-vazir),Tahoma,Arial,sans-serif;
+  --az-type-reading:var(--font-naskh),Georgia,serif;
+  --az-size-meta:12px;
+  --az-size-ui:14px;
+  --az-size-body:16px;
+  --az-size-reading:18.25px;
+  --az-size-card:22px;
+  --az-size-section:clamp(30px,2.65vw,38px);
+  --az-size-page:clamp(42px,4vw,56px);
+  font-family:var(--az-type-ui);
+  font-size:var(--az-size-body);
+  line-height:1.88;
+}
+.public-redesign :where(h1,h2,h3,h4){
+  font-family:var(--az-type-ui);
+  letter-spacing:-.018em;
+}
+.public-redesign :where(p,li,address){font-weight:400}
+.az-overline,.public-redesign .section-kicker,.az-meta,.az-section-note,.az-post-type{
+  font-family:var(--az-type-ui);
+  font-size:var(--az-size-meta);
+  font-weight:650;
+  line-height:1.6;
+}
+.az-primary-nav a{
+  font-family:var(--az-type-ui);
+  font-size:13.5px;
+  font-weight:520;
+}
+.az-wordmark strong{
+  font-family:var(--az-type-ui);
+  font-size:20px;
+  font-weight:650;
+}
+.az-action,.az-small-link,.az-text-link,.az-card-link{
+  font-family:var(--az-type-ui);
+  font-size:13.5px;
+  font-weight:600;
+}
+/* Sacred opening artwork — original user-provided image, visually integrated. */
+.az-basmala-art{
+  display:block;
+  width:clamp(220px,19vw,285px);
+  height:auto;
+  aspect-ratio:1;
+  object-fit:contain;
+  margin:10px 0 16px auto;
+  border:0;
+  box-shadow:none;
+  mix-blend-mode:multiply;
+}
+.az-home-hero .az-overline{
+  margin-bottom:2px;
+  font-size:11.5px;
+  font-weight:650;
+  color:#92743b;
+}
+.az-hero-text h1{
+  margin:4px 0 19px;
+  max-width:660px;
+  font-family:var(--az-type-reading);
+  font-size:clamp(44px,4.05vw,56px);
+  font-weight:550;
+  line-height:1.48;
+  letter-spacing:0;
+}
+.az-hero-text>p{
+  max-width:600px;
+  font-family:var(--az-type-ui);
+  font-size:16.5px;
+  line-height:1.95;
+}
+/* The portrait label becomes a quiet identification chip, not a banner. */
+.az-portrait-label{
+  inset:auto auto 14px 14px;
+  width:min(292px,calc(100% - 28px));
+  grid-template-columns:minmax(0,1fr) 36px;
+  gap:1px 10px;
+  padding:10px 12px;
+  border-radius:16px;
+  background:rgba(11,48,38,.72);
+}
+.az-portrait-label>span:first-child{
+  font-family:var(--az-type-ui);
+  font-size:9.5px;
+  line-height:1.4;
+}
+.az-portrait-label strong{
+  font-family:var(--az-type-reading);
+  font-size:18.5px;
+  font-weight:600;
+  line-height:1.45;
+  white-space:nowrap;
+}
+.az-portrait-arrow{
+  width:34px;
+  height:34px;
+  font-size:13px!important;
+}
+/* Page and section scale across the whole public site. */
+.az-flagship-copy h1,.az-leader-copy h1,
+.public-redesign .knowledge-hero h1,
+.public-redesign .publications-hero h1,
+.az-info-hero h1,
+.public-redesign .article-page h1,
+.public-redesign .membership-intro h1{
+  font-family:var(--az-type-ui);
+  font-size:var(--az-size-page);
+  font-weight:670;
+  line-height:1.48;
+  letter-spacing:-.025em;
+}
+.az-section-title h2,.az-home-search h2,.az-method h2,
+.az-contribute-band h2,.az-flagship-intro h2,.az-evidence-heading h2,
+.az-leader-index h2,.az-leader-sources h2,
+.public-redesign .knowledge-article h2,.az-info-grid h2{
+  font-family:var(--az-type-ui);
+  font-size:var(--az-size-section);
+  font-weight:650;
+  line-height:1.55;
+  letter-spacing:-.018em;
+}
+.az-latest-body h3,.az-dossier-body h3,.az-collection-grid h3,
+.az-research-path-grid h3,.az-evidence-list h3,
+.public-redesign .publication-grid h2,
+.public-redesign .publication-grid h3,
+.az-method h3{
+  font-family:var(--az-type-ui);
+  font-size:var(--az-size-card);
+  font-weight:620;
+  line-height:1.6;
+  letter-spacing:-.012em;
+}
+.az-flagship-copy>p,.az-leader-copy>p,
+.public-redesign .knowledge-hero>p:last-child,
+.public-redesign .publications-hero>p:last-child,
+.az-info-hero>p{
+  font-family:var(--az-type-reading);
+  font-size:18px;
+  font-weight:400;
+  line-height:2.05;
+}
+/* Reading surfaces keep a bookish Naskh rhythm; interfaces stay Vazirmatn. */
+.public-redesign .knowledge-article p,
+.public-redesign .knowledge-article li,
+.az-leader-article p,.az-leader-article li,
+.public-redesign .article-body p,
+.public-redesign .article-body li,
+.az-flagship-intro>p{
+  font-family:var(--az-type-reading);
+  font-size:var(--reading-size,var(--az-size-reading));
+  font-weight:400;
+  line-height:2.12;
+  letter-spacing:0;
+}
+.az-latest-body p,.az-dossier-body p,.az-collection-grid p,
+.az-research-path-grid p,.az-evidence-list p,
+.public-redesign .publication-grid p,.az-info-grid p,.az-info-grid li,
+.az-home-search>div>p,.az-method p,.az-contribute-band p{
+  font-family:var(--az-type-ui);
+  font-size:15px;
+  line-height:1.9;
+}
+.az-hero-caption,.az-research-note,.az-results-info,
+.az-site-footer,.az-site-footer p,.az-site-footer a{
+  font-family:var(--az-type-ui);
+}
+.az-hero-caption{font-size:11.5px;line-height:1.8}
+.az-search-controls label,.az-catalogue-toolbar label{font-size:10.5px}
+.az-search-controls input,.az-search-controls select,
+.az-catalogue-toolbar input,.az-catalogue-toolbar select{font-size:14px}
+.public-redesign .knowledge-layout>aside a{font-family:var(--az-type-ui);font-size:12.5px}
+.az-leader-index-grid strong{
+  font-family:var(--az-type-ui);
+  font-size:16px;
+  font-weight:620;
+}
+.az-footer-name{
+  font-family:var(--az-type-ui);
+  font-size:24px;
+  font-weight:650;
+}
+@media(max-width:860px){
+  .az-basmala-art{
+    width:clamp(180px,31vw,230px);
+    margin:6px 0 12px auto;
+  }
+  .az-hero-text h1{font-size:clamp(40px,6vw,50px)}
+  .az-portrait-label{width:min(270px,calc(100% - 24px));inset:auto auto 12px 12px}
+}
+@media(max-width:620px){
+  .public-redesign{
+    --az-size-body:15.5px;
+    --az-size-reading:17.5px;
+    --az-size-card:20px;
+    --az-size-section:29px;
+    --az-size-page:36px;
+  }
+  .az-basmala-art{width:178px;margin:4px auto 10px}
+  .az-home-hero .az-overline{text-align:center;font-size:10.5px}
+  .az-hero-text h1{
+    font-size:36px;
+    line-height:1.52;
+    text-align:right;
+  }
+  .az-hero-text>p{font-size:15.5px}
+  .az-portrait-label{
+    width:235px;
+    padding:9px 10px;
+  }
+  .az-portrait-label strong{font-size:17px}
+  .az-portrait-label>span:first-child{font-size:9px}
+  .az-flagship-copy h1,.az-leader-copy h1,
+  .public-redesign .knowledge-hero h1,
+  .public-redesign .publications-hero h1,
+  .az-info-hero h1,
+  .public-redesign .article-page h1,
+  .public-redesign .membership-intro h1{
+    font-size:36px;
+    line-height:1.52;
+  }
+  .az-latest-body p,.az-dossier-body p,.az-collection-grid p,
+  .az-research-path-grid p,.az-evidence-list p,
+  .public-redesign .publication-grid p,.az-info-grid p,.az-info-grid li{font-size:14.5px}
+}
