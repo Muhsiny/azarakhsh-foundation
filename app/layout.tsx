@@ -4,10 +4,9 @@ import "./globals.css";
 
 import "./redesign.css";
 import OfflineBootstrap from "./OfflineBootstrap";
-import SiteEnhancer from "./SiteEnhancer";
-import UniversalInlineEditorV2 from "./components/UniversalInlineEditorV2";
-import LegacyInlineEditCompatibility from "./components/LegacyInlineEditCompatibility";
 import PublicChrome from "./components/PublicChrome";
+import PublicInlineOverrides from "./components/PublicInlineOverrides";
+import AdminEditorGate from "./components/AdminEditorGate";
 import { loadSiteSettings } from "./load-site-settings";
 import { SITE_URL } from "./site-url";
 
@@ -15,14 +14,14 @@ const naskh = Noto_Naskh_Arabic({
   subsets: ["arabic"],
   variable: "--font-naskh",
   display: "swap",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600"],
 });
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
   variable: "--font-vazir",
   display: "swap",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600", "700"],
 });
 
 
@@ -93,10 +92,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <body>
         <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} type="application/ld+json" />
         <OfflineBootstrap />
-        <SiteEnhancer />
-        <UniversalInlineEditorV2 />
-        <LegacyInlineEditCompatibility />
         <PublicChrome settings={settings}>{children}</PublicChrome>
+        <PublicInlineOverrides />
+        <AdminEditorGate />
       </body>
     </html>
   );
