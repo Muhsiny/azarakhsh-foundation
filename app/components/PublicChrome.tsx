@@ -22,6 +22,8 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
     "--az-forest": settings.colors.primary,
     "--az-deep": settings.colors.dark,
     "--az-gold": settings.colors.gold,
+    "--az-paper": settings.colors.paper,
+    "--az-content-width": `${settings.design.contentWidth}px`,
   } as CSSProperties;
 
   return (
