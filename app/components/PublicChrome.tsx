@@ -4,12 +4,19 @@ import { usePathname } from "next/navigation";
 import { useState, type CSSProperties, type ReactNode } from "react";
 import type { SiteSettings } from "../site-settings";
 
-const links = [
+const coreLinks = [
   ["/archive", "آرشیف"],
   ["/publications", "نشریات"],
   ["/council", "شورای اتفاق"],
   ["/beheshti", "آیت‌الله بهشتی"],
+];
+
+const institutionLinks = [
   ["/about", "دربارهٔ بنیاد"],
+  ["/standards", "اصول پژوهش و نشر"],
+  ["/governance", "ساختار و پاسخ‌گویی"],
+  ["/contact", "تماس با بنیاد"],
+  ["/contribute", "ارسال سند و خاطره"],
 ];
 
 export default function PublicChrome({ children, settings }: { children: ReactNode; settings: SiteSettings }) {
@@ -54,17 +61,32 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
             aria-label="فهرست اصلی"
             onKeyDown={(event) => { if (event.key === "Escape") setMenu(false); }}
           >
-            {links.map(([href, label]) => (
+            {coreLinks.map(([href, label]) => (
               <a
                 key={href}
                 href={href}
-                aria-current={(href === "/" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`)) ? "page" : undefined}
+                aria-current={pathname === href || pathname.startsWith(`${href}/`) ? "page" : undefined}
                 onClick={() => setMenu(false)}
               >
                 {label}
               </a>
             ))}
-            <a className="az-language-link" href="/en" lang="en" dir="ltr">EN</a>
+            <details className="az-nav-more">
+              <summary>بنیاد</summary>
+              <div className="az-nav-popover">
+                {institutionLinks.map(([href, label]) => (
+                  <a
+                    key={href}
+                    href={href}
+                    aria-current={pathname === href || pathname.startsWith(`${href}/`) ? "page" : undefined}
+                    onClick={() => setMenu(false)}
+                  >
+                    {label}
+                  </a>
+                ))}
+              </div>
+            </details>
+            <a className="az-language-link" href="/en" lang="en" dir="ltr" aria-label="English overview" title="English overview">EN</a>
             <a className="az-member-link" href="/login">ورود اعضا</a>
           </nav>
         </div>

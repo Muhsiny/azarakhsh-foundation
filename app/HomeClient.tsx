@@ -1,7 +1,6 @@
 "use client";
 
 import type { SiteSettings } from "./site-settings";
-import { BISMILLAH_ART } from "./bismillah-data";
 
 export type LatestItem = {
   id: number;
@@ -29,26 +28,61 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
   return (
     <main className="az-home">
       <section className="az-home-hero" id="top">
-        <div className="az-container az-hero-grid">
-          <div className="az-hero-text">
-            <span className="az-overline">{settings.hero.eyebrow}</span>
-            <img className="az-basmala-art" src={BISMILLAH_ART} alt="بسم الله الرحمن الرحیم" width="1000" height="1000" />
-            <h1>{settings.hero.title}</h1>
-            <p>{settings.hero.description}</p>
-            <div className="az-actions">
-              <a className="az-action az-action-gold" href="/council">مطالعهٔ پروندهٔ شورای اتفاق <span aria-hidden="true">←</span></a>
-              <a className="az-text-link" href="/about">شناخت بنیاد <span aria-hidden="true">↗</span></a>
+        <div className="az-container az-home-intro">
+          <div className="az-home-intro-grid">
+            <div className="az-hero-copy-main">
+              <span className="az-overline">{settings.hero.eyebrow}</span>
+              <h1>{settings.hero.title}</h1>
+              <p>{settings.hero.description}</p>
+              <div className="az-hero-links">
+                <a className="az-action az-action-gold" href="/archive">کاوش آرشیف <span aria-hidden="true">←</span></a>
+                <a className="az-text-link" href="/about">شناخت بنیاد <span aria-hidden="true">↗</span></a>
+              </div>
             </div>
-            <div className="az-hero-caption">{settings.hero.principle}</div>
+
+            <div className="az-sacred-opening" aria-label="بسم الله الرحمن الرحیم">
+              <img
+                className="az-basmala-art"
+                src="/media/bismillah"
+                alt="بسم الله الرحمن الرحیم"
+                width="1000"
+                height="1000"
+                fetchPriority="high"
+              />
+            </div>
           </div>
 
-          <a className="az-portrait" href="/beheshti" aria-label="مطالعهٔ پروندهٔ آیت‌الله سید علی بهشتی">
+          <form action="/publications" method="get" className="az-hero-search" aria-label="جست‌وجو در منابع آذرخش">
+            <label htmlFor="hero-query">
+              <span>جست‌وجو در آرشیف</span>
+              <input id="hero-query" name="q" type="search" placeholder="نام، موضوع، سند یا کلیدواژه…" />
+            </label>
+            <label htmlFor="hero-type">
+              <span>نوع منبع</span>
+              <select id="hero-type" name="type" defaultValue="all">
+                <option value="all">همهٔ منابع</option>
+                <option value="document">اسناد</option>
+                <option value="article">مقالات</option>
+                <option value="book">کتاب‌ها</option>
+                <option value="oral-history">تاریخ شفاهی</option>
+              </select>
+            </label>
+            <button type="submit" className="az-action az-action-gold">جست‌وجو <span aria-hidden="true">←</span></button>
+          </form>
+
+          <p className="az-hero-caption">{settings.hero.principle}</p>
+        </div>
+      </section>
+
+      <section className="az-container az-featured-research" aria-labelledby="featured-research-title">
+        <div className="az-featured-portrait-wrap">
+          <a className="az-featured-portrait" href="/beheshti" aria-label="مطالعهٔ پروندهٔ آیت‌الله سید علی بهشتی">
             <img
               src={settings.media.leaderImageUrl}
               alt={settings.media.leaderImageAlt}
               width="1182"
               height="1200"
-              fetchPriority="high"
+              loading="eager"
               onError={(e) => {
                 if (!e.currentTarget.dataset.fallback) {
                   e.currentTarget.dataset.fallback = "1";
@@ -56,12 +90,21 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
                 }
               }}
             />
-            <div className="az-portrait-label">
-              <span>پروندهٔ شخصیت</span>
-              <strong>آیت‌الله سید علی بهشتی</strong>
-              <span className="az-portrait-arrow" aria-hidden="true">↗</span>
-            </div>
           </a>
+          <a className="az-featured-caption" href="/beheshti">
+            <span>پروندهٔ شخصیت</span>
+            <strong>آیت‌الله سید علی بهشتی</strong>
+            <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+        <div className="az-featured-copy">
+          <span className="az-overline">پژوهش برجسته</span>
+          <h2 id="featured-research-title">{settings.leader.title}</h2>
+          <p>{settings.leader.lead}</p>
+          <div className="az-actions">
+            <a className="az-action az-action-gold" href="/beheshti">مطالعهٔ پروندهٔ شخصیت ←</a>
+            <a className="az-text-link" href="/council">پروندهٔ حکومت شورای اتفاق ↗</a>
+          </div>
         </div>
       </section>
 
@@ -74,31 +117,7 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
           <a href="/standards">تفکیک سند، روایت و تحلیل</a>
         </div>
 
-        <section className="az-home-search" id="archive-search">
-          <div>
-            <span className="az-overline">در جست‌وجوی گذشته</span>
-            <h2>پرسش شما، آغاز یک پژوهش.</h2>
-            <p>در میان مقاله‌ها، اسناد، کتاب‌ها و روایت‌های منتشرشده جست‌وجو کنید.</p>
-          </div>
-          <form action="/publications" method="get" className="az-search-controls">
-            <div>
-              <label htmlFor="home-query">نام، موضوع یا کلیدواژه</label>
-              <input id="home-query" name="q" type="search" placeholder="بهشتی، شورای اتفاق، یک سند…" />
-            </div>
-            <div>
-              <label htmlFor="home-type">نوع منبع</label>
-              <select id="home-type" name="type" defaultValue="all">
-                <option value="all">همهٔ منابع</option>
-                <option value="document">اسناد</option>
-                <option value="article">مقالات</option>
-                <option value="book">کتاب‌ها</option>
-                <option value="oral-history">تاریخ شفاهی</option>
-              </select>
-            </div>
-            <button type="submit" className="az-action">جست‌وجو <span aria-hidden="true">←</span></button>
-          </form>
-          <a className="az-small-link" href="/archive">مرور آرشیف و منابع منتشرشده ←</a>
-        </section>
+
 
         {latest.length > 0 && (
           <section className="az-section az-latest" aria-labelledby="latest-title">

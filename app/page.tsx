@@ -9,7 +9,7 @@ import { posts } from "../db/schema";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "/" },
+  alternates: { canonical: "/", languages: { "fa-AF": "/", en: "/en" } },
   openGraph: { url: "/" },
 };
 

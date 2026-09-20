@@ -43,11 +43,14 @@ export default function GovernancePage() {
           <p>اعتبار یک بنیاد پژوهشی فقط به محتوای آن وابسته نیست؛ نقش‌ها، روش تصمیم‌گیری و مسیر اصلاح نیز باید برای خواننده روشن باشد.</p>
         </section>
 
-        <section className="az-info-grid" aria-label="ساختار و پاسخ‌گویی">
-          {sections.map((section) => (
+        <section className="az-governance-list" aria-label="ساختار و پاسخ‌گویی">
+          {sections.map((section, index) => (
             <article key={section.title}>
-              <h2>{section.title}</h2>
-              <p>{section.text}</p>
+              <span className="az-governance-index">{(index + 1).toLocaleString("fa-AF", { minimumIntegerDigits: 2 })}</span>
+              <div>
+                <h2>{section.title}</h2>
+                <p>{section.text}</p>
+              </div>
             </article>
           ))}
         </section>

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "English Overview",
   description: "An English institutional overview of the Azarakhsh Foundation, its archive, research standards and areas of work.",
-  alternates: { canonical: "/en" },
+  alternates: { canonical: "/en", languages: { "fa-AF": "/", en: "/en" } },
   openGraph: {
     url: "/en",
     title: "Azarakhsh Foundation — English Overview",
