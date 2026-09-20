@@ -135,6 +135,35 @@ async function directMediaUpload(request: Request, env: Env) {
   }
 }
 
+function cacheablePublicPage(request: Request, url: URL) {
+  if (request.method !== "GET") return false;
+  if (url.search) return false;
+  if (
+    url.pathname.startsWith("/admin") ||
+    url.pathname.startsWith("/api/") ||
+    url.pathname.startsWith("/_vinext/") ||
+    url.pathname === "/login"
+  ) return false;
+  if (request.headers.get("Cookie")) return false;
+  if (
+    request.headers.has("RSC") ||
+    request.headers.has("Next-Router-State-Tree") ||
+    request.headers.has("Next-Router-Prefetch") ||
+    request.headers.has("Next-Url")
+  ) return false;
+  const accept = request.headers.get("Accept") || "";
+  return accept.includes("text/html");
+}
+
+function publicCacheKey(request: Request) {
+  const url = new URL(request.url);
+  url.hash = "";
+  return new Request(url.toString(), {
+    method: "GET",
+    headers: { Accept: "text/html" },
+  });
+}
+
 function secureResponse(response: Response, pathname: string): Response {
   const secured = new Response(response.body, response);
   secured.headers.set("X-Content-Type-Options", "nosniff");
@@ -224,6 +253,26 @@ const worker = {
         },
       }, allowedWidths);
       return secureResponse(imageResponse, url.pathname);
+    }
+
+    if (cacheablePublicPage(request, url)) {
+      const cache = (caches as unknown as { default: Cache }).default;
+      const key = publicCacheKey(request);
+      const cached = await cache.match(key);
+      if (cached) {
+        const hit = secureResponse(cached, url.pathname);
+        hit.headers.set("X-Azarakhsh-Cache", "HIT");
+        return hit;
+      }
+
+      const response = secureResponse(await handler.fetch(request, env, ctx), url.pathname);
+      const contentType = response.headers.get("Content-Type") || "";
+      if (response.status === 200 && contentType.includes("text/html") && !response.headers.has("Set-Cookie")) {
+        response.headers.set("Cache-Control", "public, max-age=0, s-maxage=300, stale-while-revalidate=86400");
+        response.headers.set("X-Azarakhsh-Cache", "MISS");
+        ctx.waitUntil(cache.put(key, response.clone()));
+      }
+      return response;
     }
 
     const response = await handler.fetch(request, env, ctx);
