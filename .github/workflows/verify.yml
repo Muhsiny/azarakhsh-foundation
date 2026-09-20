@@ -29,14 +29,3 @@ jobs:
         run: npm ci
       - name: Lint, typecheck, and build
         run: npm run verify
-      - name: Create transfer ZIP
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          zip -r azarakhsh-foundation-transfer.zip . -x ".git/*" "node_modules/*" ".github/*"
-      - name: Upload transfer ZIP
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v4
-        with:
-          name: azarakhsh-foundation-transfer
-          path: azarakhsh-foundation-transfer.zip
-          retention-days: 7
