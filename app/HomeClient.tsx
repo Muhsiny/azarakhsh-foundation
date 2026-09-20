@@ -29,21 +29,27 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
     <main className="az-home">
       <section className="az-home-hero" id="top">
         <div className="az-container az-home-intro">
-          <div className="az-sacred-opening">
-            <img
-              className="az-basmala-art"
-              src="/media/bismillah"
-              alt="بسم الله الرحمن الرحیم"
-              width="1000"
-              height="1000"
-              fetchPriority="high"
-            />
-          </div>
+          <div className="az-home-intro-grid">
+            <div className="az-hero-copy-main">
+              <span className="az-overline">{settings.hero.eyebrow}</span>
+              <h1>{settings.hero.title}</h1>
+              <p>{settings.hero.description}</p>
+              <div className="az-hero-links">
+                <a className="az-action az-action-gold" href="/archive">کاوش آرشیف <span aria-hidden="true">←</span></a>
+                <a className="az-text-link" href="/about">شناخت بنیاد <span aria-hidden="true">↗</span></a>
+              </div>
+            </div>
 
-          <div className="az-hero-copy-main">
-            <span className="az-overline">{settings.hero.eyebrow}</span>
-            <h1>{settings.hero.title}</h1>
-            <p>{settings.hero.description}</p>
+            <div className="az-sacred-opening" aria-label="بسم الله الرحمن الرحیم">
+              <img
+                className="az-basmala-art"
+                src="/media/bismillah"
+                alt="بسم الله الرحمن الرحیم"
+                width="1000"
+                height="1000"
+                fetchPriority="high"
+              />
+            </div>
           </div>
 
           <form action="/publications" method="get" className="az-hero-search" aria-label="جست‌وجو در منابع آذرخش">
@@ -64,10 +70,6 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
             <button type="submit" className="az-action az-action-gold">جست‌وجو <span aria-hidden="true">←</span></button>
           </form>
 
-          <div className="az-hero-links">
-            <a className="az-action" href="/archive">کاوش آرشیف <span aria-hidden="true">←</span></a>
-            <a className="az-text-link" href="/about">شناخت بنیاد <span aria-hidden="true">↗</span></a>
-          </div>
           <p className="az-hero-caption">{settings.hero.principle}</p>
         </div>
       </section>
