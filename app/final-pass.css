@@ -1,0 +1,19 @@
+/* Final 2026 polish layer: keeps the public design system consistent across shared chrome. */
+.public-redesign .az-footer-grid{
+  grid-template-columns:1.45fr 1fr 1.15fr;
+  gap:42px;
+}
+.public-redesign .az-footer-brand .az-email{
+  margin-top:18px;
+  color:#eef3ef;
+}
+.public-redesign .az-footer-contact{grid-column:auto}
+@media(max-width:900px){
+  .public-redesign .az-footer-grid{grid-template-columns:1fr 1fr}
+  .public-redesign .az-footer-brand{grid-column:1/-1}
+  .public-redesign .az-footer-contact{grid-column:auto}
+}
+@media(max-width:620px){
+  .public-redesign .az-footer-grid{grid-template-columns:1fr;gap:28px}
+  .public-redesign .az-footer-brand,.public-redesign .az-footer-contact{grid-column:auto}
+}
