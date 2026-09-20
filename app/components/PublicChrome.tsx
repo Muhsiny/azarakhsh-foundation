@@ -5,7 +5,6 @@ import { useState, type CSSProperties, type ReactNode } from "react";
 import type { SiteSettings } from "../site-settings";
 
 const links = [
-  ["/", "صفحهٔ نخست"],
   ["/archive", "آرشیف"],
   ["/publications", "نشریات"],
   ["/council", "شورای اتفاق"],
@@ -65,7 +64,6 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
                 {label}
               </a>
             ))}
-            <a href="/contact" onClick={() => setMenu(false)}>تماس</a>
             <a className="az-language-link" href="/en" lang="en" dir="ltr">EN</a>
             <a className="az-member-link" href="/login">ورود اعضا</a>
           </nav>
