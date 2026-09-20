@@ -51,13 +51,13 @@ export const metadata: Metadata = {
     siteName: "بنیاد آذرخش",
     title: "بنیاد آذرخش | آرشیف و پژوهش تاریخ افغانستان",
     description: "نهاد مستقل برای گردآوری، حفاظت و انتشار مسئولانهٔ اسناد و روایت‌های تاریخ افغانستان.",
-    images: [{ url: "/azarakhsh-og.png", width: 1200, height: 630, alt: "بنیاد آذرخش؛ پژوهش، سند و حافظهٔ تاریخی افغانستان" }],
+    images: [{ url: "/og-card", width: 1200, height: 630, alt: "بنیاد آذرخش؛ پژوهش، سند و حافظهٔ تاریخی افغانستان" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "بنیاد آذرخش | آرشیف و پژوهش تاریخ افغانستان",
     description: "نهاد مستقل برای گردآوری، حفاظت و انتشار مسئولانهٔ اسناد و روایت‌های تاریخ افغانستان.",
-    images: ["/azarakhsh-og.png"],
+    images: ["/og-card"],
   },
   robots: {
     index: true,
