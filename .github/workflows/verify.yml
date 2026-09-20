@@ -29,3 +29,45 @@ jobs:
         run: npm ci
       - name: Lint, typecheck, and build
         run: npm run verify
+
+      - name: Prepare secret-free transfer bundle
+        run: |
+          cat > TRANSFER-README.md <<'EOF'
+# بنیاد آذرخش — Project Transfer Bundle
+Exact source export from GitHub repository Muhsiny/azarakhsh-foundation, branch main.
+
+## Hosting
+Provider: Cloudflare Workers
+Worker/service name: azarakhsh-foundation
+Worker entry: worker/index.ts
+Bindings are defined in wrangler.jsonc.
+
+## Local setup
+Node.js 22.13+ is required.
+Run: npm ci
+Development: npm run dev
+Verification: npm run verify
+Build: npm run build
+
+## Deployment
+Use Wrangler with the destination Cloudflare account:
+npm run deploy
+or npx wrangler deploy
+Configure Cloudflare credentials separately. Never commit tokens.
+
+## Secrets excluded
+.env files, private keys, certificate/key files, Cloudflare credentials and API tokens are excluded.
+
+## Handoff
+Use repository contents as source of truth. Do not reconstruct missing code from screenshots or memory.
+EOF
+          rm -rf .git node_modules .next dist .wrangler
+          find . -type f \( -name '.env' -o -name '.env.*' -o -name '*.pem' -o -name '*.key' -o -name '*.p12' -o -name '*.pfx' \) -delete
+          zip -q -r azarakhsh-foundation-project.zip . -x '*/.DS_Store'
+
+      - name: Upload secret-free transfer bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: azarakhsh-foundation-project
+          path: azarakhsh-foundation-project.zip
+          retention-days: 14
