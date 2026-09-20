@@ -2,8 +2,9 @@ name: Export project bundle
 
 on:
   push:
-    branches: [main]
-  workflow_dispatch:
+    branches:
+      - main
+  workflow_dispatch: {}
 
 permissions:
   contents: read
@@ -12,79 +13,63 @@ jobs:
   export:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout exact repository state
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Write transfer guide
-        shell: bash
         run: |
           cat > TRANSFER-README.md <<'EOF'
 # بنیاد آذرخش — Project Transfer Bundle
 
-This archive is an export of the exact Git repository state used to build the Azarakhsh Foundation website.
+Exact source export from GitHub repository Muhsiny/azarakhsh-foundation, branch main.
 
 ## Source
-- GitHub repository: https://github.com/Muhsiny/azarakhsh-foundation
-- Branch: main
-- Export commit: `$(git rev-parse HEAD)`
-
-## Stack
-- React / Next-compatible application with Vite/Vinext
-- TypeScript
-- Drizzle ORM
-- Cloudflare Workers deployment
-- Cloudflare D1 database
-- Cloudflare KV namespace for media
+Repository: https://github.com/Muhsiny/azarakhsh-foundation
+Export commit is the commit recorded by this workflow.
 
 ## Hosting
-- Provider: Cloudflare Workers
-- Worker/service name from `wrangler.jsonc`: `azarakhsh-foundation`
-- Main worker entry: `worker/index.ts`
+Provider: Cloudflare Workers
+Worker/service name: azarakhsh-foundation
+Worker entry: worker/index.ts
+Bindings are defined in wrangler.jsonc.
 
 ## Local setup
-1. Install Node.js 22.13+.
-2. Run `npm ci`.
-3. Run `npm run dev`.
-4. Verification: `npm run verify`.
-5. Production build: `npm run build`.
+Node.js 22.13+ is required.
+Run: npm ci
+Development: npm run dev
+Verification: npm run verify
+Build: npm run build
 
 ## Deployment
-1. Authenticate Wrangler in the new environment using the operator's own Cloudflare account/credentials.
-2. Do NOT put Cloudflare tokens in this archive.
-3. Run `npx wrangler deploy` (or `npm run deploy`) after the correct Cloudflare account and bindings are configured.
-4. Review `wrangler.jsonc` for the Worker name and D1/KV bindings.
-5. If deploying through GitHub Actions, configure the required repository secrets in GitHub Actions rather than committing them.
+Use Wrangler with the destination Cloudflare account:
+npm run deploy
+or
+npx wrangler deploy
 
-## Secrets
-No `.env` files, API tokens, private keys, Cloudflare credentials, or other secret values are included in this archive. Any secret values must be supplied separately in the new environment.
+Do not commit Cloudflare tokens. Configure credentials/secrets separately in the new environment or GitHub Actions.
 
-## Important assets
-The `public/` directory contains the site's current logos, historical/reference imagery, media assets, icons, and other public files used by the application.
+## Secrets excluded
+.env files, private keys, certificate/key files, Cloudflare credentials and API tokens are excluded from this archive.
 
-## Database
-The repository contains Drizzle schema/migrations. The Cloudflare D1 database binding is configured in `wrangler.jsonc`. Database credentials/secrets are not included.
-
-## Handoff note
-Treat the repository contents in this archive as source-of-truth code. Do not reconstruct missing files from screenshots or memory.
+## Handoff
+Use the repository contents as the source of truth. Do not reconstruct missing code from screenshots or memory.
 EOF
 
-      - name: Remove secrets and local/generated files
-        shell: bash
+      - name: Remove secrets and generated directories
         run: |
           rm -rf .git node_modules .next dist .wrangler
           find . -type f \( -name '.env' -o -name '.env.*' -o -name '*.pem' -o -name '*.key' -o -name '*.p12' -o -name '*.pfx' \) -delete
 
-      - name: Create ZIP
-        shell: bash
+      - name: Create archive
         run: |
-          zip -qr ../azarakhsh-foundation-project-${GITHUB_SHA}.zip . -x '*/.DS_Store'
-          mv ../azarakhsh-foundation-project-${GITHUB_SHA}.zip ./azarakhsh-foundation-project.zip
+          tar -czf ../azarakhsh-foundation-project.tar.gz .
+          zip -q -r ../azarakhsh-foundation-project.zip . -x '*/.DS_Store'
 
-      - name: Upload project bundle
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: azarakhsh-foundation-project
-          path: azarakhsh-foundation-project.zip
+          path: |
+            ../azarakhsh-foundation-project.zip
+            ../azarakhsh-foundation-project.tar.gz
           retention-days: 14
