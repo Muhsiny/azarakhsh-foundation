@@ -4,11 +4,14 @@ import { usePathname } from "next/navigation";
 import { useState, type CSSProperties, type ReactNode } from "react";
 import type { SiteSettings } from "../site-settings";
 
-const coreLinks = [
+const primaryLinks = [
   ["/archive", "آرشیف"],
   ["/publications", "نشریات"],
-  ["/council", "شورای اتفاق"],
-  ["/beheshti", "آیت‌الله بهشتی"],
+];
+
+const dossierLinks = [
+  ["/council", "حکومت شورای اتفاق"],
+  ["/beheshti", "آیت‌الله سید علی بهشتی"],
 ];
 
 const institutionLinks = [
@@ -32,9 +35,13 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
     "--az-content-width": `${settings.design.contentWidth}px`,
   } as CSSProperties;
 
+  const isCurrent = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`) ? "page" : undefined;
+
   return (
     <div className="public-redesign" style={theme}>
       <a className="az-skip" href="#public-content">رفتن به محتوای صفحه</a>
+
       <header className="az-masthead" data-inline-static>
         <div className="az-container az-header-row">
           <a href="/" className="az-wordmark" aria-label={`${settings.identity.siteName}، صفحهٔ نخست`}>
@@ -61,24 +68,25 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
             aria-label="فهرست اصلی"
             onKeyDown={(event) => { if (event.key === "Escape") setMenu(false); }}
           >
-            {coreLinks.map(([href, label]) => (
+            {primaryLinks.map(([href, label]) => (
               <a
                 key={href}
                 href={href}
-                aria-current={pathname === href || pathname.startsWith(`${href}/`) ? "page" : undefined}
+                aria-current={isCurrent(href)}
                 onClick={() => setMenu(false)}
               >
                 {label}
               </a>
             ))}
+
             <details className="az-nav-more">
-              <summary>بنیاد</summary>
+              <summary>پرونده‌ها</summary>
               <div className="az-nav-popover">
-                {institutionLinks.map(([href, label]) => (
+                {dossierLinks.map(([href, label]) => (
                   <a
                     key={href}
                     href={href}
-                    aria-current={pathname === href || pathname.startsWith(`${href}/`) ? "page" : undefined}
+                    aria-current={isCurrent(href)}
                     onClick={() => setMenu(false)}
                   >
                     {label}
@@ -86,6 +94,23 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
                 ))}
               </div>
             </details>
+
+            <details className="az-nav-more">
+              <summary>بنیاد</summary>
+              <div className="az-nav-popover">
+                {institutionLinks.map(([href, label]) => (
+                  <a
+                    key={href}
+                    href={href}
+                    aria-current={isCurrent(href)}
+                    onClick={() => setMenu(false)}
+                  >
+                    {label}
+                  </a>
+                ))}
+              </div>
+            </details>
+
             <a className="az-language-link" href="/en" lang="en" dir="ltr" aria-label="English overview" title="English overview">EN</a>
             <a className="az-member-link" href="/login">ورود اعضا</a>
           </nav>
@@ -95,7 +120,7 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
       <div id="public-content" tabIndex={-1}>{children}</div>
 
       <footer className="az-site-footer" data-inline-static>
-        <div className="az-container az-footer-grid">
+        <div className="az-container az-footer-shell">
           <div className="az-footer-brand">
             <div className="az-footer-name">{settings.identity.siteName}</div>
             <p>{settings.footer.mission}</p>
@@ -103,24 +128,9 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
             <a className="az-email" href={`mailto:${settings.contact.email}`} dir="ltr">{settings.contact.email}</a>
           </div>
 
-          <div>
-            <h2>پژوهش و دسترسی</h2>
-            <a href="/archive">آرشیف و اسناد</a>
-            <a href="/publications">نشریات و پژوهش‌ها</a>
-            <a href="/council">پروندهٔ شورای اتفاق</a>
-            <a href="/beheshti">پروندهٔ آیت‌الله بهشتی</a>
-            <a href="/standards">اصول پژوهش و نشر</a>
-          </div>
-
-          <div className="az-footer-contact">
-            <h2>بنیاد و پاسخ‌گویی</h2>
-            <a href="/about">دربارهٔ بنیاد</a>
-            <a href="/governance">ساختار و پاسخ‌گویی</a>
-            <a href="/contribute">ارسال سند و خاطره</a>
-            <a href="/contact">تماس با بنیاد</a>
+          <nav className="az-footer-utility" aria-label="پیوندهای پایانی">
             <a href="/privacy">حریم خصوصی و حقوق نشر</a>
-            <a href="/en" lang="en" dir="ltr">English overview</a>
-          </div>
+          </nav>
         </div>
 
         <div className="az-container az-footer-bottom">
