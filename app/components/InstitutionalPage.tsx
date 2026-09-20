@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import ReadingTools from "./ReadingTools";
 import ExpandableSectionText from "./ExpandableSectionText";
 
 export type InstitutionalSection = {
@@ -14,6 +15,7 @@ export default function InstitutionalPage({
   sections,
   children,
   collapseSectionText = false,
+  intro,
 }: {
   kicker: string;
   title: string;
@@ -21,28 +23,16 @@ export default function InstitutionalPage({
   sections: InstitutionalSection[];
   children?: ReactNode;
   collapseSectionText?: boolean;
+  intro?: ReactNode;
 }) {
   return (
     <main className="knowledge-page">
-      <header className="knowledge-nav">
-        <a className="brand" href="/">
-          <span className="brand-mark">
-            <img src="/azarakhsh-logo-web.png" alt="نشان بنیاد آذرخش" />
-          </span>
-          <span><strong>بنیاد آذرخش</strong><small>پژوهش، سند و حافظهٔ تاریخی</small></span>
-        </a>
-        <nav aria-label="فهرست دانشنامه">
-          <a href="/beheshti">آیت‌الله بهشتی</a>
-          <a href="/archive">آرشیو</a>
-          <a href="/publications">نشرها</a>
-          <a href="/about">دربارهٔ بنیاد</a>
-        </nav>
-      </header>
       <section className="knowledge-hero">
         <p className="section-kicker section-kicker-light">{kicker}</p>
         <h1>{title}</h1>
         <p>{lead}</p>
       </section>
+      {intro && <div className="az-institutional-intro" data-inline-static>{intro}</div>}
       <div className="knowledge-layout">
         <aside>
           <strong>در این صفحه</strong>
@@ -51,9 +41,10 @@ export default function InstitutionalPage({
           ))}
         </aside>
         <article className="knowledge-article">
+          <ReadingTools />
           {sections.map((section, index) => (
             <section id={`section-${index + 1}`} key={section.title}>
-              <span className="knowledge-index">{String(index + 1).padStart(2, "0")}</span>
+              <span className="knowledge-index">{(index + 1).toLocaleString("fa-AF", { minimumIntegerDigits: 2 })}</span>
               <h2>{section.title}</h2>
               {collapseSectionText ? <ExpandableSectionText text={section.text} /> : <p>{section.text}</p>}
               {section.points && <ul>{section.points.map((point) => <li key={point}>{point}</li>)}</ul>}
@@ -62,10 +53,6 @@ export default function InstitutionalPage({
           {children}
         </article>
       </div>
-      <footer className="knowledge-footer">
-        <p>بنیاد آذرخش — آذرخش؛ قاتل تاریکی و سایه‌یی سایه!</p>
-        <div><a href="/standards">اصول پژوهش و نشر</a><a href="/contact">تماس و ارسال سند</a><a href="/privacy">حریم خصوصی</a></div>
-      </footer>
     </main>
   );
 }

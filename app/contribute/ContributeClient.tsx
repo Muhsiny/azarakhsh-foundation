@@ -30,8 +30,8 @@ export default function ContributeClient() {
   const field = { width: "100%", boxSizing: "border-box" as const, marginTop: 6, padding: 11, border: "1px solid #c7a45b", borderRadius: 8, font: "inherit", direction: "rtl" as const };
 
   return (
-    <main style={{ minHeight: "100vh", background: "#f6f0df", color: "#173f33", padding: "24px 16px", direction: "rtl" }}>
-      <section style={{ width: "min(900px,100%)", margin: "0 auto", background: "#fffdf8", borderRadius: 18, padding: 24, boxShadow: "0 18px 60px rgba(15,49,40,.12)" }}>
+    <main className="az-contribution-page" data-inline-static>
+      <section>
         <a href="/" style={{ color: "#173f33" }}>بازگشت به صفحهٔ نخست ←</a>
         <p className="section-kicker" style={{ marginTop: 24 }}>حافظهٔ مردمی</p>
         <h1>ثبت خاطره، روایت و سند تاریخی</h1>
@@ -39,10 +39,10 @@ export default function ContributeClient() {
 
         <form onSubmit={submit} encType="multipart/form-data" style={{ display: "grid", gap: 15, marginTop: 24 }}>
           <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }} />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 14 }}>
-            <label>نام کامل<input name="fullName" required style={field} /></label>
-            <label>ایمیل<input name="email" type="email" required style={field} /></label>
-            <label>شماره تماس ـ اختیاری<input name="phone" style={field} /></label>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(230px,100%),1fr))", gap: 14 }}>
+            <label>نام کامل<input name="fullName" autoComplete="name" required style={field} /></label>
+            <label>ایمیل<input name="email" autoComplete="email" type="email" required style={field} /></label>
+            <label>شماره تماس ـ اختیاری<input name="phone" autoComplete="tel" type="tel" style={field} /></label>
             <label>نسبت شما با روایت یا منبع<input name="relationToStory" placeholder="راوی، عضو خانواده، شاهد، مالک سند..." style={field} /></label>
           </div>
 
@@ -63,12 +63,13 @@ export default function ContributeClient() {
             <textarea name="narrative" required minLength={80} rows={10} style={{ ...field, resize: "vertical" }} placeholder="چه اتفاقی افتاد؟ چه کسانی حضور داشتند؟ شما این روایت را از چه کسی شنیده‌اید؟" />
           </label>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 14 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(230px,100%),1fr))", gap: 14 }}>
             <label>زمان واقعه ـ در صورت اطلاع<input name="eventDate" style={field} /></label>
             <label>مکان واقعه ـ در صورت اطلاع<input name="eventPlace" style={field} /></label>
             <label>نام اشخاص حاضر ـ در صورت اطلاع<input name="peoplePresent" style={field} /></label>
           </div>
 
+          <div className="az-field-help">شرح روایت باید دست‌کم ۸۰ نویسه داشته باشد. زمان و مکان تقریبی را نیز می‌توانید بنویسید.</div>
           <label>منشأ و توضیح اصالت منبع
             <textarea name="sourceNote" rows={4} style={{ ...field, resize: "vertical" }} placeholder="اصل سند نزد چه کسی است؟ فایل اسکن است یا تصویر اصل؟ روایت مستقیم است یا نقل‌شده؟" />
           </label>

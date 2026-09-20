@@ -37,14 +37,6 @@ export default async function CustomPage({ params }: { params: Promise<{ slug: s
   return (
     <main className="knowledge-page custom-managed-page" style={style}>
       {settings.design.customCss && <style>{settings.design.customCss}</style>}
-      <header className="knowledge-nav">
-        <a className="brand" href="/">
-          <span className="brand-mark"><img src={settings.identity.logoUrl} alt={`لوگوی ${settings.identity.siteName}`} /></span>
-          <span><strong>{settings.identity.siteName}</strong><small>{settings.identity.tagline}</small></span>
-        </a>
-        <nav><a href="/">صفحه نخست</a><a href="/publications">نشرها</a><a href="/archive">آرشیو</a><a href="/contact">تماس</a></nav>
-      </header>
-
       <section className="knowledge-hero">
         <p className="section-kicker">صفحهٔ رسمی بنیاد آذرخش</p>
         <h1>{page.title}</h1>
@@ -61,11 +53,6 @@ export default async function CustomPage({ params }: { params: Promise<{ slug: s
         </article>
       </div>
 
-      <footer className="knowledge-footer">
-        <div className="footer-brand"><img src={settings.identity.logoUrl} alt="" /><div><strong>{settings.identity.siteName}</strong><p>{settings.identity.tagline}</p></div></div>
-        <p className="footer-mission">{settings.footer.mission}</p>
-        <small>{settings.footer.copyright}</small>
-      </footer>
     </main>
   );
 }

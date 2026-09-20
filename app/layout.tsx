@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import { Noto_Naskh_Arabic, Noto_Nastaliq_Urdu, Vazirmatn } from "next/font/google";
 import "./globals.css";
-import "./home-order-fix.css";
+
 import "./traditional-typography.css";
-import "./home-approved.css";
+import "./redesign.css";
 import OfflineBootstrap from "./OfflineBootstrap";
 import SiteEnhancer from "./SiteEnhancer";
 import UniversalInlineEditorV2 from "./components/UniversalInlineEditorV2";
 import LegacyInlineEditCompatibility from "./components/LegacyInlineEditCompatibility";
-import PublicContributionLink from "./components/PublicContributionLink";
+import PublicChrome from "./components/PublicChrome";
+import { loadSiteSettings } from "./load-site-settings";
 import { SITE_URL } from "./site-url";
 
 const naskh = Noto_Naskh_Arabic({
@@ -80,7 +81,8 @@ export const metadata: Metadata = {
   other: { "mobile-web-app-capable": "yes" },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const settings = await loadSiteSettings();
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ResearchOrganization",
@@ -101,8 +103,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <SiteEnhancer />
         <UniversalInlineEditorV2 />
         <LegacyInlineEditCompatibility />
-        <PublicContributionLink />
-        {children}
+        <PublicChrome settings={settings}>{children}</PublicChrome>
       </body>
     </html>
   );

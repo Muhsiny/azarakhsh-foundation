@@ -6,6 +6,7 @@ import { getDb } from "../../../db";
 import { ensurePlatformSchema } from "../../../db/platform";
 import { posts } from "../../../db/schema";
 import { getAdminUser } from "../../admin-auth";
+import ReadingTools from "../../components/ReadingTools";
 import DownloadQuizGate from "../../components/DownloadQuizGate";
 
 export const dynamic = "force-dynamic";
@@ -102,8 +103,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const paragraphs = post.content.split(/\n{2,}/).filter(Boolean);
   return (
     <main className="article-page">
-      <header className="article-topbar"><a href="/">بنیاد آذرخش</a><a href="/publications">همهٔ نشرها ←</a></header>
+      <div className="az-breadcrumb" data-inline-static><a href="/publications">نشریات</a><span aria-hidden="true"> / </span><span>مطالعهٔ مطلب</span></div>
       <article>
+        <ReadingTools />
         <div className="article-meta"><span>{post.category}</span><time>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("fa-AF") : ""}</time></div>
         <h1>{post.title}</h1>
         <p className="article-deck">{post.excerpt}</p>
