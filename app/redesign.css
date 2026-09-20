@@ -2089,6 +2089,41 @@
 
 /* Preserve the phone composition while making the footer cleaner there too. */
 @media(max-width:760px){
+  .az-menu-toggle{
+    display:inline-flex!important;
+    align-items:center;
+    justify-content:center;
+  }
+  .az-primary-nav{
+    display:none!important;
+    width:100%!important;
+    padding:8px 0 12px!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    gap:3px!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+  }
+  .az-primary-nav.is-open{display:flex!important}
+  .az-primary-nav>a,
+  .az-nav-more>summary{
+    padding:11px 12px!important;
+    border-radius:12px!important;
+    font-size:13.5px!important;
+  }
+  .az-nav-more{width:100%!important}
+  .az-nav-popover{
+    position:static!important;
+    width:100%!important;
+    margin:3px 0 5px!important;
+    box-shadow:none!important;
+    background:#f3f5f1!important;
+  }
+  .az-primary-nav .az-member-link{
+    margin-top:6px!important;
+    text-align:center;
+  }
   .az-home-intro-grid{
     grid-template-columns:1fr;
     gap:18px;
