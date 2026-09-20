@@ -129,11 +129,7 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
           </div>
 
           <nav className="az-footer-utility" aria-label="پیوندهای پایانی">
-            <a href="/about">دربارهٔ بنیاد</a>
-            <a href="/standards">اصول پژوهش</a>
-            <a href="/contact">تماس</a>
             <a href="/privacy">حریم خصوصی و حقوق نشر</a>
-            <a href="/en" lang="en" dir="ltr">English</a>
           </nav>
         </div>
 
