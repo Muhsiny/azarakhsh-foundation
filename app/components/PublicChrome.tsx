@@ -45,7 +45,7 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
       <header className="az-masthead az-masthead-reference" data-inline-static>
         <div className="az-reference-top">
           <div className="az-reference-top-side az-reference-top-side-right">حقیقت | پژوهش | حافظهٔ تاریخ | آیندهٔ آگاهانه</div>
-          <a href="/" className="az-reference-basmala" aria-label="صفحهٔ نخست">بسم الله الرحمن الرحیم</a>
+          <a href="/" className="az-reference-basmala" aria-label="صفحهٔ نخست"><img src="/media/bismillah" alt="بسم الله الرحمن الرحیم" /></a>
           <div className="az-reference-top-side az-reference-top-side-left">
             <a href="/en" lang="en" dir="ltr">EN</a>
             <span aria-hidden="true">◌</span>
