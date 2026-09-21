@@ -24,11 +24,15 @@ const typeLabels: Record<string, string> = {
   page: "پرونده",
 };
 
-const fallbackCards = [
+type FallbackCard = { title: string; type: string; href: string };
+
+const fallbackCards: FallbackCard[] = [
   { title: "نقش حکومت شورای اتفاق در تحولات افغانستان", type: "مقاله", href: "/council" },
   { title: "بازخوانی تجربهٔ حکومت موقت در مناطق مرکزی", type: "تحلیل", href: "/council" },
   { title: "بامیان؛ جغرافیا، مردم و حافظهٔ تاریخی", type: "پژوهش", href: "/archive" },
 ];
+
+type FeaturedCard = LatestItem | FallbackCard;
 
 export default function HomeClient({ settings, latest }: { settings: SiteSettings; latest: LatestItem[] }) {
   const featured = latest.slice(0, 3);
@@ -82,7 +86,7 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
             <a href="/publications">همهٔ مطالب ←</a>
           </div>
           <div className="az-reference-latest-grid">
-            {(featured.length ? featured : fallbackCards).map((item: any, index: number) => {
+            {((featured.length ? featured : fallbackCards) as FeaturedCard[]).map((item, index) => {
               const href = "slug" in item ? "/publications/" + item.slug : item.href;
               const label = "contentType" in item ? (typeLabels[item.contentType] || item.category) : item.type;
               const image = "coverImage" in item ? item.coverImage : null;
