@@ -50,41 +50,50 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
               </div>
             </div>
 
-            <aside className="az-hero-visual" aria-label="پرونده‌های محوری بنیاد آذرخش">
+            <aside className="az-hero-visual az-hero-visual-premium" aria-label="پرونده‌های محوری بنیاد آذرخش">
               <a className="az-hero-portrait" href="/beheshti">
-                <img
-                  src={settings.media.leaderImageUrl}
-                  alt={settings.media.leaderImageAlt}
-                  width="1182"
-                  height="1200"
-                  fetchPriority="high"
-                  onError={(e) => {
-                    if (!e.currentTarget.dataset.fallback) {
-                      e.currentTarget.dataset.fallback = "1";
-                      e.currentTarget.src = "/media/beheshti-original.webp";
-                    }
-                  }}
-                />
+                <span className="az-hero-portrait-image">
+                  <img
+                    src={settings.media.leaderImageUrl}
+                    alt={settings.media.leaderImageAlt}
+                    width="1182"
+                    height="1200"
+                    fetchPriority="high"
+                    onError={(e) => {
+                      if (!e.currentTarget.dataset.fallback) {
+                        e.currentTarget.dataset.fallback = "1";
+                        e.currentTarget.src = "/media/beheshti-original.webp";
+                      }
+                    }}
+                  />
+                </span>
                 <span className="az-hero-portrait-caption">
                   <small>پروندهٔ شخصیت</small>
                   <strong>آیت‌الله سید علی بهشتی</strong>
                 </span>
               </a>
 
-              <a className="az-hero-emblem" href="/council">
-                <img
-                  src={settings.media.councilEmblemUrl}
-                  alt=""
-                  width="1075"
-                  height="1100"
-                  onError={(e) => {
-                    if (!e.currentTarget.dataset.fallback) {
-                      e.currentTarget.dataset.fallback = "1";
-                      e.currentTarget.src = "/media/council-emblem.webp";
-                    }
-                  }}
-                />
-                <span><small>پروندهٔ تاریخی</small><strong>حکومت شورای اتفاق</strong></span>
+              <a className="az-hero-council" href="/council">
+                <span className="az-hero-council-mark">
+                  <img
+                    src={settings.media.councilEmblemUrl}
+                    alt={settings.media.councilEmblemAlt}
+                    width="1075"
+                    height="1100"
+                    onError={(e) => {
+                      if (!e.currentTarget.dataset.fallback) {
+                        e.currentTarget.dataset.fallback = "1";
+                        e.currentTarget.src = "/media/council-emblem.webp";
+                      }
+                    }}
+                  />
+                </span>
+                <span className="az-hero-council-copy">
+                  <small>نشان تاریخی</small>
+                  <strong>حکومت شورای اتفاق اسلامی افغانستان</strong>
+                  <em>پروندهٔ حکومت و اسناد</em>
+                </span>
+                <span className="az-hero-council-arrow" aria-hidden="true">↗</span>
               </a>
             </aside>
           </div>
