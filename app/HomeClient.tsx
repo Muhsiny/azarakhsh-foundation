@@ -29,19 +29,18 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
     <main className="az-home">
       <section className="az-home-hero" id="top">
         <div className="az-container az-home-intro">
-          <div className="az-sacred-opening" aria-label="بسم الله الرحمن الرحیم">
-            <img
-              className="az-basmala-art"
-              src="/media/bismillah"
-              alt="بسم الله الرحمن الرحیم"
-              width="1000"
-              height="1000"
-              fetchPriority="high"
-            />
-          </div>
-
           <div className="az-home-intro-grid">
             <div className="az-hero-copy-main">
+              <div className="az-sacred-opening" aria-label="بسم الله الرحمن الرحیم">
+                <img
+                  className="az-basmala-art"
+                  src="/media/bismillah"
+                  alt="بسم الله الرحمن الرحیم"
+                  width="1000"
+                  height="1000"
+                  fetchPriority="high"
+                />
+              </div>
               <span className="az-overline">{settings.hero.eyebrow}</span>
               <h1>{settings.hero.title}</h1>
               <p>{settings.hero.description}</p>
