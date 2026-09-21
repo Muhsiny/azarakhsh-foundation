@@ -3,6 +3,7 @@ import { Noto_Naskh_Arabic, Vazirmatn } from "next/font/google";
 import "./globals.css";
 
 import "./redesign.css";
+import "./final-polish.css";
 import OfflineBootstrap from "./OfflineBootstrap";
 import PublicChrome from "./components/PublicChrome";
 import PublicInlineOverrides from "./components/PublicInlineOverrides";
