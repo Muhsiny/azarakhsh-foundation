@@ -1385,3 +1385,14 @@
 @media(max-width:1180px){.az-reference-menu{gap:12px}.az-reference-menu a{font-size:11px}.az-reference-brand{min-width:210px}.az-reference-hero{grid-template-columns:46% 34% 20%}.az-reference-hero-emblem img{width:120px;height:120px}.az-reference-hero-emblem strong{font-size:15px}}
 @media(max-width:900px){.az-reference-top{height:64px;padding:0 18px}.az-reference-top-side{display:none}.az-reference-basmala{font-size:27px}.az-reference-nav{grid-template-columns:1fr auto}.az-reference-brand{min-width:0}.az-masthead-reference .az-menu-toggle{display:block!important;justify-self:end}.az-reference-support{display:none}.az-reference-menu{display:none;grid-column:1/3;flex-direction:column;align-items:stretch;gap:0;padding:8px 0 14px}.az-reference-menu.is-open{display:flex}.az-reference-menu a{padding:10px 4px}.az-reference-hero{grid-template-columns:1fr;min-height:0}.az-reference-hero-photo{min-height:380px}.az-reference-hero-center{padding:34px 20px}.az-reference-hero-emblem{padding:22px}.az-reference-hero-motto{display:none}.az-reference-paths{grid-template-columns:repeat(2,1fr);margin-top:0;border-radius:0;width:100%}.az-reference-paths>a:nth-child(2){border-inline-end:0}.az-reference-lower{grid-template-columns:1fr}.az-reference-latest-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:600px){.az-reference-brand strong{font-size:18px}.az-reference-brand small{display:none}.az-reference-top{height:58px}.az-reference-basmala{font-size:23px}.az-reference-hero-photo{min-height:300px}.az-reference-photo-quote{left:20px;bottom:28px;font-size:15px}.az-reference-hero-center h1{font-size:31px}.az-reference-hero-center p{font-size:13.5px}.az-reference-paths{grid-template-columns:1fr}.az-reference-paths>a{border-inline-end:0;border-bottom:1px solid rgba(25,66,55,.12)}.az-reference-latest-grid{grid-template-columns:1fr}.az-reference-latest-media{height:170px}}
+
+/* Approved mockup precision pass: calligraphy + utility strip */
+.az-reference-basmala{display:flex;align-items:center;justify-content:center;min-width:330px}
+.az-reference-basmala img{display:block;width:330px;max-width:34vw;height:62px;object-fit:contain;object-position:center;filter:contrast(1.12) saturate(.15)}
+.az-reference-socials{display:inline-flex;align-items:center;gap:14px;margin-inline-start:8px;color:#273f38;font-weight:700}
+.az-reference-socials>span{display:grid;place-items:center;min-width:16px;height:18px;font-size:13px;line-height:1}
+.az-reference-globe{font-size:18px;color:#253f38}
+.az-reference-separator{display:inline-block;width:1px;height:18px;background:rgba(28,61,51,.18)}
+.az-reference-search-icon{font-size:19px;line-height:1;color:#253f38}
+@media(max-width:900px){.az-reference-basmala{min-width:0}.az-reference-basmala img{width:245px;max-width:52vw;height:50px}}
+@media(max-width:600px){.az-reference-basmala img{width:205px;max-width:62vw;height:43px}}
