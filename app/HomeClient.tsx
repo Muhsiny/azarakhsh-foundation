@@ -36,7 +36,7 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
     <main className="az-reference-home">
       <section className="az-reference-hero" aria-labelledby="az-ref-title">
         <div className="az-reference-hero-photo">
-          <img src="/media/hero-historical.webp" alt="تصویر تاریخی آیت‌الله سید علی بهشتی در میان همراهان" />
+          <img src="/reference-v2/hero-left.webp" alt="تصویر تاریخی آیت‌الله سید علی بهشتی در میان همراهان" />
           <div className="az-reference-photo-quote">
             <strong>مردی<br/>از جنس ایمان<br/>از تبار مردم<br/>برای آزادی<br/>و عزت افغانستان</strong>
             <span />
