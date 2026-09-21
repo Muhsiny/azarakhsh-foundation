@@ -11,6 +11,7 @@ test("home keeps each flagship dossier in one visible block", async () => {
   assert.equal(source.includes("az-trust-line"), false);
   assert.equal(source.includes("latest.length === 0"), false);
   assert.equal(source.includes("az-dossiers"), false);
+  assert.match(source, /replace\("اسناد سخن بگوید", "اسناد سخن بگویند"\)/);
 });
 
 test("archive and publications share one collection menu", async () => {
