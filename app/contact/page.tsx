@@ -3,19 +3,18 @@ import InstitutionalPage from "../components/InstitutionalPage";
 import { loadSiteSettings } from "../load-site-settings";
 
 export const metadata: Metadata = {
-  title: "تماس و ارسال سند",
-  description: "راهنمای همکاری پژوهشی و ارسال اسناد و روایت‌ها به بنیاد آذرخش.",
+  title: "تماس و همکاری",
+  description: "راه‌های تماس، همکاری پژوهشی و درخواست اصلاح محتوا در بنیاد آذرخش.",
   alternates: { canonical: "/contact" },
-  openGraph: { url: "/contact", title: "تماس و ارسال سند | بنیاد آذرخش", description: "راهنمای همکاری پژوهشی، اهدای سند و ارسال روایت به بنیاد آذرخش." },
+  openGraph: { url: "/contact", title: "تماس و همکاری | بنیاد آذرخش", description: "راه‌های تماس، همکاری پژوهشی و درخواست اصلاح محتوا در بنیاد آذرخش." },
 };
 const sections = [
-  { title: "ارسال سند", text: "پیش از ارسال، نوع سند، مالک فعلی، منشأ، تاریخ تقریبی، اشخاص یا مکان‌های مرتبط و اجازهٔ نشر را یادداشت کنید." },
-  { title: "ارسال روایت", text: "روایت باید مشخص کند گوینده شاهد مستقیم است یا ناقل، واقعه در چه زمان و مکانی رخ داده و کدام بخش‌ها قطعی یا تقریبی‌اند." },
-  { title: "همکاری پژوهشی", text: "پژوهشگران می‌توانند طرح، مقاله، تصحیح سند، کتاب‌شناسی یا پیشنهاد پروندهٔ موضوعی ارائه کنند." },
-  { title: "روند بررسی", text: "دریافت اولیه به معنای انتشار نیست. مواد پس از ارزیابی منشأ، حقوق، کیفیت و ارتباط موضوعی وارد روند تحریریه می‌شوند." },
-  { title: "امنیت و حقوق", text: "اصل اسناد ارزشمند را بدون نسخهٔ پشتیبان واگذار نکنید. شرایط مالکیت، نمایش و استفادهٔ پژوهشی باید روشن و مکتوب باشد." },
+  { title: "پرسش و همکاری پژوهشی", text: "برای پیشنهاد پژوهش مشترک، معرفی منبع، تصحیح سند، کتاب‌شناسی یا طرح پروندهٔ موضوعی با بنیاد تماس بگیرید." },
+  { title: "درخواست اصلاح یا تکمیل", text: "اگر در یکی از صفحه‌ها خطا، ابهام یا منبع تازه‌ای یافته‌اید، نشانی دقیق صفحه و شواهد پشتیبان را در پیام خود ذکر کنید." },
+  { title: "حقوق نشر و استفاده از منابع", text: "برای بازنشر، استناد گسترده یا دریافت نسخهٔ پژوهشی یک منبع، عنوان و کاربرد موردنظر را روشن بنویسید." },
+  { title: "اطلاعات حساس", text: "اطلاعات شخصی یا حساس را فقط در حد ضروری بفرستید. برای ارسال سند و خاطره از فرم مستقل و گزینه‌های رضایت آن استفاده کنید." },
 ];
 export default async function ContactPage() {
   const settings = await loadSiteSettings();
-  return <InstitutionalPage kicker="درگاه مشارکت" title="تماس، همکاری و اهدای سند" lead="برای پرسش پژوهشی، پیشنهاد همکاری یا هماهنگی ارسال منابع با بنیاد در ارتباط باشید." sections={sections} intro={<div className="az-contact-cards"><div><h2>ارتباط مستقیم با بنیاد</h2><address><a href={`mailto:${settings.contact.email}`} dir="ltr">{settings.contact.email}</a>{settings.contact.phone && <p>{settings.contact.phone}</p>}{settings.contact.address && <p>{settings.contact.address}</p>}</address></div><div><h2>سند یا روایتی دارید؟</h2><p>اطلاعات منبع و ترجیح شما دربارهٔ ذکر نام در فرم ثبت می‌شود.</p><a className="az-action" href="/contribute">بازکردن فرم ارسال منبع ←</a></div></div>} />;
+  return <InstitutionalPage kicker="ارتباط با بنیاد" title="تماس و همکاری با بنیاد" lead="این صفحه برای پرسش، همکاری پژوهشی، درخواست اصلاح و امور حقوق نشر است. ارسال سند و خاطره مسیر جداگانه‌ای دارد." sections={sections} intro={<div className="az-contact-cards"><div><h2>ارتباط مستقیم با بنیاد</h2><address><a href={`mailto:${settings.contact.email}`} dir="ltr">{settings.contact.email}</a>{settings.contact.phone && <p>{settings.contact.phone}</p>}{settings.contact.address && <p>{settings.contact.address}</p>}</address></div><div><h2>سند یا خاطره‌ای دارید؟</h2><p>فرم ارسال منبع، اطلاعات منشأ، پیوست و ترجیح شما دربارهٔ ذکر نام را یک‌جا ثبت می‌کند.</p><a className="az-action" href="/contribute">رفتن به فرم ارسال سند و خاطره ←</a></div></div>} />;
 }

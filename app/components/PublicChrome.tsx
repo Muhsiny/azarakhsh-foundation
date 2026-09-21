@@ -4,9 +4,9 @@ import { usePathname } from "next/navigation";
 import { useState, type CSSProperties, type ReactNode } from "react";
 import type { SiteSettings } from "../site-settings";
 
-const primaryLinks = [
-  ["/archive", "آرشیف"],
-  ["/publications", "نشریات"],
+const collectionLinks = [
+  ["/publications", "همهٔ نشریات و منابع"],
+  ["/archive", "آرشیف فایل‌ها"],
 ];
 
 const dossierLinks = [
@@ -18,8 +18,8 @@ const institutionLinks = [
   ["/about", "دربارهٔ بنیاد"],
   ["/standards", "اصول پژوهش و نشر"],
   ["/governance", "ساختار و پاسخ‌گویی"],
-  ["/contact", "تماس با بنیاد"],
-  ["/contribute", "ارسال سند و خاطره"],
+  ["/contact", "تماس و همکاری"],
+  ["/contribute", "ارسال سند یا خاطره"],
 ];
 
 export default function PublicChrome({ children, settings }: { children: ReactNode; settings: SiteSettings }) {
@@ -68,19 +68,24 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
             aria-label="فهرست اصلی"
             onKeyDown={(event) => { if (event.key === "Escape") setMenu(false); }}
           >
-            {primaryLinks.map(([href, label]) => (
-              <a
-                key={href}
-                href={href}
-                aria-current={isCurrent(href)}
-                onClick={() => setMenu(false)}
-              >
-                {label}
-              </a>
-            ))}
+            <details className="az-nav-more">
+              <summary aria-current={collectionLinks.some(([href]) => isCurrent(href)) ? "page" : undefined}>گنجینه</summary>
+              <div className="az-nav-popover">
+                {collectionLinks.map(([href, label]) => (
+                  <a
+                    key={href}
+                    href={href}
+                    aria-current={isCurrent(href)}
+                    onClick={() => setMenu(false)}
+                  >
+                    {label}
+                  </a>
+                ))}
+              </div>
+            </details>
 
             <details className="az-nav-more">
-              <summary>پرونده‌ها</summary>
+              <summary aria-current={dossierLinks.some(([href]) => isCurrent(href)) ? "page" : undefined}>پرونده‌ها</summary>
               <div className="az-nav-popover">
                 {dossierLinks.map(([href, label]) => (
                   <a
@@ -96,7 +101,7 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
             </details>
 
             <details className="az-nav-more">
-              <summary>بنیاد</summary>
+              <summary aria-current={institutionLinks.some(([href]) => isCurrent(href)) ? "page" : undefined}>بنیاد</summary>
               <div className="az-nav-popover">
                 {institutionLinks.map(([href, label]) => (
                   <a

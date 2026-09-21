@@ -112,51 +112,7 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
         </div>
       </section>
 
-      <section className="az-container az-featured-research" aria-labelledby="featured-research-title">
-        <div className="az-featured-portrait-wrap">
-          <a className="az-featured-portrait" href="/beheshti" aria-label="مطالعهٔ پروندهٔ آیت‌الله سید علی بهشتی">
-            <img
-              src={settings.media.leaderImageUrl}
-              alt={settings.media.leaderImageAlt}
-              width="1182"
-              height="1200"
-              loading="eager"
-              onError={(e) => {
-                if (!e.currentTarget.dataset.fallback) {
-                  e.currentTarget.dataset.fallback = "1";
-                  e.currentTarget.src = "/media/beheshti-original.webp";
-                }
-              }}
-            />
-          </a>
-          <a className="az-featured-caption" href="/beheshti">
-            <span>پروندهٔ شخصیت</span>
-            <strong>آیت‌الله سید علی بهشتی</strong>
-            <span aria-hidden="true">↗</span>
-          </a>
-        </div>
-        <div className="az-featured-copy">
-          <span className="az-overline">پژوهش برجسته</span>
-          <h2 id="featured-research-title">{settings.leader.title}</h2>
-          <p>{settings.leader.lead}</p>
-          <div className="az-actions">
-            <a className="az-action az-action-gold" href="/beheshti">مطالعهٔ پروندهٔ شخصیت ←</a>
-            <a className="az-text-link" href="/council">پروندهٔ حکومت شورای اتفاق ↗</a>
-          </div>
-        </div>
-      </section>
-
       <div className="az-container">
-        <div className="az-trust-line" aria-label="پایه‌های پژوهش">
-          <span>پایه‌های پژوهش</span>
-          <a href="/standards">منبع‌سنجی</a>
-          <a href="/standards">ارجاع روشن</a>
-          <a href="/standards">حفظ اصل سند</a>
-          <a href="/standards">تفکیک سند، روایت و تحلیل</a>
-        </div>
-
-
-
         {latest.length > 0 && (
           <section className="az-section az-latest" aria-labelledby="latest-title">
             <div className="az-section-title">
@@ -187,85 +143,6 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
             </div>
           </section>
         )}
-
-        {latest.length === 0 && (
-          <section className="az-section az-latest" aria-labelledby="current-title">
-            <div className="az-section-title">
-              <div>
-                <span className="az-overline">اکنون در آذرخش</span>
-                <h2 id="current-title">پرونده‌های فعال پژوهشی</h2>
-              </div>
-              <a className="az-small-link" href="/publications">گنجینهٔ پژوهش ←</a>
-            </div>
-            <div className="az-latest-grid">
-              <article className="az-latest-card">
-                <div className="az-latest-mark" aria-hidden="true">۰۱</div>
-                <div className="az-latest-body"><span className="az-meta">پروندهٔ محوری</span><h3><a href="/council">حکومت شورای اتفاق اسلامی افغانستان</a></h3><p>زمینه‌ها، ساختار، حکومت‌داری و شواهد تاریخی در یک مسیر پژوهشی منظم.</p><a className="az-card-link" href="/council">مطالعهٔ پرونده <span aria-hidden="true">←</span></a></div>
-              </article>
-              <article className="az-latest-card">
-                <div className="az-latest-mark" aria-hidden="true">۰۲</div>
-                <div className="az-latest-body"><span className="az-meta">پروندهٔ شخصیت</span><h3><a href="/beheshti">آیت‌الله سید علی بهشتی</a></h3><p>زندگی، اندیشه، رهبری، آثار و حافظهٔ عمومی با تفکیک سند، روایت و تحلیل.</p><a className="az-card-link" href="/beheshti">مطالعهٔ پرونده <span aria-hidden="true">←</span></a></div>
-              </article>
-              <article className="az-latest-card">
-                <div className="az-latest-mark" aria-hidden="true">۰۳</div>
-                <div className="az-latest-body"><span className="az-meta">روش پژوهش</span><h3><a href="/standards">اصول پژوهش، نشر و اصلاحات</a></h3><p>منبع‌سنجی، ارجاع، چندصدایی، اصلاحات و معیارهای انتشار در بنیاد.</p><a className="az-card-link" href="/standards">مطالعهٔ معیارها <span aria-hidden="true">←</span></a></div>
-              </article>
-            </div>
-          </section>
-        )}
-
-        <section className="az-section" id="dossiers">
-          <div className="az-section-title">
-            <div>
-              <span className="az-overline">پرونده‌های محوری</span>
-              <h2>تاریخ را در زمینهٔ آن بخوانیم.</h2>
-            </div>
-            <span className="az-section-note">سند · روایت · پژوهش</span>
-          </div>
-
-          <div className="az-dossiers">
-            {settings.visibility.council && (
-              <article className="az-dossier" id="council">
-                <div className="az-dossier-art">
-                  <img
-                    src={settings.media.councilEmblemUrl}
-                    alt={settings.media.councilEmblemAlt}
-                    width="1075"
-                    height="1100"
-                    loading="lazy"
-                    onError={(e) => {
-                      if (!e.currentTarget.dataset.fallback) {
-                        e.currentTarget.dataset.fallback = "1";
-                        e.currentTarget.src = "/media/council-emblem.webp";
-                      }
-                    }}
-                  />
-                  <span>حکومت شورای اتفاق</span>
-                </div>
-                <div className="az-dossier-body">
-                  <span className="az-overline">پروندهٔ تاریخی / ۰۱</span>
-                  <h3>{settings.council.title}</h3>
-                  <p>{settings.council.text}</p>
-                  <a href="/council" className="az-card-link">ورود به پرونده <span aria-hidden="true">←</span></a>
-                </div>
-              </article>
-            )}
-
-            {settings.visibility.leader && (
-              <article className="az-dossier" id="beheshti">
-                <div className="az-dossier-type" aria-hidden="true">
-                  <span>علم</span><span>اندیشه</span><span>رهبری</span>
-                </div>
-                <div className="az-dossier-body">
-                  <span className="az-overline">پروندهٔ شخصیت / ۰۲</span>
-                  <h3>{settings.leader.title}</h3>
-                  <p>{settings.leader.lead}</p>
-                  <a href="/beheshti" className="az-card-link">زندگی و میراث علمی <span aria-hidden="true">←</span></a>
-                </div>
-              </article>
-            )}
-          </div>
-        </section>
 
         {settings.visibility.archive && (
           <section className="az-section az-collections">

@@ -38,7 +38,13 @@ export default function ContributeClient() {
         <p>خاطرات، روایت‌های خانوادگی، تصویر، سند، فایل صوتی یا ویدیو را برای بررسی پژوهشی بنیاد آذرخش بفرستید. هیچ مطلبی پیش از بررسی و رضایت روشن صاحب منبع منتشر نمی‌شود.</p>
 
         <form onSubmit={submit} encType="multipart/form-data" style={{ display: "grid", gap: 15, marginTop: 24 }}>
-          <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }} />
+          <input
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0, 0, 0, 0)", whiteSpace: "nowrap", border: 0 }}
+          />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(230px,100%),1fr))", gap: 14 }}>
             <label>نام کامل<input name="fullName" autoComplete="name" required style={field} /></label>
             <label>ایمیل<input name="email" autoComplete="email" type="email" required style={field} /></label>
