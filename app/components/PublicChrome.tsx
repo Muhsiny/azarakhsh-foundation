@@ -42,66 +42,39 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
     <div className="public-redesign" style={theme}>
       <a className="az-skip" href="#public-content">رفتن به محتوای صفحه</a>
 
-      <header className="az-masthead az-masthead-final" data-inline-static>
-        <div className="az-container az-header-row az-header-row-final">
-          <a href="/" className="az-wordmark az-wordmark-final" aria-label={settings.identity.siteName + "، صفحهٔ نخست"}>
-            <img src={settings.identity.logoUrl} width="52" height="52" alt="" />
-            <span>
-              <strong>{settings.identity.siteName}</strong>
-              <small>پژوهش · سند · حافظهٔ تاریخی</small>
-            </span>
-          </a>
-
-          <a href="/" className="az-header-basmala" aria-label="صفحهٔ نخست">
-            <span>بسم الله الرحمن الرحیم</span>
-          </a>
-
-          <button
-            className="az-menu-toggle"
-            type="button"
-            aria-controls="public-navigation"
-            aria-expanded={menu}
-            onClick={() => setMenu(!menu)}
-          >
-            {menu ? "بستن ✕" : "فهرست ☰"}
-          </button>
-
-          <nav
-            id="public-navigation"
-            className={menu ? "az-primary-nav az-primary-nav-final is-open" : "az-primary-nav az-primary-nav-final"}
-            aria-label="فهرست اصلی"
-            onKeyDown={(event) => { if (event.key === "Escape") setMenu(false); }}
-          >
-            <details className="az-nav-more">
-              <summary aria-current={collectionLinks.some(([href]) => isCurrent(href)) ? "page" : undefined}>گنجینه</summary>
-              <div className="az-nav-popover">
-                {collectionLinks.map(([href, label]) => (
-                  <a key={href} href={href} aria-current={isCurrent(href)} onClick={() => setMenu(false)}>{label}</a>
-                ))}
-              </div>
-            </details>
-
-            <details className="az-nav-more">
-              <summary aria-current={dossierLinks.some(([href]) => isCurrent(href)) ? "page" : undefined}>پرونده‌ها</summary>
-              <div className="az-nav-popover">
-                {dossierLinks.map(([href, label]) => (
-                  <a key={href} href={href} aria-current={isCurrent(href)} onClick={() => setMenu(false)}>{label}</a>
-                ))}
-              </div>
-            </details>
-
-            <details className="az-nav-more">
-              <summary aria-current={institutionLinks.some(([href]) => isCurrent(href)) ? "page" : undefined}>بنیاد</summary>
-              <div className="az-nav-popover">
-                {institutionLinks.map(([href, label]) => (
-                  <a key={href} href={href} aria-current={isCurrent(href)} onClick={() => setMenu(false)}>{label}</a>
-                ))}
-              </div>
-            </details>
-
-            <a className="az-language-link" href="/en" lang="en" dir="ltr" aria-label="English overview">EN</a>
-            <a className="az-member-link" href="/login">ورود اعضا</a>
-          </nav>
+      <header className="az-masthead az-masthead-reference" data-inline-static>
+        <div className="az-reference-top">
+          <div className="az-reference-top-side az-reference-top-side-right">حقیقت | پژوهش | حافظهٔ تاریخ | آیندهٔ آگاهانه</div>
+          <a href="/" className="az-reference-basmala" aria-label="صفحهٔ نخست">بسم الله الرحمن الرحیم</a>
+          <div className="az-reference-top-side az-reference-top-side-left">
+            <a href="/en" lang="en" dir="ltr">EN</a>
+            <span aria-hidden="true">◌</span>
+            <a href="/publications">جست‌وجو…</a>
+          </div>
+        </div>
+        <div className="az-reference-nav-shell">
+          <div className="az-container az-reference-nav">
+            <a href="/" className="az-reference-brand" aria-label={settings.identity.siteName + "، صفحهٔ نخست"}>
+              <img src={settings.identity.logoUrl} width="56" height="56" alt="" />
+              <span><strong>{settings.identity.siteName}</strong><small>نهاد مستقل پژوهشی تاریخ افغانستان</small></span>
+            </a>
+            <button className="az-menu-toggle" type="button" aria-controls="public-navigation" aria-expanded={menu} onClick={() => setMenu(!menu)}>
+              {menu ? "بستن ✕" : "فهرست ☰"}
+            </button>
+            <nav id="public-navigation" className={menu ? "az-reference-menu is-open" : "az-reference-menu"} aria-label="فهرست اصلی" onKeyDown={(event) => { if (event.key === "Escape") setMenu(false); }}>
+              <a href="/" aria-current={pathname === "/" ? "page" : undefined}>صفحهٔ نخست</a>
+              <a href="/about" aria-current={isCurrent("/about")}>دربارهٔ ما</a>
+              <a href="/council" aria-current={isCurrent("/council")}>حکومت شورای اتفاق</a>
+              <a href="/beheshti" aria-current={isCurrent("/beheshti")}>آیت‌الله بهشتی</a>
+              <a href="/archive" aria-current={isCurrent("/archive")}>آرشیف</a>
+              <a href="/publications" aria-current={isCurrent("/publications")}>نشریات</a>
+              <a href="/standards" aria-current={isCurrent("/standards")}>معیارهای پژوهش</a>
+              <a href="/governance" aria-current={isCurrent("/governance")}>حکومت‌داری</a>
+              <a href="/contact" aria-current={isCurrent("/contact")}>همکاری</a>
+              <a href="/contact" aria-current={isCurrent("/contact")}>تماس</a>
+            </nav>
+            <a className="az-reference-support" href="/contribute">حمایت از بنیاد ←</a>
+          </div>
         </div>
       </header>
 
