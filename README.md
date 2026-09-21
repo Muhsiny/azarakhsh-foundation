@@ -14,3 +14,4 @@
 <!-- visual QA run: desktop repair verified -->
 <!-- cloudflare direct deploy trigger: desktop repair 2026-09-21 -->
 <!-- cloudflare direct deploy retrigger: 2026-09-21T10:22+04:30 -->
+<!-- smoke after direct deploy 2026-09-21 -->
