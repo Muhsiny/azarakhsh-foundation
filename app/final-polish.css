@@ -1402,3 +1402,11 @@
 .az-reference-hero-center,.az-reference-hero-emblem,.az-reference-hero-motto{position:relative;z-index:3}
 .az-reference-hero-emblem{background:transparent}
 @media(max-width:900px){.az-reference-hero::after{position:absolute;inset:auto 0 0 0;width:100%;height:210px;opacity:.30}.az-reference-hero-emblem{z-index:4}}
+
+/* Lock the approved visual order despite the RTL document direction */
+.az-reference-hero{direction:ltr}
+.az-reference-hero-photo,.az-reference-hero-center,.az-reference-hero-emblem,.az-reference-hero-motto{direction:rtl}
+.az-reference-paths{direction:ltr}
+.az-reference-paths>a{direction:rtl}
+.az-reference-lower{direction:ltr}
+.az-reference-quote-card,.az-reference-latest,.az-reference-note-card{direction:rtl}
