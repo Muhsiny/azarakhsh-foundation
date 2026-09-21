@@ -4,24 +4,6 @@ import { usePathname } from "next/navigation";
 import { useState, type CSSProperties, type ReactNode } from "react";
 import type { SiteSettings } from "../site-settings";
 
-const collectionLinks = [
-  ["/publications", "نشریات و منابع"],
-  ["/archive", "آرشیف تاریخی"],
-];
-
-const dossierLinks = [
-  ["/council", "حکومت شورای اتفاق"],
-  ["/beheshti", "آیت‌الله سید علی بهشتی"],
-];
-
-const institutionLinks = [
-  ["/about", "دربارهٔ بنیاد"],
-  ["/standards", "اصول پژوهش و نشر"],
-  ["/governance", "ساختار و پاسخ‌گویی"],
-  ["/contact", "تماس و همکاری"],
-  ["/contribute", "ارسال سند یا خاطره"],
-];
-
 export default function PublicChrome({ children, settings }: { children: ReactNode; settings: SiteSettings }) {
   const pathname = usePathname() || "/";
   const [menu, setMenu] = useState(false);
