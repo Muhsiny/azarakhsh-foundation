@@ -25,6 +25,8 @@ const typeLabels: Record<string, string> = {
 };
 
 export default function HomeClient({ settings, latest }: { settings: SiteSettings; latest: LatestItem[] }) {
+  const heroTitle = settings.hero.title.replace("اسناد سخن بگوید", "اسناد سخن بگویند");
+
   return (
     <main className="az-home">
       <section className="az-home-hero" id="top">
@@ -42,7 +44,7 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
                 />
               </div>
               <span className="az-overline">{settings.hero.eyebrow}</span>
-              <h1>{settings.hero.title}</h1>
+              <h1>{heroTitle}</h1>
               <p>{settings.hero.description}</p>
               <div className="az-hero-links">
                 <a className="az-action az-action-gold" href="/archive">کاوش آرشیف <span aria-hidden="true">←</span></a>
