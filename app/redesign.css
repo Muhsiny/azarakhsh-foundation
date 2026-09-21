@@ -1879,38 +1879,42 @@
    Wide-screen composition, compact navigation, non-duplicated footer.
    ========================================================= */
 
-/* Home hero: keep the sacred artwork at the top edge on desktop.
-   It must never drift down beside the headline. */
+/* Home hero: the sacred opening is always the first, independent element.
+   The editorial cover below pairs the institution statement with archival imagery. */
 .az-home-intro{
   padding:clamp(34px,4.2vw,56px) clamp(32px,5vw,64px);
-}
-.az-home-intro-grid{
-  width:100%;
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 250px;
-  gap:clamp(34px,5vw,68px);
-  align-items:start;
-}
-.az-hero-copy-main{
-  width:100%;
-  max-width:760px;
 }
 .az-sacred-opening{
   width:100%;
   min-height:0;
-  margin:0;
-  padding:0;
-  align-self:start;
+  display:flex;
   justify-content:center;
-  align-items:flex-start;
+  align-items:center;
+  margin:0 0 clamp(22px,3vw,34px);
+  padding:0 0 clamp(20px,2.5vw,28px);
+  border-bottom:1px solid rgba(20,61,49,.08);
 }
 .az-basmala-art{
   display:block;
-  width:230px;
+  width:clamp(190px,17vw,248px);
   max-width:100%;
   height:auto;
-  margin:-8px auto 0;
+  aspect-ratio:1;
+  margin:0 auto;
   object-fit:contain;
+  mix-blend-mode:multiply;
+  filter:contrast(1.04) saturate(.88);
+}
+.az-home-intro-grid{
+  width:100%;
+  display:grid;
+  grid-template-columns:minmax(0,1.13fr) minmax(270px,.67fr);
+  gap:clamp(38px,5.8vw,76px);
+  align-items:center;
+}
+.az-hero-copy-main{
+  width:100%;
+  max-width:760px;
 }
 .az-hero-copy-main h1{
   max-width:760px;
@@ -1933,6 +1937,85 @@
 .az-hero-caption{
   width:100%;
   max-width:980px;
+}
+.az-hero-visual{
+  position:relative;
+  width:100%;
+  max-width:380px;
+  justify-self:end;
+  padding:0 0 34px 34px;
+}
+.az-hero-portrait{
+  position:relative;
+  display:block;
+  overflow:hidden;
+  border-radius:30px;
+  background:#dfe5df;
+  box-shadow:0 26px 72px rgba(15,48,38,.15);
+}
+.az-hero-portrait>img{
+  display:block;
+  width:100%;
+  aspect-ratio:4/4.7;
+  object-fit:cover;
+  object-position:center 31%;
+  transition:transform .45s ease;
+}
+.az-hero-portrait:hover>img{transform:scale(1.018)}
+.az-hero-portrait::after{
+  content:"";
+  position:absolute;
+  inset:auto 0 0;
+  height:45%;
+  background:linear-gradient(180deg,transparent,rgba(7,28,22,.82));
+  pointer-events:none;
+}
+.az-hero-portrait-caption{
+  position:absolute;
+  z-index:1;
+  inset:auto 20px 18px;
+  display:grid;
+  gap:1px;
+  color:#fff;
+}
+.az-hero-portrait-caption small,
+.az-hero-emblem small{
+  color:#e2cb90;
+  font-size:10.5px;
+}
+.az-hero-portrait-caption strong{
+  font-family:var(--az-type-reading,var(--font-naskh),serif);
+  font-size:19px;
+  font-weight:600;
+}
+.az-hero-emblem{
+  position:absolute;
+  z-index:2;
+  inset:auto auto 0 0;
+  width:min(205px,62%);
+  display:grid;
+  grid-template-columns:58px minmax(0,1fr);
+  gap:11px;
+  align-items:center;
+  padding:10px 12px;
+  border:1px solid rgba(20,61,49,.10);
+  border-radius:18px;
+  background:rgba(255,254,250,.96);
+  box-shadow:0 18px 48px rgba(18,46,37,.14);
+  backdrop-filter:blur(14px);
+}
+.az-hero-emblem img{
+  display:block;
+  width:58px;
+  height:58px;
+  object-fit:contain;
+  border-radius:10px;
+}
+.az-hero-emblem>span{display:grid;gap:1px;min-width:0}
+.az-hero-emblem strong{
+  color:#173d32;
+  font-size:12.5px;
+  line-height:1.55;
 }
 
 /* Desktop header: fewer top-level destinations, stable down to tablet width. */
@@ -2078,10 +2161,11 @@
 
 @media(max-width:1080px) and (min-width:761px){
   .az-home-intro-grid{
-    grid-template-columns:minmax(0,1fr) 205px;
-    gap:28px;
+    grid-template-columns:minmax(0,1fr) minmax(235px,.58fr);
+    gap:34px;
   }
-  .az-basmala-art{width:195px;margin-top:-5px}
+  .az-basmala-art{width:205px}
+  .az-hero-visual{max-width:330px;padding-inline-start:26px}
   .az-primary-nav{gap:12px}
   .az-primary-nav>a,.az-nav-more>summary{font-size:11.75px}
   .az-primary-nav .az-member-link{padding:8px 11px}
@@ -2126,16 +2210,12 @@
   }
   .az-home-intro-grid{
     grid-template-columns:1fr;
-    gap:18px;
+    gap:28px;
   }
-  .az-sacred-opening{
-    order:-1;
-    justify-content:center;
-    align-items:flex-start;
-  }
+  .az-sacred-opening{margin-bottom:26px;padding-bottom:22px}
   .az-basmala-art{
     width:clamp(160px,45vw,190px);
-    margin:0 auto 4px;
+    margin:0 auto;
   }
   .az-hero-copy-main{
     width:100%;
@@ -2144,6 +2224,13 @@
   .az-hero-copy-main h1{
     font-size:clamp(33px,8vw,40px);
     line-height:1.55;
+  }
+  .az-hero-visual{
+    width:min(100%,430px);
+    max-width:none;
+    justify-self:center;
+    padding-inline-start:34px;
+    margin-top:2px;
   }
   .az-footer-shell{
     grid-template-columns:1fr;
@@ -2163,6 +2250,7 @@
     padding:24px 20px 28px;
     border-radius:25px;
   }
+  .az-sacred-opening{margin-bottom:22px;padding-bottom:18px}
   .az-hero-copy-main .az-overline{
     text-align:right;
     font-size:10.5px;
@@ -2183,6 +2271,19 @@
     width:100%;
     text-align:center;
   }
+  .az-hero-visual{
+    width:100%;
+    padding:0 0 27px 23px;
+  }
+  .az-hero-portrait{border-radius:22px}
+  .az-hero-portrait>img{aspect-ratio:4/4.25}
+  .az-hero-emblem{
+    width:min(198px,70%);
+    grid-template-columns:50px minmax(0,1fr);
+    padding:9px 10px;
+    border-radius:15px;
+  }
+  .az-hero-emblem img{width:50px;height:50px}
   .az-featured-research{
     width:calc(100% - 28px);
     grid-template-columns:1fr;
