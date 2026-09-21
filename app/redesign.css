@@ -2121,3 +2121,385 @@
   }
   .az-hero-emblem img{width:50px;height:50px}
 }
+
+/* =========================================================
+   DIGNIFIED EDITORIAL RESET — 2026-09-21
+   A restrained archive and religious-research language for home.
+   ========================================================= */
+.public-redesign{
+  background:#f4f1e8;
+}
+.az-container{
+  width:min(var(--az-content-width,1180px),calc(100% - 64px));
+}
+
+/* A masthead, not a floating application toolbar. */
+.public-redesign .az-masthead{
+  padding:0;
+  border:0;
+  border-bottom:1px solid rgba(23,63,51,.16);
+  background:rgba(249,247,241,.97);
+  box-shadow:none;
+  backdrop-filter:blur(10px);
+}
+.public-redesign .az-header-row{
+  min-height:70px;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  backdrop-filter:none;
+}
+.public-redesign .az-wordmark{gap:9px}
+.public-redesign .az-wordmark img{width:42px;height:42px}
+.public-redesign .az-wordmark strong{font-size:21px}
+.public-redesign .az-wordmark small{font-size:10.5px}
+.public-redesign .az-primary-nav .az-member-link{
+  padding:7px 12px;
+  border-radius:3px;
+  background:transparent;
+}
+.public-redesign .az-nav-popover{
+  border-radius:3px!important;
+  box-shadow:0 14px 34px rgba(18,46,37,.12)!important;
+}
+
+/* The opening fits inside one viewport and reads like an editorial cover. */
+.az-home-hero{
+  padding:38px 0 26px;
+  border-bottom:1px solid rgba(23,63,51,.12);
+  background:
+    linear-gradient(90deg,rgba(199,164,91,.055),transparent 34%),
+    #f8f6ef;
+}
+.az-home-intro{
+  display:block;
+  width:min(var(--az-content-width,1180px),calc(100% - 64px));
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+}
+.az-home-intro-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 310px;
+  gap:clamp(42px,6vw,76px);
+  align-items:center;
+  min-height:408px;
+}
+.az-hero-copy-main{
+  width:100%;
+  max-width:720px;
+}
+.az-sacred-opening{
+  width:118px;
+  min-height:0;
+  display:block;
+  margin:0 0 10px;
+  padding:0;
+  border:0;
+}
+.az-basmala-art{
+  display:block;
+  width:108px;
+  max-width:100%;
+  height:auto;
+  margin:0;
+  aspect-ratio:1;
+  object-fit:contain;
+  mix-blend-mode:multiply;
+  filter:contrast(1.08) saturate(.82);
+}
+.az-hero-copy-main .az-overline{
+  margin:0 0 8px;
+  color:#846a31;
+  font-size:11px;
+  letter-spacing:.01em;
+}
+.az-hero-copy-main h1{
+  max-width:720px;
+  margin:0;
+  color:#12392e;
+  font-size:clamp(38px,3.65vw,50px);
+  font-weight:690;
+  line-height:1.48;
+  letter-spacing:-.018em;
+}
+.az-hero-copy-main>p{
+  max-width:650px;
+  margin:14px 0 0;
+  color:#485b53;
+  font-size:16.5px;
+  line-height:1.95;
+}
+.az-hero-links{margin-top:17px;gap:18px}
+.az-home .az-action{
+  min-height:43px;
+  padding:9px 17px;
+  border-radius:3px;
+  font-size:13px;
+  box-shadow:none;
+}
+.az-home .az-action:hover{transform:none;box-shadow:none}
+.az-hero-visual{
+  position:relative;
+  width:100%;
+  max-width:310px;
+  justify-self:end;
+  padding:0 0 24px 24px;
+}
+.az-hero-portrait{
+  border:1px solid rgba(23,63,51,.16);
+  border-radius:3px;
+  background:#dde2db;
+  box-shadow:0 16px 38px rgba(17,42,34,.13);
+}
+.az-hero-portrait>img{
+  aspect-ratio:4/4.65;
+  object-position:center 31%;
+}
+.az-hero-portrait-caption{inset:auto 16px 14px}
+.az-hero-portrait-caption strong{font-size:17px}
+.az-hero-emblem{
+  inset:auto auto 0 0;
+  width:176px;
+  grid-template-columns:48px minmax(0,1fr);
+  gap:9px;
+  padding:8px 10px;
+  border:1px solid rgba(23,63,51,.17);
+  border-radius:3px;
+  background:#fbf8ef;
+  box-shadow:0 10px 28px rgba(18,46,37,.13);
+  backdrop-filter:none;
+}
+.az-hero-emblem img{width:48px;height:48px;border-radius:0}
+.az-hero-emblem strong{font-size:11.5px}
+
+/* Search is an archive instrument, not another card. */
+.az-hero-search{
+  width:100%;
+  max-width:none;
+  grid-template-columns:minmax(0,1fr) 180px auto;
+  gap:0;
+  margin:24px 0 0;
+  padding:13px 0;
+  border:0;
+  border-top:1px solid rgba(23,63,51,.15);
+  border-bottom:1px solid rgba(23,63,51,.15);
+  border-radius:0;
+  background:transparent;
+}
+.az-hero-search label{
+  min-height:48px;
+  justify-content:center;
+  padding:2px 16px;
+  border-inline-end:1px solid rgba(23,63,51,.12);
+}
+.az-hero-search label:first-child{padding-inline-start:0}
+.az-hero-search input,.az-hero-search select{min-height:30px;font-size:14px}
+.az-hero-search .az-action{
+  min-width:112px;
+  min-height:46px;
+  margin-inline-start:14px;
+}
+.az-hero-caption{
+  max-width:none;
+  margin:10px 0 0;
+  padding:0;
+  border:0;
+  font-size:11.5px;
+}
+
+/* Collections become a compact archival index instead of four template cards. */
+.az-section{padding:52px 0}
+.az-collections{border:0}
+.az-section-title{
+  align-items:end;
+  margin-bottom:20px;
+  padding-bottom:15px;
+  border-bottom:1px solid rgba(23,63,51,.15);
+}
+.az-section-title .az-overline{margin-bottom:4px}
+.az-section-title h2{
+  margin:0;
+  font-size:clamp(29px,2.6vw,36px);
+  line-height:1.45;
+}
+.az-collection-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:0;
+  border:0;
+  border-bottom:1px solid rgba(23,63,51,.15);
+}
+.az-collection-grid>a{
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr) 22px;
+  grid-template-rows:auto auto;
+  align-items:center;
+  min-height:112px;
+  padding:20px 24px;
+  border:0!important;
+  border-top:1px solid rgba(23,63,51,.15)!important;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  transition:background .2s ease;
+}
+.az-collection-grid>a:nth-child(odd){
+  padding-inline-start:0;
+  border-inline-end:1px solid rgba(23,63,51,.15)!important;
+}
+.az-collection-grid>a:hover{
+  transform:none;
+  background:rgba(255,255,255,.46);
+  box-shadow:none;
+}
+.az-collection-number{
+  grid-column:1;
+  grid-row:1/3;
+  align-self:start;
+  padding-top:4px;
+}
+.az-collection-grid h3{
+  grid-column:2;
+  margin:0 0 3px;
+  font-size:19px;
+}
+.az-collection-grid p{grid-column:2;margin:0;max-width:none;font-size:13.5px}
+.az-collection-arrow{
+  position:static;
+  grid-column:3;
+  grid-row:1/3;
+  justify-self:end;
+}
+
+/* Research standards read like a charter, not a giant dark promotional panel. */
+.az-method{
+  display:grid;
+  grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);
+  gap:clamp(36px,5vw,64px);
+  margin:8px 0 52px;
+  padding:38px 0 40px;
+  border:0;
+  border-top:3px solid #b99547;
+  border-bottom:1px solid rgba(23,63,51,.16);
+  border-radius:0;
+  background:transparent;
+  color:#173d32;
+}
+.az-method .az-overline{margin-bottom:7px;color:#876a2f}
+.az-method h2{
+  margin:0 0 10px;
+  color:#173d32;
+  font-size:clamp(28px,2.5vw,35px);
+}
+.az-method p{color:#52635b}
+.az-method>div>p{font-size:15px;line-height:1.95}
+.az-method ol{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:20px 28px;
+  margin:0;
+  padding:0;
+  list-style:none;
+  counter-reset:method;
+}
+.az-method li{
+  position:relative;
+  margin:0;
+  padding:15px 0 0;
+  border:0;
+  border-top:1px solid rgba(23,63,51,.18);
+  counter-increment:method;
+}
+.az-method li::before{
+  content:"۰" counter(method);
+  display:block;
+  margin-bottom:5px;
+  color:#a17e35;
+  font-size:10.5px;
+}
+.az-method h3{color:#173d32;font-size:18px}
+.az-method li p{margin-top:2px;color:#5a6b63;font-size:13px;line-height:1.8}
+
+/* One modest invitation closes the page. */
+.az-contribute-band{
+  margin:0 0 54px;
+  padding:28px 32px;
+  border:1px solid rgba(23,63,51,.15);
+  border-inline-start:4px solid #c3a052;
+  border-radius:0;
+  background:#ece9df;
+  color:#173d32;
+}
+.az-contribute-band .az-overline{margin-bottom:4px;color:#876a2f}
+.az-contribute-band h2{font-size:clamp(26px,2.4vw,33px)}
+.az-contribute-band p{max-width:720px;margin-top:5px;color:#51635a;font-size:14px}
+
+/* A short institutional colophon. */
+.public-redesign .az-site-footer{margin-top:0;background:#102f27}
+.az-footer-shell{
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:54px;
+  padding:28px 0 21px;
+}
+.az-footer-name{margin-bottom:5px;font-size:20px}
+.az-site-footer .az-footer-brand p{margin-bottom:4px;font-size:12.5px;line-height:1.75}
+.az-footer-motto{font-size:11.5px}
+.az-site-footer .az-email{margin-top:8px;font-size:11.5px}
+.az-footer-utility{padding-top:0;align-self:center}
+.az-footer-bottom{padding:11px 0 13px;font-size:10.5px}
+
+@media(max-width:980px){
+  .az-home-intro-grid{grid-template-columns:minmax(0,1fr) 270px;gap:38px}
+  .az-hero-visual{max-width:270px;padding:0 0 20px 20px}
+  .az-hero-copy-main h1{font-size:40px}
+}
+
+@media(max-width:760px){
+  .az-container,.az-home-intro{width:calc(100% - 32px)}
+  .public-redesign .az-header-row{min-height:64px;padding:0}
+  .public-redesign .az-masthead{padding:0}
+  .az-home-hero{padding:24px 0 18px}
+  .az-home-intro-grid{grid-template-columns:1fr;gap:28px;min-height:0}
+  .az-sacred-opening{width:92px;margin-bottom:7px;padding:0}
+  .az-basmala-art{width:88px;margin:0}
+  .az-hero-copy-main h1{font-size:clamp(32px,9vw,39px);line-height:1.5}
+  .az-hero-copy-main>p{font-size:15.5px}
+  .az-hero-visual{width:min(100%,290px);max-width:290px;padding:0 0 19px 19px}
+  .az-hero-portrait{border-radius:2px}
+  .az-hero-search{grid-template-columns:1fr;margin-top:22px;padding:8px 0}
+  .az-hero-search label{
+    min-height:58px;
+    padding:8px 0;
+    border-inline-end:0;
+    border-bottom:1px solid rgba(23,63,51,.12);
+  }
+  .az-hero-search .az-action{width:100%;margin:10px 0 0}
+  .az-hero-links{align-items:flex-start;flex-direction:row;flex-wrap:wrap}
+  .az-hero-links .az-action{width:auto}
+  .az-section{padding:42px 0}
+  .az-section-title{display:flex;align-items:end}
+  .az-collection-grid{grid-template-columns:1fr}
+  .az-collection-grid>a,.az-collection-grid>a:nth-child(odd){
+    min-height:100px;
+    padding:17px 0;
+    border-inline-end:0!important;
+  }
+  .az-method{grid-template-columns:1fr;gap:28px;margin-bottom:42px;padding:31px 0 34px}
+  .az-method ol{grid-template-columns:1fr;gap:16px}
+  .az-contribute-band{align-items:flex-start;flex-direction:column;margin-bottom:42px;padding:25px 22px}
+  .az-footer-shell{grid-template-columns:1fr;gap:18px;padding:25px 0 18px}
+  .az-footer-utility{align-self:start}
+}
+
+@media(max-width:480px){
+  .az-container,.az-home-intro{width:calc(100% - 24px)}
+  .az-section-title{display:block}
+  .az-section-title>.az-small-link{margin-top:9px}
+  .az-hero-copy-main h1{font-size:31px}
+  .az-hero-visual{width:100%;max-width:270px}
+}
