@@ -29,6 +29,17 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
     <main className="az-home">
       <section className="az-home-hero" id="top">
         <div className="az-container az-home-intro">
+          <div className="az-sacred-opening" aria-label="بسم الله الرحمن الرحیم">
+            <img
+              className="az-basmala-art"
+              src="/media/bismillah"
+              alt="بسم الله الرحمن الرحیم"
+              width="1000"
+              height="1000"
+              fetchPriority="high"
+            />
+          </div>
+
           <div className="az-home-intro-grid">
             <div className="az-hero-copy-main">
               <span className="az-overline">{settings.hero.eyebrow}</span>
@@ -40,16 +51,43 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
               </div>
             </div>
 
-            <div className="az-sacred-opening" aria-label="بسم الله الرحمن الرحیم">
-              <img
-                className="az-basmala-art"
-                src="/media/bismillah"
-                alt="بسم الله الرحمن الرحیم"
-                width="1000"
-                height="1000"
-                fetchPriority="high"
-              />
-            </div>
+            <aside className="az-hero-visual" aria-label="پرونده‌های محوری بنیاد آذرخش">
+              <a className="az-hero-portrait" href="/beheshti">
+                <img
+                  src={settings.media.leaderImageUrl}
+                  alt={settings.media.leaderImageAlt}
+                  width="1182"
+                  height="1200"
+                  fetchPriority="high"
+                  onError={(e) => {
+                    if (!e.currentTarget.dataset.fallback) {
+                      e.currentTarget.dataset.fallback = "1";
+                      e.currentTarget.src = "/media/beheshti-original.webp";
+                    }
+                  }}
+                />
+                <span className="az-hero-portrait-caption">
+                  <small>پروندهٔ شخصیت</small>
+                  <strong>آیت‌الله سید علی بهشتی</strong>
+                </span>
+              </a>
+
+              <a className="az-hero-emblem" href="/council">
+                <img
+                  src={settings.media.councilEmblemUrl}
+                  alt=""
+                  width="1075"
+                  height="1100"
+                  onError={(e) => {
+                    if (!e.currentTarget.dataset.fallback) {
+                      e.currentTarget.dataset.fallback = "1";
+                      e.currentTarget.src = "/media/council-emblem.webp";
+                    }
+                  }}
+                />
+                <span><small>پروندهٔ تاریخی</small><strong>حکومت شورای اتفاق</strong></span>
+              </a>
+            </aside>
           </div>
 
           <form action="/publications" method="get" className="az-hero-search" aria-label="جست‌وجو در منابع آذرخش">
