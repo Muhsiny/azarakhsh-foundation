@@ -44,12 +44,17 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
 
       <header className="az-masthead az-masthead-reference" data-inline-static>
         <div className="az-reference-top">
-          <div className="az-reference-top-side az-reference-top-side-right">حقیقت | پژوهش | حافظهٔ تاریخ | آیندهٔ آگاهانه</div>
+          <div className="az-reference-top-side az-reference-top-side-right">
+            <span>حقیقت | پژوهش | حافظهٔ تاریخ | آیندهٔ آگاهانه</span>
+            <span className="az-reference-socials" aria-label="رسانه‌های بنیاد"><span aria-hidden="true">▶</span><span aria-hidden="true">f</span><span aria-hidden="true">𝕏</span></span>
+          </div>
           <a href="/" className="az-reference-basmala" aria-label="صفحهٔ نخست"><img src="/media/bismillah" alt="بسم الله الرحمن الرحیم" /></a>
           <div className="az-reference-top-side az-reference-top-side-left">
+            <span className="az-reference-globe" aria-hidden="true">◎</span>
             <a href="/en" lang="en" dir="ltr">EN</a>
-            <span aria-hidden="true">◌</span>
+            <span className="az-reference-separator" aria-hidden="true" />
             <a href="/publications">جست‌وجو…</a>
+            <span className="az-reference-search-icon" aria-hidden="true">⌕</span>
           </div>
         </div>
         <div className="az-reference-nav-shell">
