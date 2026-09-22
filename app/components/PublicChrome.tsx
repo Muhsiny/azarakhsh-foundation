@@ -2,9 +2,15 @@
 
 import { usePathname } from "next/navigation";
 import { useState, type CSSProperties, type ReactNode } from "react";
-import type { SiteSettings } from "../site-settings";
+export type PublicChromeSettings = {
+  identity: { siteName: string; logoUrl: string };
+  colors: { primary: string; dark: string; gold: string; paper: string };
+  design: { contentWidth: number };
+  footer: { mission: string; copyright: string };
+  contact: { email: string };
+};
 
-export default function PublicChrome({ children, settings }: { children: ReactNode; settings: SiteSettings }) {
+export default function PublicChrome({ children, settings }: { children: ReactNode; settings: PublicChromeSettings }) {
   const pathname = usePathname() || "/";
   const [menu, setMenu] = useState(false);
   if (pathname.startsWith("/admin")) return <>{children}</>;

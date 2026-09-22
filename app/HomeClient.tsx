@@ -1,7 +1,5 @@
 "use client";
 
-import type { SiteSettings } from "./site-settings";
-
 export type LatestItem = {
   id: number;
   slug: string;
@@ -24,7 +22,12 @@ const typeLabels: Record<string, string> = {
   page: "پرونده",
 };
 
-export default function HomeClient({ settings, latest }: { settings: SiteSettings; latest: LatestItem[] }) {
+export type HomeMedia = {
+  councilEmblemUrl: string;
+  councilEmblemAlt: string;
+};
+
+export default function HomeClient({ media, latest }: { media: HomeMedia; latest: LatestItem[] }) {
   const featured = latest.slice(0, 3);
 
   return (
@@ -52,7 +55,7 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
         </div>
 
         <div className="az-reference-hero-emblem">
-          <img src={settings.media.councilEmblemUrl || "/media/council-emblem.webp"} alt={settings.media.councilEmblemAlt} />
+          <img src={media.councilEmblemUrl || "/media/council-emblem.webp"} alt={media.councilEmblemAlt} />
           <strong>حکومت شورای اتفاق<br />اسلامی افغانستان</strong>
           <a href="/council">پروندهٔ پژوهشی ←</a>
         </div>
