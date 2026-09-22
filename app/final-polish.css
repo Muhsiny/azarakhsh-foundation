@@ -1410,3 +1410,293 @@
 .az-reference-paths>a{direction:rtl}
 .az-reference-lower{direction:ltr}
 .az-reference-quote-card,.az-reference-latest,.az-reference-note-card{direction:rtl}
+
+
+/* =========================================================
+   DEEP SITE AUDIT — 2026-09-23
+   Integrity, hierarchy, navigation and responsive cleanup.
+   This block intentionally wins over legacy global selectors.
+   ========================================================= */
+
+.public-redesign nav{
+  gap:0;
+}
+.public-redesign nav a{
+  padding:0;
+}
+.az-reference-menu{
+  gap:18px;
+}
+.az-reference-menu>a{
+  padding:23px 0 19px!important;
+}
+.az-reference-more{
+  position:relative;
+  align-self:stretch;
+}
+.az-reference-more>summary{
+  display:flex;
+  align-items:center;
+  min-height:100%;
+  padding:0;
+  color:rgba(255,255,255,.92);
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  list-style:none;
+  user-select:none;
+}
+.az-reference-more>summary::-webkit-details-marker{display:none}
+.az-reference-more>summary::after{
+  content:"⌄";
+  margin-inline-start:5px;
+  color:#e0c676;
+  font-size:9px;
+}
+.az-reference-more>div{
+  position:absolute;
+  z-index:120;
+  top:calc(100% - 8px);
+  inset-inline-end:-12px;
+  display:grid;
+  width:220px;
+  padding:9px;
+  border:1px solid rgba(18,56,47,.12);
+  border-radius:12px;
+  background:#fffdf9;
+  box-shadow:0 18px 48px rgba(7,37,29,.18);
+}
+.az-reference-more>div a{
+  padding:10px 11px!important;
+  border-radius:7px;
+  color:#21473d;
+  font-size:11.5px;
+}
+.az-reference-more>div a:hover,
+.az-reference-more>div a[aria-current=page]{
+  background:#eef1ec;
+  color:#9b741d;
+}
+
+.az-reference-top{
+  min-height:72px;
+  height:auto;
+}
+.az-reference-top-side{
+  max-width:330px;
+  line-height:1.7;
+}
+.az-reference-top-side-right{
+  font-weight:600;
+}
+.az-reference-brand{
+  min-width:225px;
+}
+.az-reference-brand small{
+  letter-spacing:0;
+}
+
+.az-reference-hero{
+  min-height:500px;
+  grid-template-columns:minmax(360px,43%) minmax(330px,34%) minmax(220px,23%);
+}
+.az-reference-hero-photo{
+  margin:0;
+  min-height:500px;
+}
+.az-reference-photo-caption{
+  position:absolute;
+  z-index:3;
+  inset:auto auto 30px 28px;
+  display:grid;
+  gap:2px;
+  max-width:min(310px,75%);
+  padding:11px 13px;
+  border-inline-start:2px solid #d5a93e;
+  background:rgba(5,38,30,.72);
+  color:#fff;
+  text-shadow:0 1px 10px rgba(0,0,0,.28);
+  backdrop-filter:blur(5px);
+}
+.az-reference-photo-caption strong{
+  font:600 14px/1.7 var(--font-naskh),Tahoma,serif;
+}
+.az-reference-photo-caption span{
+  color:#e0cf9c;
+  font-size:9.5px;
+}
+.az-reference-kicker{
+  margin-bottom:12px;
+  color:#8f6b1f;
+  font-size:10.5px;
+  font-weight:700;
+}
+.az-reference-hero-center{
+  padding-inline:20px;
+}
+.az-reference-hero-center p{
+  max-width:470px;
+}
+.az-reference-hero-emblem a{
+  margin-top:12px;
+  color:#8b671d;
+  font-size:10.5px;
+  font-weight:700;
+}
+.az-reference-hero-motto strong{
+  letter-spacing:0;
+}
+
+.az-reference-lower{
+  grid-template-columns:minmax(210px,.8fr) minmax(0,2fr) minmax(210px,.8fr);
+  gap:28px;
+  padding-top:38px;
+  padding-bottom:54px;
+}
+.az-reference-card-label{
+  display:block;
+  margin-bottom:10px;
+  color:#dfc77b;
+  font-size:9.5px;
+  font-weight:700;
+}
+.az-reference-note-card .az-reference-card-label{
+  color:#9a762e;
+}
+.az-reference-quote-card blockquote{
+  font-size:18px;
+}
+.az-reference-quote-card>a,
+.az-reference-note-card>a{
+  margin-top:16px;
+  color:#ddc67e;
+  font-size:10.5px;
+  font-weight:700;
+}
+.az-reference-note-card>a{
+  color:#8f6c25;
+}
+.az-reference-media-placeholder{
+  display:grid;
+  place-items:center;
+  width:100%;
+  height:100%;
+  background:
+    radial-gradient(circle at 50% 38%,rgba(196,157,70,.16),transparent 36%),
+    linear-gradient(145deg,#e8e4d9,#d9d3c5);
+  color:#52675e;
+  font:600 16px/1.4 var(--font-naskh),Tahoma,serif;
+}
+.az-reference-empty{
+  min-height:160px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:26px;
+  border:1px solid rgba(18,56,47,.10);
+  border-radius:12px;
+  background:rgba(255,255,255,.54);
+}
+.az-reference-empty strong{
+  color:#173f35;
+  font:600 18px/1.7 var(--font-naskh),Tahoma,serif;
+}
+.az-reference-empty p{
+  max-width:560px;
+  margin:7px 0 0;
+  color:#6a7a73;
+  font-size:12.5px;
+  line-height:1.9;
+}
+
+.az-footer-utility{
+  display:flex!important;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:10px 18px!important;
+}
+.az-footer-utility a{
+  padding:0!important;
+  color:#d9e2dc;
+  font-size:12px;
+}
+
+@media(max-width:1180px){
+  .az-reference-menu{gap:11px}
+  .az-reference-menu>a,
+  .az-reference-more>summary{font-size:10.8px}
+  .az-reference-brand{min-width:200px}
+}
+@media(max-width:900px){
+  .az-reference-top{min-height:60px}
+  .az-reference-menu{
+    gap:0;
+  }
+  .az-reference-menu>a{
+    padding:10px 4px!important;
+  }
+  .az-reference-more{
+    align-self:auto;
+  }
+  .az-reference-more>summary{
+    min-height:auto;
+    padding:10px 4px;
+  }
+  .az-reference-more>div{
+    position:static;
+    width:auto;
+    margin:0 8px 8px;
+    box-shadow:none;
+  }
+  .az-reference-more>div a{
+    padding:9px 10px!important;
+  }
+  .az-reference-hero{
+    grid-template-columns:1fr;
+  }
+  .az-reference-hero-photo{
+    min-height:370px;
+  }
+  .az-reference-photo-caption{
+    inset:auto auto 24px 20px;
+  }
+  .az-reference-lower{
+    grid-template-columns:1fr;
+  }
+  .az-footer-utility{
+    justify-content:flex-start;
+  }
+}
+@media(max-width:600px){
+  .az-reference-hero-photo{
+    min-height:300px;
+  }
+  .az-reference-photo-caption{
+    inset:auto 16px 18px 16px;
+    max-width:none;
+  }
+  .az-reference-hero-center{
+    padding:34px 22px 38px;
+  }
+  .az-reference-hero-center h1{
+    font-size:30px;
+    line-height:1.6;
+  }
+  .az-reference-paths>a{
+    min-height:82px;
+  }
+  .az-reference-lower{
+    width:calc(100% - 30px);
+    gap:16px;
+    padding-top:24px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .public-redesign *,
+  .public-redesign *::before,
+  .public-redesign *::after{
+    scroll-behavior:auto!important;
+    transition:none!important;
+    animation:none!important;
+  }
+}
