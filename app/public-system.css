@@ -388,9 +388,9 @@
   .az-home-hero::after{display:none}
   .az-home-hero-grid{min-height:0;grid-template-columns:1fr;gap:32px;padding-block:34px 42px}
   .az-home-copy{max-width:none;order:2}
-  .az-home-portrait{order:1;justify-self:stretch;width:100%;max-width:560px;margin-inline:auto}
-  .az-home-portrait-frame{aspect-ratio:16/11}
-  .az-home-portrait-frame img{object-position:center 18%}
+  .az-home-portrait{order:1;justify-self:stretch;width:100%;max-width:380px;margin-inline:auto}
+  .az-home-portrait-frame{aspect-ratio:4/5}
+  .az-home-portrait-frame img{object-position:center top}
   .az-research-index-grid{grid-template-columns:1fr}
   .az-research-index-grid>a:nth-child(odd),
   .az-research-index-grid>a:nth-child(even){padding-inline:0;border-inline-end:0}
@@ -430,8 +430,9 @@
   .az-site-brand img{width:42px;height:42px;flex-basis:42px}
   .az-site-brand strong{font-size:16px}
   .az-home-hero-grid{padding-top:22px;gap:26px}
-  .az-home-portrait-frame{aspect-ratio:16/10}
-  .az-home-portrait figcaption{inset:auto 12px 12px 12px;padding:10px 11px}
+  .az-home-portrait{max-width:330px}
+  .az-home-portrait-frame{aspect-ratio:4/5}
+  .az-home-portrait figcaption{position:static;inset:auto;padding:11px 12px;border-inline-start:2px solid #c9aa63;background:#0a3028;backdrop-filter:none}
   .az-home-copy h1{font-size:34px;line-height:1.55}
   .az-home-lead{margin:16px 0 20px;font-size:14px;line-height:1.95}
   .az-home-actions{display:grid;grid-template-columns:1fr 1fr}
