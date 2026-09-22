@@ -27,40 +27,66 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
       <header className="az-masthead az-masthead-reference" data-inline-static>
         <div className="az-reference-top">
           <div className="az-reference-top-side az-reference-top-side-right">
-            <span>حقیقت | پژوهش | حافظهٔ تاریخ | آیندهٔ آگاهانه</span>
-            <span className="az-reference-socials" aria-label="رسانه‌های بنیاد"><span aria-hidden="true">▶</span><span aria-hidden="true">f</span><span aria-hidden="true">𝕏</span></span>
+            <span>بنیاد مستقل پژوهشی تاریخ افغانستان</span>
           </div>
-          <a href="/" className="az-reference-basmala" aria-label="صفحهٔ نخست"><img src="/media/bismillah" alt="بسم الله الرحمن الرحیم" /></a>
+
+          <a href="/" className="az-reference-basmala" aria-label="صفحهٔ نخست">
+            <img src="/media/bismillah" alt="بسم الله الرحمن الرحیم" />
+          </a>
+
           <div className="az-reference-top-side az-reference-top-side-left">
-            <span className="az-reference-globe" aria-hidden="true">◎</span>
             <a href="/en" lang="en" dir="ltr">EN</a>
             <span className="az-reference-separator" aria-hidden="true" />
-            <a href="/publications">جست‌وجو…</a>
+            <a href="/publications">جست‌وجو در منابع</a>
             <span className="az-reference-search-icon" aria-hidden="true">⌕</span>
           </div>
         </div>
+
         <div className="az-reference-nav-shell">
           <div className="az-container az-reference-nav">
             <a href="/" className="az-reference-brand" aria-label={settings.identity.siteName + "، صفحهٔ نخست"}>
               <img src={settings.identity.logoUrl} width="56" height="56" alt="" />
-              <span><strong>{settings.identity.siteName}</strong><small>نهاد مستقل پژوهشی تاریخ افغانستان</small></span>
+              <span>
+                <strong>{settings.identity.siteName}</strong>
+                <small>پژوهش، سند و حافظهٔ تاریخی</small>
+              </span>
             </a>
-            <button className="az-menu-toggle" type="button" aria-controls="public-navigation" aria-expanded={menu} onClick={() => setMenu(!menu)}>
+
+            <button
+              className="az-menu-toggle"
+              type="button"
+              aria-controls="public-navigation"
+              aria-expanded={menu}
+              onClick={() => setMenu(!menu)}
+            >
               {menu ? "بستن ✕" : "فهرست ☰"}
             </button>
-            <nav id="public-navigation" className={menu ? "az-reference-menu is-open" : "az-reference-menu"} aria-label="فهرست اصلی" onKeyDown={(event) => { if (event.key === "Escape") setMenu(false); }}>
+
+            <nav
+              id="public-navigation"
+              className={menu ? "az-reference-menu is-open" : "az-reference-menu"}
+              aria-label="فهرست اصلی"
+              onKeyDown={(event) => { if (event.key === "Escape") setMenu(false); }}
+            >
               <a href="/" aria-current={pathname === "/" ? "page" : undefined}>صفحهٔ نخست</a>
-              <a href="/about" aria-current={isCurrent("/about")}>دربارهٔ ما</a>
+              <a href="/about" aria-current={isCurrent("/about")}>دربارهٔ بنیاد</a>
               <a href="/council" aria-current={isCurrent("/council")}>حکومت شورای اتفاق</a>
               <a href="/beheshti" aria-current={isCurrent("/beheshti")}>آیت‌الله بهشتی</a>
               <a href="/archive" aria-current={isCurrent("/archive")}>آرشیف</a>
               <a href="/publications" aria-current={isCurrent("/publications")}>نشریات</a>
-              <a href="/standards" aria-current={isCurrent("/standards")}>معیارهای پژوهش</a>
-              <a href="/governance" aria-current={isCurrent("/governance")}>حکومت‌داری</a>
-              <a href="/contact" aria-current={isCurrent("/contact")}>همکاری</a>
-              <a href="/contact" aria-current={isCurrent("/contact")}>تماس</a>
+
+              <details className="az-reference-more">
+                <summary>بیشتر</summary>
+                <div>
+                  <a href="/standards" aria-current={isCurrent("/standards")}>معیارهای پژوهش</a>
+                  <a href="/governance" aria-current={isCurrent("/governance")}>ساختار و پاسخ‌گویی</a>
+                  <a href="/contribute" aria-current={isCurrent("/contribute")}>همکاری و ارسال منبع</a>
+                  <a href="/contact" aria-current={isCurrent("/contact")}>تماس</a>
+                </div>
+              </details>
             </nav>
-            <a className="az-reference-support" href="/contribute">حمایت از بنیاد ←</a>
+
+            <a className="az-reference-support" href="/contribute">ارسال سند و خاطره ←</a>
           </div>
         </div>
       </header>
@@ -77,8 +103,10 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
           </div>
 
           <nav className="az-footer-utility" aria-label="پیوندهای پایانی">
-            <a href="/about">درباره</a>
+            <a href="/about">دربارهٔ بنیاد</a>
             <a href="/standards">روش پژوهش</a>
+            <a href="/contribute">ارسال سند و خاطره</a>
+            <a href="/contact">تماس</a>
             <a href="/privacy">حریم خصوصی و حقوق نشر</a>
           </nav>
         </div>
