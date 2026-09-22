@@ -340,6 +340,10 @@
 .az-contribution-page textarea,
 .az-contribution-page select{width:100%;border:1px solid rgba(16,53,44,.22);border-radius:7px;background:#fff;padding:11px 12px;color:#233d35}
 .az-field-help{color:#7c8580;font-size:10px}
+.az-file-picker{position:relative;min-height:48px;margin-top:6px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:6px 7px 6px 12px;border:1px solid rgba(16,53,44,.22);border-radius:7px;background:#fff;overflow:hidden}
+.az-file-picker input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.az-file-picker>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#74807a;font-size:10.5px}
+.az-file-picker>b{padding:7px 11px;border-radius:6px;background:#edf0eb;color:#25463d;font-size:10.5px;font-weight:700}
 .custom-managed-page{padding-bottom:64px}
 .managed-page-cover{width:min(980px,calc(100% - 64px));margin:0 auto}
 .managed-page-cover img{width:100%;max-height:520px;object-fit:cover}
