@@ -2,7 +2,6 @@
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import GovernanceCenter from "./GovernanceCenter";
-import SiteStudio from "./SiteStudio";
 
 type Post = {
   id: number;
@@ -198,7 +197,6 @@ export default function AdminDashboard({
       </header>
 
       <GovernanceCenter />
-      <SiteStudio />
 
       <section className="admin-grid">
         <form className="editor-card" onSubmit={savePost}>
