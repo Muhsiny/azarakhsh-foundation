@@ -76,6 +76,29 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const settings = await loadSiteSettings();
+  const chromeSettings = {
+    identity: {
+      siteName: settings.identity.siteName,
+      logoUrl: settings.identity.logoUrl,
+    },
+    colors: {
+      primary: settings.colors.primary,
+      dark: settings.colors.dark,
+      gold: settings.colors.gold,
+      paper: settings.colors.paper,
+    },
+    design: {
+      contentWidth: settings.design.contentWidth,
+    },
+    footer: {
+      mission: settings.footer.mission,
+      copyright: settings.footer.copyright,
+    },
+    contact: {
+      email: settings.contact.email,
+    },
+  };
+
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ResearchOrganization",
@@ -93,7 +116,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <body>
         <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} type="application/ld+json" />
         <OfflineBootstrap />
-        <PublicChrome settings={settings}>{children}</PublicChrome>
+        <PublicChrome settings={chromeSettings}>{children}</PublicChrome>
         <PublicInlineOverrides />
         <AdminEditorGate />
       </body>
