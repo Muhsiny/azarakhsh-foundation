@@ -23,8 +23,6 @@ const typeLabels: Record<string, string> = {
 };
 
 export type HomeMedia = {
-  leaderImageUrl: string;
-  leaderImageAlt: string;
   councilEmblemUrl: string;
   councilEmblemAlt: string;
 };
