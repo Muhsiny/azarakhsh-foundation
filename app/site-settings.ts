@@ -29,10 +29,9 @@ export type SiteSettings = {
   footer: { mission: string; copyright: string };
   contact: { email: string; phone: string; address: string; website: string };
   colors: { primary: string; dark: string; gold: string; paper: string };
-  design: { fontFamily: string; heroAlignment: "right" | "center"; density: "compact" | "balanced" | "spacious"; headerStyle: "solid" | "glass"; imageStyle: "archival" | "natural" | "monochrome"; headingScale: number; sectionSpacing: number; contentWidth: number; cardRadius: number; customCss: string };
+  design: { fontFamily: string; heroAlignment: "right" | "center"; density: "compact" | "balanced" | "spacious"; headerStyle: "solid" | "glass"; imageStyle: "archival" | "natural" | "monochrome"; headingScale: number; sectionSpacing: number; contentWidth: number; cardRadius: number };
   visibility: Record<SectionKey, boolean>;
   sectionOrder: SectionKey[];
-  inlineOverrides: Record<string, string>;
 };
 
 export type DeepPartial<T> = { [K in keyof T]?: T[K] extends Array<infer U> ? U[] : T[K] extends object ? DeepPartial<T[K]> : T[K] };
@@ -101,10 +100,9 @@ export const defaultSiteSettings: SiteSettings = {
   footer: { mission: "بنیاد مستقل پژوهش، اسناد و حافظهٔ تاریخی افغانستان", copyright: "تمام حقوق محفوظ است." },
   contact: { email: "info@azarakhsh.foundation", phone: "", address: "افغانستان", website: SITE_URL },
   colors: { primary: "#173f33", dark: "#0b231d", gold: "#c7a45b", paper: "#f8f6f0" },
-  design: { fontFamily: "Vazirmatn, Tahoma, sans-serif", heroAlignment: "right", density: "balanced", headerStyle: "solid", imageStyle: "archival", headingScale: 1, sectionSpacing: 1, contentWidth: 1180, cardRadius: 2, customCss: "" },
+  design: { fontFamily: "Vazirmatn, Tahoma, sans-serif", heroAlignment: "right", density: "balanced", headerStyle: "solid", imageStyle: "archival", headingScale: 1, sectionSpacing: 1, contentWidth: 1180, cardRadius: 2 },
   visibility: { mission: true, council: true, timeline: true, leader: true, archive: true, standards: true, method: true, contribute: true },
   sectionOrder: ["mission", "council", "timeline", "leader", "archive", "standards", "method", "contribute"],
-  inlineOverrides: {},
 };
 
 function isPlainObject(value: unknown): value is Record<string, unknown> { return Boolean(value) && typeof value === "object" && !Array.isArray(value) }
@@ -114,8 +112,8 @@ function deepMerge<T>(base: T, override?: DeepPartial<T>): T {
   if (!isPlainObject(base) || !isPlainObject(override)) return override as T;
   const result: Record<string, unknown> = { ...base };
   for (const [key, value] of Object.entries(override)) {
-    if (value === undefined) continue;
-    result[key] = key in result ? deepMerge(result[key], value as never) : value;
+    if (value === undefined || !(key in result)) continue;
+    result[key] = deepMerge(result[key], value as never);
   }
   return result as T;
 }
