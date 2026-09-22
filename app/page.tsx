@@ -39,5 +39,10 @@ export default async function Home() {
     latest = [];
   }
 
-  return <HomeClient settings={settings} latest={latest} />;
+  const media = {
+    councilEmblemUrl: settings.media.councilEmblemUrl,
+    councilEmblemAlt: settings.media.councilEmblemAlt,
+  };
+
+  return <HomeClient media={media} latest={latest} />;
 }
