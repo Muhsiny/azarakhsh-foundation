@@ -5,6 +5,54 @@ import { siteSettings } from "../../../db/schema";
 import { canManageSiteRequest } from "../../admin-auth";
 import { defaultSiteSettings, mergeSiteSettings } from "../../site-settings";
 
+
+type PublicAssetRecord = Record<string, unknown>;
+
+function isPublicAsset(value: unknown) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const asset = value as PublicAssetRecord;
+  if ("visibility" in asset && asset.visibility !== "public") return false;
+  if ("status" in asset && asset.status !== "published") return false;
+  if (asset.type === "image") return true;
+  return (
+    asset.status === "published" &&
+    asset.visibility === "public" &&
+    typeof asset.publicSlug === "string" &&
+    Boolean(asset.publicSlug)
+  );
+}
+
+function sanitizeBlock(value: unknown): unknown {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return value;
+  const block = value as Record<string, unknown>;
+  if (!Array.isArray(block.assets)) return block;
+  return { ...block, assets: block.assets.filter(isPublicAsset) };
+}
+
+function sanitizeOverride(raw: string) {
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return JSON.stringify(
+        parsed.map((item) => {
+          if (!item || typeof item !== "object" || Array.isArray(item)) return item;
+          const section = item as Record<string, unknown>;
+          return { ...section, body: sanitizeBlock(section.body) };
+        }),
+      );
+    }
+    return JSON.stringify(sanitizeBlock(parsed));
+  } catch {
+    return raw;
+  }
+}
+
+function publicOverrides(overrides: Record<string, string> | undefined) {
+  return Object.fromEntries(
+    Object.entries(overrides || {}).map(([key, value]) => [key, sanitizeOverride(value)]),
+  );
+}
+
 async function readSettings() {
   await ensurePlatformSchema();
   const db = await getDb();
@@ -16,7 +64,10 @@ async function readSettings() {
 export async function GET() {
   try {
     const { settings } = await readSettings();
-    return Response.json({ overrides: settings.inlineOverrides || {} });
+    return Response.json(
+      { overrides: publicOverrides(settings.inlineOverrides) },
+      { headers: { "Cache-Control": "no-store" } },
+    );
   } catch {
     return Response.json({ overrides: {} });
   }
