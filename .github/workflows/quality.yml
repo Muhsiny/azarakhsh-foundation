@@ -114,6 +114,9 @@ jobs:
           await capture("leader-desktop", "/beheshti", 1440, 1000, false);
           await capture("council-desktop", "/council", 1440, 1000, false);
           await capture("publications-desktop", "/publications", 1440, 1000, false);
+          await capture("about-desktop", "/about", 1440, 1000, false);
+          await capture("about-mobile", "/about", 390, 844, true);
+          await capture("contribute-mobile", "/contribute", 390, 844, true);
           ws.close();
           NODE
           node /tmp/capture.mjs
