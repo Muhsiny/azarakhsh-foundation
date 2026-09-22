@@ -36,8 +36,7 @@ export default async function CustomPage({ params }: { params: Promise<{ slug: s
 
   return (
     <main className="knowledge-page custom-managed-page" style={style}>
-      {settings.design.customCss && <style>{settings.design.customCss}</style>}
-      <section className="knowledge-hero">
+<section className="knowledge-hero">
         <p className="section-kicker">صفحهٔ رسمی بنیاد آذرخش</p>
         <h1>{page.title}</h1>
         {page.excerpt && <p>{page.excerpt}</p>}
