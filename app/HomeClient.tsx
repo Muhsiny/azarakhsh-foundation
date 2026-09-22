@@ -66,8 +66,8 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
           <figure className="az-home-portrait">
             <div className="az-home-portrait-frame">
               <img
-                src={media.leaderImageUrl || "/media/beheshti-original.webp"}
-                alt={media.leaderImageAlt}
+                src="/media/beheshti-original.webp"
+                alt="آیت‌الله سید علی بهشتی"
                 width="1182"
                 height="1200"
                 fetchPriority="high"
