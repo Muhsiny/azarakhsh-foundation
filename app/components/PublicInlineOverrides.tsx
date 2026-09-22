@@ -56,6 +56,8 @@ function stableKey(element: HTMLElement, all: HTMLElement[]) {
 }
 
 function showAsset(asset: Asset) {
+  if (asset.visibility && asset.visibility !== "public") return false;
+  if (asset.status && asset.status !== "published") return false;
   if (asset.type === "image") return true;
   return asset.status === "published" && asset.visibility === "public" && Boolean(asset.publicSlug);
 }
