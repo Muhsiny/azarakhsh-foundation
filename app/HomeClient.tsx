@@ -24,45 +24,41 @@ const typeLabels: Record<string, string> = {
   page: "پرونده",
 };
 
-type FallbackCard = { title: string; type: string; href: string };
-
-const fallbackCards: FallbackCard[] = [
-  { title: "نقش حکومت شورای اتفاق در تحولات افغانستان", type: "مقاله", href: "/council" },
-  { title: "بازخوانی تجربهٔ حکومت موقت در مناطق مرکزی", type: "تحلیل", href: "/council" },
-  { title: "بامیان؛ جغرافیا، مردم و حافظهٔ تاریخی", type: "پژوهش", href: "/archive" },
-];
-
-type FeaturedCard = LatestItem | FallbackCard;
-
 export default function HomeClient({ settings, latest }: { settings: SiteSettings; latest: LatestItem[] }) {
   const featured = latest.slice(0, 3);
+
   return (
-    <main className="az-reference-home">
+    <main className="az-reference-home" data-inline-static>
       <section className="az-reference-hero" aria-labelledby="az-ref-title">
-        <div className="az-reference-hero-photo">
+        <figure className="az-reference-hero-photo">
           <img src="/reference-v2/hero-left.webp" alt="تصویر تاریخی آیت‌الله سید علی بهشتی در میان همراهان" />
-          <div className="az-reference-photo-quote">
-            <strong>مردی<br/>از جنس ایمان<br/>از تبار مردم<br/>برای آزادی<br/>و عزت افغانستان</strong>
-            <span />
-          </div>
-        </div>
+          <figcaption className="az-reference-photo-caption">
+            <strong>آیت‌الله سید علی بهشتی در میان همراهان</strong>
+            <span>تصویر تاریخی</span>
+          </figcaption>
+        </figure>
 
         <div className="az-reference-hero-center">
-          <h1 id="az-ref-title"><span>تاریخ، آنگاه روشن می‌شود</span><em>که اسناد سخن بگویند.</em></h1>
-          <p>بنیاد آذرخش؛ نهاد مستقل پژوهشی<br/>برای بازخوانی دقیق تاریخ افغانستان</p>
+          <span className="az-reference-kicker">بنیاد پژوهشی تاریخی آذرخش</span>
+          <h1 id="az-ref-title">
+            <span>تاریخ، آنگاه روشن می‌شود</span>
+            <em>که اسناد سخن بگویند.</em>
+          </h1>
+          <p>نهاد مستقل پژوهشی برای گردآوری، سنجش و بازخوانی مستند تاریخ افغانستان</p>
           <div className="az-reference-hero-actions">
-            <a className="az-ref-btn az-ref-btn-outline" href="/about">دربارهٔ بنیاد</a>
             <a className="az-ref-btn az-ref-btn-solid" href="/archive">کاوش در آرشیف ←</a>
+            <a className="az-ref-btn az-ref-btn-outline" href="/standards">معیارهای پژوهش</a>
           </div>
         </div>
 
         <div className="az-reference-hero-emblem">
           <img src={settings.media.councilEmblemUrl || "/media/council-emblem.webp"} alt={settings.media.councilEmblemAlt} />
-          <strong>حکومت شورای اتفاق<br/>اسلامی افغانستان</strong>
+          <strong>حکومت شورای اتفاق<br />اسلامی افغانستان</strong>
+          <a href="/council">پروندهٔ پژوهشی ←</a>
         </div>
 
-        <div className="az-reference-hero-motto">
-          <strong>از مردم<br/>با مردم<br/>برای مردم</strong>
+        <div className="az-reference-hero-motto" aria-label="روش پژوهش بنیاد">
+          <strong>سند<br />زمینه<br />روایت</strong>
           <span />
         </div>
       </section>
@@ -71,13 +67,14 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
         <a href="/publications?type=book"><span className="az-ref-icon">▣</span><div><strong>نشریات و کتاب‌ها</strong><small>آثار و منابع پژوهشی منتشرشده</small></div></a>
         <a href="/publications?type=document"><span className="az-ref-icon">⌕</span><div><strong>اسناد تاریخی</strong><small>نامه‌ها، اعلامیه‌ها و منابع مکتوب</small></div></a>
         <a href="/publications?type=article"><span className="az-ref-icon">▤</span><div><strong>مقالات و پژوهش‌ها</strong><small>تحلیل‌ها و پژوهش‌های تاریخی</small></div></a>
-        <a href="/publications?type=oral-history"><span className="az-ref-icon">●</span><div><strong>حافظهٔ جمعی</strong><small>روایت‌ها و خاطرات شاهدان</small></div></a>
+        <a href="/publications?type=oral-history"><span className="az-ref-icon">●</span><div><strong>تاریخ شفاهی</strong><small>روایت‌ها و خاطرات شاهدان</small></div></a>
       </section>
 
       <section className="az-reference-lower az-container">
         <aside className="az-reference-quote-card">
-          <blockquote>«ملت‌ها با حافظهٔ تاریخی زنده‌اند.»</blockquote>
-          <span>— آیت‌الله سید علی بهشتی (رح)</span>
+          <span className="az-reference-card-label">اصل پژوهش</span>
+          <blockquote>هر ادعا باید تا جای ممکن به سند، شاهد یا منبع قابل بررسی بازگردد.</blockquote>
+          <a href="/standards">روش و معیارها ←</a>
         </aside>
 
         <div className="az-reference-latest">
@@ -85,28 +82,34 @@ export default function HomeClient({ settings, latest }: { settings: SiteSetting
             <h2>آخرین مطالب</h2>
             <a href="/publications">همهٔ مطالب ←</a>
           </div>
-          <div className="az-reference-latest-grid">
-            {((featured.length ? featured : fallbackCards) as FeaturedCard[]).map((item, index) => {
-              const href = "slug" in item ? "/publications/" + item.slug : item.href;
-              const label = "contentType" in item ? (typeLabels[item.contentType] || item.category) : item.type;
-              const image = "coverImage" in item ? item.coverImage : null;
-              return (
-                <article key={"id" in item ? item.id : index}>
-                  <a href={href} className="az-reference-latest-media">
-                    {image ? <img src={image} alt="" /> : <img src="/media/hero-historical.webp" alt="" />}
-                    <span>{label}</span>
-                  </a>
-                  <h3><a href={href}>{item.title}</a></h3>
-                </article>
-              );
-            })}
-          </div>
+          {featured.length ? (
+            <div className="az-reference-latest-grid">
+              {featured.map((item) => {
+                const href = "/publications/" + item.slug;
+                const label = typeLabels[item.contentType] || item.category;
+                return (
+                  <article key={item.id}>
+                    <a href={href} className="az-reference-latest-media">
+                      {item.coverImage ? <img src={item.coverImage} alt="" /> : <div className="az-reference-media-placeholder" aria-hidden="true">آذرخش</div>}
+                      <span>{label}</span>
+                    </a>
+                    <h3><a href={href}>{item.title}</a></h3>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="az-reference-empty">
+              <strong>هنوز مطلبی در این بخش منتشر نشده است.</strong>
+              <p>پس از انتشار نخستین سند، مقاله یا کتاب، تازه‌ترین موارد در همین‌جا نمایش داده می‌شوند.</p>
+            </div>
+          )}
         </div>
 
         <aside className="az-reference-note-card">
-          <span className="az-reference-feather">❧</span>
-          <strong>اگر سند نباشد،<br/>تاریخ به روایت دیگران نوشته می‌شود.</strong>
-          <small>— بنیاد آذرخش</small>
+          <span className="az-reference-card-label">تفکیک شواهد</span>
+          <strong>سند، خاطره و تفسیر یک چیز نیستند؛ هرکدام باید با جایگاه خودش خوانده شود.</strong>
+          <a href="/standards">منشور اعتبار ←</a>
         </aside>
       </section>
     </main>
