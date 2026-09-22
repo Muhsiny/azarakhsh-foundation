@@ -1592,19 +1592,6 @@
 .az-latest-body p,.az-collection-grid p,
 .az-info-grid p,.az-info-grid li{color:#465950}
 
-/* Inline edited public content stays lightweight and readable. */
-.az-inline-assets{display:grid;gap:12px;margin:16px 0 28px}
-.az-inline-assets img,.az-inline-image{
-  display:block;
-  width:100%;
-  max-height:620px;
-  object-fit:contain;
-  border-radius:16px;
-}
-.az-inline-assets a{font-weight:600;text-decoration:underline;text-underline-offset:4px}
-.az-public-subsection{margin:44px 0}
-.az-public-subsection-body{line-height:2.1}
-
 /* Institutional editorial pages: fewer boxes, clearer reading rhythm. */
 .public-redesign .knowledge-article>section{
   padding:40px 0 46px;
