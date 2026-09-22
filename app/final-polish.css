@@ -1789,3 +1789,30 @@
     line-height:1.95;
   }
 }
+
+
+/* Internal flagship contrast: the premium page grid is light, so copy must be dark. */
+.az-flagship-hero .az-flagship-copy h1,
+.az-leader-hero .az-leader-copy h1{
+  color:#12382d;
+}
+.az-flagship-hero .az-flagship-copy>p,
+.az-leader-hero .az-leader-copy>p{
+  color:#52655d;
+}
+.az-flagship-hero .az-overline,
+.az-leader-hero .az-overline{
+  color:#8f6c25;
+}
+.az-leader-hero .az-text-link-light{
+  color:#173f33;
+}
+.az-leader-hero .az-research-note{
+  border-top-color:rgba(18,56,47,.14);
+}
+.az-leader-hero .az-research-note strong{
+  color:#8f6c25;
+}
+.az-leader-hero .az-research-note span{
+  color:#52655d;
+}
