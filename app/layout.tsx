@@ -6,8 +6,6 @@ import "./redesign.css";
 import "./final-polish.css";
 import OfflineBootstrap from "./OfflineBootstrap";
 import PublicChrome from "./components/PublicChrome";
-import PublicInlineOverrides from "./components/PublicInlineOverrides";
-import AdminEditorGate from "./components/AdminEditorGate";
 import { loadSiteSettings } from "./load-site-settings";
 import { SITE_URL } from "./site-url";
 
@@ -117,8 +115,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} type="application/ld+json" />
         <OfflineBootstrap />
         <PublicChrome settings={chromeSettings}>{children}</PublicChrome>
-        <PublicInlineOverrides />
-        <AdminEditorGate />
       </body>
     </html>
   );
