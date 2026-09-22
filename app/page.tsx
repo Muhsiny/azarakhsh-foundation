@@ -40,8 +40,6 @@ export default async function Home() {
   }
 
   const media = {
-    leaderImageUrl: settings.media.leaderImageUrl,
-    leaderImageAlt: settings.media.leaderImageAlt,
     councilEmblemUrl: settings.media.councilEmblemUrl,
     councilEmblemAlt: settings.media.councilEmblemAlt,
   };
