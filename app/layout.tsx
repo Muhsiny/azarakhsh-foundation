@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Naskh_Arabic, Vazirmatn } from "next/font/google";
 import "./globals.css";
 
-import "./redesign.css";
-import "./final-polish.css";
+import "./public-system.css";
 import OfflineBootstrap from "./OfflineBootstrap";
 import PublicChrome from "./components/PublicChrome";
 import { loadSiteSettings } from "./load-site-settings";
