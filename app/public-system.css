@@ -27,13 +27,13 @@
 .public-redesign *,
 .public-redesign *::before,
 .public-redesign *::after{box-sizing:border-box}
-.public-redesign a{color:inherit;text-decoration:none}
+.public-redesign a{text-decoration:none}
 .public-redesign img{max-width:100%}
 .public-redesign button,
 .public-redesign input,
 .public-redesign select,
 .public-redesign textarea{font:inherit}
-.public-redesign button{color:inherit}
+.public-redesign button{}
 .public-redesign :focus-visible{outline:3px solid color-mix(in srgb,var(--az-gold) 65%,#fff);outline-offset:3px}
 .az-container{width:min(var(--az-content-width),calc(100% - 64px));margin-inline:auto}
 .az-skip{position:fixed;z-index:9999;top:12px;inset-inline-start:12px;transform:translateY(-150%);padding:10px 14px;background:#fff;color:#111;border:1px solid #111}
@@ -356,7 +356,7 @@
 .az-footer-utility a:hover{color:#fff}
 .az-footer-contact{display:grid;gap:7px}
 .az-footer-contact>span{color:#d2bf88;font-size:9.5px}
-.az-email{color:rgba(255,255,255,.82);font-size:11px;overflow-wrap:anywhere}
+.az-email{color:rgba(255,255,255,.82);font-size:10.5px;white-space:nowrap;overflow-wrap:normal}
 .az-footer-bottom{display:flex;justify-content:space-between;gap:20px;margin-top:38px;padding-top:15px;border-top:1px solid rgba(255,255,255,.09);color:rgba(255,255,255,.45);font-size:9px}
 
 /* Responsive */
