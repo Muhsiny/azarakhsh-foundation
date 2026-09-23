@@ -1072,3 +1072,19 @@
     transition:none!important;
   }
 }
+
+
+/* Council desktop contrast correction: preserve a dark institutional hero
+   without sacrificing legibility. Mobile remains the light editorial layout. */
+@media(min-width:621px){
+  .public-redesign .az-flagship-hero .az-flagship-copy h1{color:#fff}
+  .public-redesign .az-flagship-hero .az-flagship-copy>p{color:rgba(255,255,255,.72)}
+  .public-redesign .az-flagship-hero .az-overline{color:#dfc47d}
+  .public-redesign .az-flagship-hero .az-text-link{color:#e5d49e}
+  .public-redesign .az-flagship-hero .az-action{
+    border-color:rgba(230,208,148,.32);
+    background:rgba(255,255,255,.07);
+    color:#fff;
+  }
+  .public-redesign .az-flagship-emblem>p{color:rgba(255,255,255,.56)}
+}
