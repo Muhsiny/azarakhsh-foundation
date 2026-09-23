@@ -17,33 +17,62 @@ jobs:
         with:
           node-version: 22
           cache: npm
+
       - name: Install locked dependencies
         run: npm ci
+
+      - name: Reject incomplete source markers
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RInE 'TODO|FIXME|@ts-ignore|console\.log\(' app worker --include='*.ts' --include='*.tsx' --include='*.js' --include='*.mjs'; then
+            echo "::error::Incomplete/debug source marker found."
+            exit 1
+          fi
+
       - name: Type check
         run: npm run typecheck
+
       - name: Lint
         run: npm run lint
+
       - name: Production build
         run: npm run build
+
       - name: Audit production dependencies
         run: npm audit --omit=dev
 
-      - name: Start local visual QA server
+      - name: Start local QA server
         if: github.event_name == 'pull_request'
         shell: bash
         run: |
           set -euo pipefail
-          npm run dev -- --host 127.0.0.1 --port 4173 > /tmp/azarakhsh-visual.log 2>&1 &
+          npm run dev -- --host 127.0.0.1 --port 4173 > /tmp/azarakhsh-qa.log 2>&1 &
           for i in {1..60}; do
             if curl -fsS http://127.0.0.1:4173/ >/dev/null; then
               exit 0
             fi
             sleep 2
           done
-          cat /tmp/azarakhsh-visual.log
+          cat /tmp/azarakhsh-qa.log
           exit 1
 
-      - name: Capture desktop and real mobile renders
+      - name: Smoke test every public route
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          routes=(
+            "/" "/about" "/council" "/beheshti" "/archive" "/publications"
+            "/standards" "/governance" "/contribute" "/contact" "/privacy"
+            "/en" "/join" "/login"
+          )
+          for route in "${routes[@]}"; do
+            echo "checking $route"
+            curl -fsS --max-time 20 "http://127.0.0.1:4173$route" >/dev/null
+          done
+
+      - name: Real desktop and mobile browser QA
         if: github.event_name == 'pull_request'
         shell: bash
         run: |
@@ -59,16 +88,26 @@ jobs:
             curl -fsS http://127.0.0.1:9222/json >/dev/null && break
             sleep 1
           done
+
           cat > /tmp/capture.mjs <<'NODE'
           import fs from "node:fs";
+
+          const routes = [
+            "/", "/about", "/council", "/beheshti", "/archive", "/publications",
+            "/standards", "/governance", "/contribute", "/contact", "/privacy",
+            "/en", "/join", "/login"
+          ];
+
           const pages = await (await fetch("http://127.0.0.1:9222/json")).json();
           const page = pages.find((item) => item.type === "page");
           if (!page) throw new Error("Chrome page target not found");
+
           const ws = new WebSocket(page.webSocketDebuggerUrl);
           await new Promise((resolve, reject) => {
             ws.addEventListener("open", resolve, { once: true });
             ws.addEventListener("error", reject, { once: true });
           });
+
           let id = 0;
           const pending = new Map();
           ws.addEventListener("message", (event) => {
@@ -83,21 +122,51 @@ jobs:
             pending.set(next, resolve);
             ws.send(JSON.stringify({ id: next, method, params }));
           });
+
           await send("Page.enable");
           await send("Runtime.enable");
 
-          async function capture(name, path, width, height, mobile) {
+          async function navigate(path, width, height, mobile) {
             await send("Emulation.setDeviceMetricsOverride", {
               width, height, deviceScaleFactor: 1, mobile,
               screenWidth: width, screenHeight: height
             });
             await send("Page.navigate", { url: "http://127.0.0.1:4173" + path });
-            await new Promise((resolve) => setTimeout(resolve, 1800));
-            const metrics = await send("Runtime.evaluate", {
-              expression: `(()=>({innerWidth,innerHeight,scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight,title:document.title}))()`,
+            await new Promise((resolve) => setTimeout(resolve, 1200));
+            const result = await send("Runtime.evaluate", {
+              expression: `(()=>({
+                path: location.pathname,
+                innerWidth,
+                scrollWidth: document.documentElement.scrollWidth,
+                bodyText: document.body.innerText.slice(0,500),
+                brokenImages: [...document.images].filter(i => i.complete && i.naturalWidth === 0).map(i => i.getAttribute('src')),
+                leaderSrc: document.querySelector('.az-home-portrait img')?.getAttribute('src') || null
+              }))()`,
               returnByValue: true
             });
-            fs.appendFileSync("visual-qa/metrics.jsonl", JSON.stringify({name,...metrics.result.result.value})+"\n");
+            return result.result.result.value;
+          }
+
+          const failures = [];
+          for (const path of routes) {
+            const metrics = await navigate(path, 390, 844, true);
+            fs.appendFileSync("visual-qa/mobile-metrics.jsonl", JSON.stringify(metrics) + "\n");
+            if (metrics.scrollWidth > metrics.innerWidth + 1) {
+              failures.push(`${path}: horizontal overflow ${metrics.scrollWidth} > ${metrics.innerWidth}`);
+            }
+            if (metrics.brokenImages.length) {
+              failures.push(`${path}: broken images ${metrics.brokenImages.join(", ")}`);
+            }
+            if (/Internal Server Error|Application error/i.test(metrics.bodyText)) {
+              failures.push(`${path}: application error visible`);
+            }
+            if (path === "/" && metrics.leaderSrc !== "/media/beheshti-original.webp") {
+              failures.push(`/: expected original Beheshti portrait, got ${metrics.leaderSrc}`);
+            }
+          }
+
+          async function capture(name, path, width, height, mobile) {
+            await navigate(path, width, height, mobile);
             const layout = await send("Page.getLayoutMetrics");
             const contentHeight = Math.min(Math.ceil(layout.result.cssContentSize.height), mobile ? 2600 : 2200);
             const shot = await send("Page.captureScreenshot", {
@@ -114,11 +183,17 @@ jobs:
           await capture("leader-desktop", "/beheshti", 1440, 1000, false);
           await capture("council-desktop", "/council", 1440, 1000, false);
           await capture("publications-desktop", "/publications", 1440, 1000, false);
-          await capture("about-desktop", "/about", 1440, 1000, false);
-          await capture("about-mobile", "/about", 390, 844, true);
-          await capture("contribute-mobile", "/contribute", 390, 844, true);
+          await capture("join-mobile", "/join", 390, 844, true);
+          await capture("login-mobile", "/login", 390, 844, true);
+
           ws.close();
+
+          if (failures.length) {
+            console.error(failures.join("\n"));
+            process.exit(1);
+          }
           NODE
+
           node /tmp/capture.mjs
 
       - name: Upload visual QA
