@@ -552,3 +552,75 @@
   .public-redesign .admin-access-card{padding:24px}
   .public-redesign .admin-access-card h1{font-size:29px}
 }
+
+
+/* Root visual corrections — 2026-09-23 */
+.az-sacred-basmala{
+  width:86px!important;
+  height:30px!important;
+  display:grid!important;
+  place-items:center!important;
+  overflow:hidden!important;
+  flex:0 0 86px!important;
+}
+.az-sacred-basmala img{
+  display:block!important;
+  width:86px!important;
+  height:30px!important;
+  max-width:86px!important;
+  object-fit:contain!important;
+  object-position:center!important;
+}
+.az-home-portrait-frame{
+  height:auto!important;
+  aspect-ratio:1.12/1!important;
+}
+.az-home-portrait-frame img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center 13%!important;
+}
+.az-home-portrait figcaption{
+  position:static!important;
+  inset:auto!important;
+  background:#0a3028!important;
+  backdrop-filter:none!important;
+}
+.az-council-cover{
+  width:100%;
+  margin:0;
+  overflow:hidden;
+  background:#08231d;
+  border-bottom:1px solid rgba(199,164,91,.42);
+}
+.az-council-cover img{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:520px;
+  object-fit:cover;
+  object-position:center;
+}
+.az-emblem-frame,
+.az-council-feature-emblem>div{
+  background:#fffdf6!important;
+}
+.az-emblem-frame img,
+.az-council-feature-emblem img{
+  filter:none!important;
+  mix-blend-mode:normal!important;
+  opacity:1!important;
+  object-fit:contain!important;
+}
+@media(max-width:620px){
+  .az-sacred-strip,.az-sacred-inner{height:32px!important}
+  .az-sacred-basmala{width:78px!important;height:26px!important;flex-basis:78px!important}
+  .az-sacred-basmala img{width:78px!important;height:26px!important;max-width:78px!important}
+  .az-home-portrait-frame{height:auto!important;aspect-ratio:1.16/1!important}
+  .az-home-portrait-frame img{object-position:center 11%!important}
+  .az-home-portrait figcaption{padding:10px 12px!important}
+  .az-council-cover img{height:auto!important;max-height:none!important;object-fit:contain!important}
+  .az-flagship-hero-grid{padding-top:24px!important}
+  .az-emblem-frame{width:152px!important}
+}
