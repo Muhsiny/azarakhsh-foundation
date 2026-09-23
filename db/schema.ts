@@ -37,8 +37,3 @@ export const membershipRequests = sqliteTable("membership_requests", {
   reviewedAt: text("reviewed_at"),
 });
 
-export const siteSettings = sqliteTable("site_settings", {
-  id: integer("id").primaryKey(),
-  data: text("data").notNull(),
-  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-});

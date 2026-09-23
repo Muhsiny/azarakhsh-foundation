@@ -135,35 +135,6 @@ async function directMediaUpload(request: Request, env: Env) {
   }
 }
 
-function cacheablePublicPage(request: Request, url: URL) {
-  if (request.method !== "GET") return false;
-  if (url.search) return false;
-  if (
-    url.pathname.startsWith("/admin") ||
-    url.pathname.startsWith("/api/") ||
-    url.pathname.startsWith("/_vinext/") ||
-    url.pathname === "/login"
-  ) return false;
-  if (request.headers.get("Cookie")) return false;
-  if (
-    request.headers.has("RSC") ||
-    request.headers.has("Next-Router-State-Tree") ||
-    request.headers.has("Next-Router-Prefetch") ||
-    request.headers.has("Next-Url")
-  ) return false;
-  const accept = request.headers.get("Accept") || "";
-  return accept.includes("text/html");
-}
-
-function publicCacheKey(request: Request) {
-  const url = new URL(request.url);
-  url.hash = "";
-  return new Request(url.toString(), {
-    method: "GET",
-    headers: { Accept: "text/html" },
-  });
-}
-
 function secureResponse(response: Response, pathname: string): Response {
   const secured = new Response(response.body, response);
   secured.headers.set("X-Content-Type-Options", "nosniff");
@@ -175,7 +146,7 @@ function secureResponse(response: Response, pathname: string): Response {
   secured.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
   secured.headers.set(
     "Content-Security-Policy",
-    "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; frame-src 'self'; object-src 'none'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https:; manifest-src 'self'; worker-src 'self' blob:; upgrade-insecure-requests",
+    "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; frame-src 'self'; object-src 'none'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https:; upgrade-insecure-requests",
   );
 
   if (
@@ -228,9 +199,7 @@ const worker = {
       return secureResponse(await directMediaUpload(request, env), url.pathname);
     }
 
-    // Serve build/public assets directly from the Cloudflare ASSETS binding.
-    // Vinext handles application routes, but the approved homepage uses several
-    // reference images from public/reference that must bypass the RSC router.
+    // Serve immutable public/build assets directly from the Cloudflare ASSETS binding.
     if (
       (request.method === "GET" || request.method === "HEAD") &&
       !url.pathname.startsWith("/api/") &&
@@ -253,26 +222,6 @@ const worker = {
         },
       }, allowedWidths);
       return secureResponse(imageResponse, url.pathname);
-    }
-
-    if (cacheablePublicPage(request, url)) {
-      const cache = (caches as unknown as { default: Cache }).default;
-      const key = publicCacheKey(request);
-      const cached = await cache.match(key);
-      if (cached) {
-        const hit = secureResponse(cached, url.pathname);
-        hit.headers.set("X-Azarakhsh-Cache", "HIT");
-        return hit;
-      }
-
-      const response = secureResponse(await handler.fetch(request, env, ctx), url.pathname);
-      const contentType = response.headers.get("Content-Type") || "";
-      if (response.status === 200 && contentType.includes("text/html") && !response.headers.has("Set-Cookie")) {
-        response.headers.set("Cache-Control", "public, max-age=0, s-maxage=300, stale-while-revalidate=86400");
-        response.headers.set("X-Azarakhsh-Cache", "MISS");
-        ctx.waitUntil(cache.put(key, response.clone()));
-      }
-      return response;
     }
 
     const response = await handler.fetch(request, env, ctx);

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { loadSiteSettings } from "../load-site-settings";
+import { siteSettings as settings } from "../site-settings";
 
 export const metadata: Metadata = {
   title: "حکومت شورای اتفاق اسلامی افغانستان",
@@ -27,7 +27,6 @@ const evidence = [
 ];
 
 export default async function CouncilPage() {
-  const settings = await loadSiteSettings();
 
   return (
     <main className="az-flagship-page">

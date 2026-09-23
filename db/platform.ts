@@ -46,11 +46,6 @@ export async function ensurePlatformSchema() {
       updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     )`).run();
 
-    await db.prepare(`CREATE TABLE IF NOT EXISTS site_settings (
-      id INTEGER PRIMARY KEY NOT NULL,
-      data TEXT NOT NULL,
-      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-    )`).run();
 
     await db.prepare(`CREATE TABLE IF NOT EXISTS admin_users (
       id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
