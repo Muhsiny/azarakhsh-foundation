@@ -96,14 +96,19 @@ export default function PublicChrome({
             {links.map(([href, label]) => (
               <a href={href} aria-current={isCurrent(href)} key={href}>{label}</a>
             ))}
-            <a href="/standards" aria-current={isCurrent("/standards")}>روش پژوهش</a>
-            <a href="/contribute" aria-current={isCurrent("/contribute")}>ارسال سند و خاطره</a>
-            {extraPages.slice(0, 2).map((page) => (
-              <a href={"/pages/" + page.slug} aria-current={isCurrent("/pages/" + page.slug)} key={page.slug}>
-                {page.title}
-              </a>
-            ))}
-            <a href="/contact" aria-current={isCurrent("/contact")}>تماس</a>
+            <details className="az2-more">
+              <summary>بیشتر</summary>
+              <div>
+                <a href="/standards" aria-current={isCurrent("/standards")}>روش پژوهش</a>
+                <a href="/contribute" aria-current={isCurrent("/contribute")}>ارسال سند و خاطره</a>
+                {extraPages.slice(0, 2).map((page) => (
+                  <a href={"/pages/" + page.slug} aria-current={isCurrent("/pages/" + page.slug)} key={page.slug}>
+                    {page.title}
+                  </a>
+                ))}
+                <a href="/contact" aria-current={isCurrent("/contact")}>تماس</a>
+              </div>
+            </details>
           </nav>
         </div>
       </header>
