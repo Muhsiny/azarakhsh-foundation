@@ -9,6 +9,7 @@ export const metadata: Metadata = {
     url: "/council",
     title: "پروندهٔ حکومت شورای اتفاق اسلامی افغانستان",
     description: "زمینه‌ها، ساختار، حکومت‌داری، منابع تاریخی و روایت‌های مرتبط با شورای اتفاق.",
+    images: [{ url: "/media/council-cover.webp", width: 960, height: 540, alt: "کاور پروندهٔ حکومت شورای اتفاق اسلامی افغانستان" }],
   },
 };
 
@@ -30,6 +31,16 @@ export default async function CouncilPage() {
 
   return (
     <main className="az-flagship-page">
+      <figure className="az-council-cover">
+        <img
+          src="/media/council-cover.webp"
+          alt="کاور پروندهٔ حکومت شورای اتفاق اسلامی افغانستان"
+          width="960"
+          height="540"
+          fetchPriority="high"
+        />
+      </figure>
+
       <section className="az-flagship-hero">
         <div className="az-container az-flagship-hero-grid">
           <div className="az-flagship-copy">

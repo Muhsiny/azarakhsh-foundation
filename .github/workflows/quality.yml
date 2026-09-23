@@ -153,6 +153,20 @@ jobs:
                 homeCopyTop: document.querySelector('.az-home-copy')?.getBoundingClientRect().top ?? null,
                 homePortraitTop: document.querySelector('.az-home-portrait')?.getBoundingClientRect().top ?? null,
                 homePortraitHeight: document.querySelector('.az-home-portrait')?.getBoundingClientRect().height ?? null,
+                homePortraitFrameBottom: document.querySelector('.az-home-portrait-frame')?.getBoundingClientRect().bottom ?? null,
+                homePortraitCaptionTop: document.querySelector('.az-home-portrait figcaption')?.getBoundingClientRect().top ?? null,
+                leaderRenderedRatio: document.querySelector('.az-home-portrait img') ? (() => {
+                  const i = document.querySelector('.az-home-portrait img');
+                  const r = i.getBoundingClientRect();
+                  return r.height / r.width;
+                })() : null,
+                leaderNaturalRatio: document.querySelector('.az-home-portrait img') ? (() => {
+                  const i = document.querySelector('.az-home-portrait img');
+                  return i.naturalHeight / i.naturalWidth;
+                })() : null,
+                councilCoverSrc: document.querySelector('.az-council-cover img')?.getAttribute('src') || null,
+                councilCoverNaturalWidth: document.querySelector('.az-council-cover img')?.naturalWidth || 0,
+                councilEmblemSrc: document.querySelector('.az-emblem-frame img')?.getAttribute('src') || null,
                 councilCopyTop: document.querySelector('.az-flagship-copy')?.getBoundingClientRect().top ?? null,
                 councilEmblemTop: document.querySelector('.az-flagship-emblem')?.getBoundingClientRect().top ?? null,
                 councilEmblemWidth: document.querySelector('.az-emblem-frame')?.getBoundingClientRect().width ?? null,
@@ -161,6 +175,7 @@ jobs:
                   const r = document.querySelector('.az-sacred-basmala').getBoundingClientRect();
                   return r.left + r.width / 2;
                 })() : null,
+                basmalaImageHeight: document.querySelector('.az-sacred-basmala img')?.getBoundingClientRect().height ?? null,
                 homeLeadAlign: document.querySelector('.az-home-lead') ? getComputedStyle(document.querySelector('.az-home-lead')).textAlign : null
               }))()`,
               returnByValue: true
@@ -187,8 +202,20 @@ jobs:
             if (path === "/" && !(metrics.homeCopyTop < metrics.homePortraitTop)) {
               failures.push(`/: mobile hero message must appear before the leader portrait`);
             }
-            if (path === "/" && metrics.homePortraitHeight > 310) {
-              failures.push(`/: mobile leader feature is too tall (${metrics.homePortraitHeight}px)`);
+            if (path === "/" && Math.abs(metrics.leaderRenderedRatio - metrics.leaderNaturalRatio) > 0.03) {
+              failures.push(`/: leader portrait is cropped; rendered ratio ${metrics.leaderRenderedRatio}, natural ratio ${metrics.leaderNaturalRatio}`);
+            }
+            if (path === "/" && metrics.homePortraitCaptionTop + 1 < metrics.homePortraitFrameBottom) {
+              failures.push(`/: leader caption overlaps the portrait`);
+            }
+            if (path === "/council" && metrics.councilCoverSrc !== "/media/council-cover.webp") {
+              failures.push(`/council: approved council cover missing; got ${metrics.councilCoverSrc}`);
+            }
+            if (path === "/council" && metrics.councilCoverNaturalWidth < 900) {
+              failures.push(`/council: approved council cover did not load at full web resolution`);
+            }
+            if (path === "/council" && metrics.councilEmblemSrc !== "/media/council-emblem-color.webp") {
+              failures.push(`/council: vivid council emblem missing; got ${metrics.councilEmblemSrc}`);
             }
             if (path === "/council" && !(metrics.councilCopyTop < metrics.councilEmblemTop)) {
               failures.push(`/council: research copy must appear before the emblem on mobile`);
@@ -201,6 +228,9 @@ jobs:
             }
             if (path === "/" && Math.abs(metrics.basmalaCenter - metrics.innerWidth / 2) > 4) {
               failures.push(`/: Bismillah is not centered in the mobile sacred strip`);
+            }
+            if (path === "/" && metrics.basmalaImageHeight > 40) {
+              failures.push(`/: Bismillah is oversized on mobile (${metrics.basmalaImageHeight}px)`);
             }
             if (path === "/" && metrics.homeLeadAlign !== "justify") {
               failures.push(`/: research lead text is not justified`);
