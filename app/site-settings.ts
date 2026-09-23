@@ -29,7 +29,6 @@ export type SiteSettings = {
     paper: string;
   };
   design: {
-    fontFamily: string;
     contentWidth: number;
   };
 };
@@ -48,7 +47,7 @@ export const defaultSiteSettings: SiteSettings = {
     councilEmblemUrl: "/media/council-emblem.webp",
     leaderImageAlt: "آیت‌الله سید علی بهشتی",
     councilEmblemAlt: "نشان تاریخی حکومت شورای اتفاق اسلامی افغانستان",
-    councilEmblemCaption: "نسخهٔ آرشیوی؛ تاریخ و منشأ دقیق در حال تکمیل است.",
+    councilEmblemCaption: "نسخهٔ آرشیوی نشان حکومت شورای اتفاق اسلامی افغانستان.",
   },
   council: {
     text: "این پرونده تجربهٔ حکومت شورای اتفاق اسلامی افغانستان را از مسیر اسناد، روایت‌ها و زمینهٔ تاریخی بررسی می‌کند.",
@@ -69,7 +68,6 @@ export const defaultSiteSettings: SiteSettings = {
     paper: "#f8f6f0",
   },
   design: {
-    fontFamily: "Vazirmatn, Tahoma, sans-serif",
     contentWidth: 1180,
   },
 };
