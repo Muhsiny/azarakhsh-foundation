@@ -124,7 +124,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     name: "بنیاد آذرخش",
     alternateName: "Azarakhsh Research Foundation",
     url: SITE_URL,
-    logo: `${SITE_URL}/azarakhsh-logo-web.png`,
+    logo: `${SITE_URL}/azarakhsh-logo-transparent-web.png`,
     description: "بنیاد مستقل برای پژوهش عمیق تاریخ افغانستان، گردآوری اسناد و بازتاب مسئولانهٔ حقیقت‌های تاریخی.",
     areaServed: "Afghanistan",
     knowsAbout: ["تاریخ افغانستان", "حکومت شورای اتفاق اسلامی افغانستان", "حضرت آیت‌الله العظمی بهشتی", "تاریخ هزاره‌جات", "تاریخ شفاهی"],
