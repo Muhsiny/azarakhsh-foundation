@@ -19,8 +19,6 @@ export type SiteSettings = {
   };
   contact: {
     email: string;
-    phone: string;
-    address: string;
   };
   colors: {
     primary: string;
@@ -54,8 +52,6 @@ export const siteSettings: Readonly<SiteSettings> = {
   },
   contact: {
     email: "info@azarakhsh.foundation",
-    phone: "",
-    address: "افغانستان",
   },
   colors: {
     primary: "#173f33",
