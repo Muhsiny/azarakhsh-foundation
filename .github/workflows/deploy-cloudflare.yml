@@ -53,6 +53,31 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: npx wrangler deploy
 
+      - name: Smoke test deployed Worker
+        if: steps.cloudflare.outputs.available == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://azarakhsh-foundation.com14.workers.dev"
+          routes=(
+            "/" "/about" "/council" "/beheshti" "/archive" "/publications"
+            "/standards" "/governance" "/contribute" "/contact" "/privacy"
+            "/en" "/join" "/login" "/robots.txt" "/sitemap.xml"
+            "/manifest.webmanifest" "/.well-known/security.txt" "/api/posts"
+          )
+          for attempt in {1..12}; do
+            if curl -fsS --max-time 20 "$BASE/" >/dev/null; then break; fi
+            sleep 5
+          done
+          for path in "${routes[@]}"; do
+            code=$(curl -sS -L -o /tmp/body -w "%{http_code}" --max-time 25 "$BASE$path" || echo "000")
+            echo "$code $path"
+            if [[ "$code" == "000" || "$code" -lt 200 || "$code" -ge 400 ]]; then
+              echo "::error::Smoke test failed for $path with HTTP $code"
+              exit 1
+            fi
+          done
+
       - name: Store verified production bundle
         if: steps.cloudflare.outputs.available != 'true'
         uses: actions/upload-artifact@v4
