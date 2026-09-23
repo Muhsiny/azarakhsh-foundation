@@ -1,10 +1,8 @@
-import type { CSSProperties } from "react";
 import { and, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { getDb } from "../../../db";
 import { ensurePlatformSchema } from "../../../db/platform";
-import { posts, siteSettings } from "../../../db/schema";
-import { defaultSiteSettings, mergeSiteSettings } from "../../site-settings";
+import { posts } from "../../../db/schema";
 
 export const dynamic = "force-dynamic";
 
@@ -20,22 +18,8 @@ export default async function CustomPage({ params }: { params: Promise<{ slug: s
 
   if (!page || page.visibility !== "public") notFound();
 
-  const [settingsRow] = await db.select().from(siteSettings).where(eq(siteSettings.id, 1)).limit(1);
-  const settings = mergeSiteSettings(settingsRow?.data ? JSON.parse(settingsRow.data) : defaultSiteSettings);
-
-  const style = {
-    "--forest-800": settings.colors.primary,
-    "--forest-700": settings.colors.primary,
-    "--forest-900": settings.colors.dark,
-    "--forest-950": settings.colors.dark,
-    "--gold-500": settings.colors.gold,
-    "--gold-400": settings.colors.gold,
-    "--paper": settings.colors.paper,
-    "--font-persian": settings.design.fontFamily,
-  } as CSSProperties;
-
   return (
-    <main className="knowledge-page custom-managed-page" style={style}>
+    <main className="knowledge-page custom-managed-page">
 <section className="knowledge-hero">
         <p className="section-kicker">صفحهٔ رسمی بنیاد آذرخش</p>
         <h1>{page.title}</h1>
