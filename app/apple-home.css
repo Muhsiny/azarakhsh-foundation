@@ -30,7 +30,7 @@
 .az2-header-main{
   min-height:82px;
   display:grid;
-  grid-template-columns:1fr 132px 1fr;
+  grid-template-columns:1fr 140px 1fr;
   grid-template-areas:"tools basmala brand";
   align-items:center;
   gap:20px;
@@ -72,15 +72,15 @@
 .az2-basmala{
   grid-area:basmala;
   justify-self:center;
-  width:70px;
-  height:70px;
+  width:140px;
+  height:56px;
   display:grid;
   place-items:center;
   overflow:visible;
 }
 .az2-basmala img{
-  width:70px;
-  height:70px;
+  width:140px;
+  height:56px;
   display:block;
   object-fit:contain;
   object-position:center;
@@ -690,8 +690,8 @@
 
 /* tablet */
 @media(max-width:900px){
-  .az2-header-main{min-height:72px;grid-template-columns:1fr 92px 1fr}
-  .az2-basmala,.az2-basmala img{width:62px;height:62px}
+  .az2-header-main{min-height:72px;grid-template-columns:1fr 120px 1fr}
+  .az2-basmala,.az2-basmala img{width:118px;height:50px}
   .az2-brand img{width:40px;height:40px;flex-basis:40px}
   .az2-brand strong{font-size:15px}
   .az2-brand small{font-size:7.7px}
@@ -727,14 +727,14 @@
   .az2-header-main{
     width:calc(100% - 18px);
     min-height:70px;
-    grid-template-columns:minmax(82px,1fr) 72px minmax(118px,1fr);
-    gap:6px;
+    grid-template-columns:minmax(72px,1fr) 112px minmax(116px,1fr);
+    gap:4px;
   }
   .az2-brand{gap:6px}
   .az2-brand img{width:32px;height:32px;flex-basis:32px}
   .az2-brand strong{display:block;font-size:11.5px;line-height:1.25}
   .az2-brand small{display:block;margin-top:1px;font-size:6.5px;line-height:1.35}
-  .az2-basmala,.az2-basmala img{width:64px;height:64px}
+  .az2-basmala,.az2-basmala img{width:108px;height:46px}
   .az2-header-tools{gap:0}
   .az2-search,.az2-menu-button{min-width:34px;height:34px;border-radius:10px}
   .az2-search svg{width:17px;height:17px}
@@ -768,7 +768,11 @@
     aspect-ratio:1.32/1;
   }
   .az2-feature-leader .az2-feature-media{
-    max-height:286px;
+    width:min(72%,260px);
+    max-height:none;
+    aspect-ratio:1182/1200;
+    margin-inline:auto;
+    background:transparent;
   }
   .az2-feature-leader .az2-feature-media img{
     object-fit:contain;
@@ -847,10 +851,10 @@
 }
 
 @media(max-width:390px){
-  .az2-header-main{grid-template-columns:minmax(76px,1fr) 68px minmax(106px,1fr)}
+  .az2-header-main{grid-template-columns:minmax(66px,1fr) 104px minmax(108px,1fr)}
   .az2-brand strong{font-size:10.8px}
   .az2-brand small{font-size:6.2px}
-  .az2-basmala,.az2-basmala img{width:60px;height:60px}
+  .az2-basmala,.az2-basmala img{width:100px;height:43px}
   .az2-actions{grid-template-columns:1fr}
 }
 
