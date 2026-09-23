@@ -39,6 +39,7 @@ export default async function Home() {
   }
 
   const media = {
+    councilEmblemUrl: settings.media.councilEmblemUrl,
     councilEmblemAlt: settings.media.councilEmblemAlt,
   };
 
