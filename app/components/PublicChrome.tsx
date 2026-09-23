@@ -44,7 +44,7 @@ export default function PublicChrome({ children, settings, extraPages = [] }: { 
           <div className="az-container az-sacred-inner">
             <span>بنیاد مستقل پژوهشی تاریخ افغانستان</span>
             <a href="/" className="az-sacred-basmala" aria-label="صفحهٔ نخست">
-              <img src="/media/bismillah" alt="بسم الله الرحمن الرحیم" />
+              <img src="/bismillah.jpg" alt="بسم الله الرحمن الرحیم" />
             </a>
             <div>
               <a href="/en" lang="en" dir="ltr">EN</a>
