@@ -106,8 +106,8 @@
   direction:ltr;
 }
 .az2-lang,.az2-search,.az2-menu-button{
-  min-width:36px;
-  height:36px;
+  min-width:44px;
+  height:44px;
   display:grid;
   place-items:center;
   border:1px solid transparent;
@@ -1097,7 +1097,7 @@
 /* Final polish: secondary navigation, touch targets, catalogue controls and type scale */
 .az2-more{position:relative}
 .az2-more>summary{
-  min-height:42px;
+  min-height:44px;
   display:flex;
   align-items:center;
   gap:5px;
@@ -1123,7 +1123,7 @@
   box-shadow:0 18px 44px rgba(5,43,35,.14);
 }
 .az2-more>div a{
-  min-height:42px;
+  min-height:44px;
   display:flex;
   align-items:center;
   padding:0 11px;
