@@ -153,6 +153,10 @@ jobs:
                 homeCopyTop: document.querySelector('.az-home-copy')?.getBoundingClientRect().top ?? null,
                 homePortraitTop: document.querySelector('.az-home-portrait')?.getBoundingClientRect().top ?? null,
                 homePortraitHeight: document.querySelector('.az-home-portrait')?.getBoundingClientRect().height ?? null,
+                councilCopyTop: document.querySelector('.az-flagship-copy')?.getBoundingClientRect().top ?? null,
+                councilEmblemTop: document.querySelector('.az-flagship-emblem')?.getBoundingClientRect().top ?? null,
+                councilEmblemWidth: document.querySelector('.az-emblem-frame')?.getBoundingClientRect().width ?? null,
+                councilHeroBackground: document.querySelector('.az-flagship-hero') ? getComputedStyle(document.querySelector('.az-flagship-hero')).backgroundColor : null,
                 basmalaCenter: document.querySelector('.az-sacred-basmala') ? (() => {
                   const r = document.querySelector('.az-sacred-basmala').getBoundingClientRect();
                   return r.left + r.width / 2;
@@ -183,8 +187,17 @@ jobs:
             if (path === "/" && !(metrics.homeCopyTop < metrics.homePortraitTop)) {
               failures.push(`/: mobile hero message must appear before the leader portrait`);
             }
-            if (path === "/" && metrics.homePortraitHeight > 430) {
+            if (path === "/" && metrics.homePortraitHeight > 310) {
               failures.push(`/: mobile leader feature is too tall (${metrics.homePortraitHeight}px)`);
+            }
+            if (path === "/council" && !(metrics.councilCopyTop < metrics.councilEmblemTop)) {
+              failures.push(`/council: research copy must appear before the emblem on mobile`);
+            }
+            if (path === "/council" && metrics.councilEmblemWidth > 170) {
+              failures.push(`/council: emblem is too large on mobile (${metrics.councilEmblemWidth}px)`);
+            }
+            if (path === "/council" && metrics.councilHeroBackground === "rgb(8, 35, 29)") {
+              failures.push(`/council: dark poster-style hero background regressed`);
             }
             if (path === "/" && Math.abs(metrics.basmalaCenter - metrics.innerWidth / 2) > 4) {
               failures.push(`/: Bismillah is not centered in the mobile sacred strip`);
