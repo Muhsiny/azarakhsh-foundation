@@ -765,7 +765,10 @@
   }
   .az2-feature-media{
     min-height:0;
-    aspect-ratio:1.12/1;
+    aspect-ratio:1.32/1;
+  }
+  .az2-feature-leader .az2-feature-media{
+    max-height:286px;
   }
   .az2-feature-leader .az2-feature-media img{
     object-fit:contain;
