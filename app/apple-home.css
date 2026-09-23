@@ -412,13 +412,13 @@
 .az2-feature-leader .az2-feature-media{
   display:grid;
   place-items:center;
-  padding:18px;
+  padding:12px;
   background:linear-gradient(180deg,#f2ede3,#e8e1d4);
 }
 .az2-feature-leader .az2-feature-media img{
   width:auto;
   max-width:100%;
-  height:min(270px,calc(100% - 4px));
+  height:min(282px,calc(100% - 2px));
   object-fit:contain;
   object-position:center top;
   border-radius:18px;
@@ -664,7 +664,7 @@
   max-width:760px;margin:14px 0 0;color:#69766f;
   font:500 14px/2 var(--az-reading);text-align:start;
 }
-.public-redesign .publications-shell{min-height:calc(100vh - 126px);padding-bottom:0}
+.public-redesign .publications-shell{min-height:0;padding-bottom:46px}
 .public-redesign .publications-body{
   width:min(1040px,calc(100% - 64px));margin-inline:auto;padding:27px 0 54px;
 }
@@ -1198,4 +1198,41 @@
   .az2-footer-links a{min-height:38px;display:flex;align-items:center}
   .az2-footer-brand>p{font-size:12.5px}
   .az2-footer-email{font-size:11.5px}
+}
+
+
+/* Editorial readability pass for long-form research pages */
+.public-redesign .az-overline,
+.public-redesign .section-kicker{font-size:11.5px}
+.public-redesign .az-research-note strong{font-size:11.5px}
+.public-redesign .az-research-note span{font-size:13px;line-height:1.8}
+.public-redesign .az-leader-index-grid span{font-size:10.5px}
+.public-redesign .az-leader-index-grid strong{font-size:15px;line-height:1.65}
+.public-redesign .az-leader-aside p{font-size:14px;line-height:2}
+.public-redesign .az-section-index{font-size:10.5px}
+.public-redesign .az-leader-article h2{font-size:30px}
+.public-redesign .az-leader-article p,
+.public-redesign .az-leader-article li,
+.public-redesign .az-expanded-copy{font-size:17.5px;line-height:2.08}
+.public-redesign .az-research-path-grid article>span{font-size:11px}
+.public-redesign .az-research-path-grid p{font-size:14.5px;line-height:2}
+.public-redesign .az-evidence-heading p{font-size:15px}
+.public-redesign .az-evidence-list article>span{font-size:11px}
+.public-redesign .az-evidence-list p{font-size:14.5px;line-height:1.95}
+.public-redesign .az-flagship-cta p{font-size:14px}
+.public-redesign .az-research-note,
+.public-redesign .az-leader-sources,
+.public-redesign .az-flagship-cta{border-radius:var(--az2-radius-lg)}
+
+@media(max-width:620px){
+  .public-redesign .az-leader-copy>p{font-size:15px;line-height:2}
+  .public-redesign .az-research-note span{font-size:13.5px}
+  .public-redesign .az-leader-index-grid strong{font-size:14px}
+  .public-redesign .az-leader-aside p{font-size:13.5px}
+  .public-redesign .az-leader-article h2{font-size:26px}
+  .public-redesign .az-leader-article p,
+  .public-redesign .az-leader-article li,
+  .public-redesign .az-expanded-copy{font-size:16px;line-height:2.05}
+  .public-redesign .az-research-path-grid p,
+  .public-redesign .az-evidence-list p{font-size:14px}
 }
