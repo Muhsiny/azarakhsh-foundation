@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 
 export type PublicChromeSettings = {
   identity: { siteName: string; logoUrl: string };
@@ -19,9 +19,20 @@ const links = [
   ["/publications", "نشریات"],
 ] as const;
 
-export default function PublicChrome({ children, settings, extraPages = [] }: { children: ReactNode; settings: PublicChromeSettings; extraPages?: Array<{ slug: string; title: string }> }) {
+export default function PublicChrome({
+  children,
+  settings,
+  extraPages = [],
+}: {
+  children: ReactNode;
+  settings: PublicChromeSettings;
+  extraPages?: Array<{ slug: string; title: string }>;
+}) {
   const pathname = usePathname() || "/";
   const [menu, setMenu] = useState(false);
+
+  useEffect(() => setMenu(false), [pathname]);
+
   if (pathname.startsWith("/admin")) return <>{children}</>;
 
   const theme = {
@@ -36,102 +47,105 @@ export default function PublicChrome({ children, settings, extraPages = [] }: { 
     pathname === href || pathname.startsWith(href + "/") ? "page" : undefined;
 
   return (
-    <div className="public-redesign" style={theme}>
+    <div className="public-redesign az2-shell" style={theme}>
       <a className="az-skip" href="#public-content">رفتن به محتوای صفحه</a>
 
-      <header className="az-site-header">
-        <div className="az-sacred-strip">
-          <div className="az-container az-sacred-inner">
-            <span>بنیاد مستقل پژوهشی تاریخ افغانستان</span>
-            <a href="/" className="az-sacred-basmala" aria-label="صفحهٔ نخست">
-              <img src="/bismillah.jpg" alt="بسم الله الرحمن الرحیم" width="1398" height="372" />
+      <header className="az2-header">
+        <div className="az2-header-main az-container">
+          <a className="az2-brand" href="/" aria-label={settings.identity.siteName + "، صفحهٔ نخست"}>
+            <img src={settings.identity.logoUrl} width="48" height="48" alt="" />
+            <span>
+              <strong>{settings.identity.siteName}</strong>
+              <small>پژوهش، اسناد و حافظهٔ تاریخی</small>
+            </span>
+          </a>
+
+          <a href="/" className="az2-basmala" aria-label="صفحهٔ نخست">
+            <img src="/bismillah.jpg" alt="بسم الله الرحمن الرحیم" width="1398" height="372" />
+          </a>
+
+          <div className="az2-header-tools">
+            <a className="az2-lang" href="/en" lang="en" dir="ltr">EN</a>
+            <a className="az2-search" href="/archive" aria-label="جست‌وجو در آرشیف">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="11" r="6.5" />
+                <path d="m16 16 4 4" />
+              </svg>
             </a>
-            <div>
-              <a href="/en" lang="en" dir="ltr">EN</a>
-              <a href="/publications">جست‌وجو در منابع</a>
-            </div>
+            <button
+              className="az2-menu-button"
+              type="button"
+              aria-controls="az2-navigation"
+              aria-expanded={menu}
+              aria-label={menu ? "بستن فهرست" : "باز کردن فهرست"}
+              onClick={() => setMenu((open) => !open)}
+            >
+              <span /><span /><span />
+            </button>
           </div>
         </div>
 
-        <div className="az-site-nav-shell">
-          <div className="az-container az-site-nav">
-            <a href="/" className="az-site-brand" aria-label={settings.identity.siteName + "، صفحهٔ نخست"}>
-              <img src={settings.identity.logoUrl} width="52" height="52" alt="" />
-              <span>
-                <strong>{settings.identity.siteName}</strong>
-                <small>پژوهش، سند و حافظهٔ تاریخی</small>
-              </span>
-            </a>
-
-            <button
-              className="az-menu-button"
-              type="button"
-              aria-controls="public-navigation"
-              aria-expanded={menu}
-              onClick={() => setMenu(!menu)}
-            >
-              <span aria-hidden="true"><i /><i /><i /></span>
-              <b>{menu ? "بستن" : "فهرست"}</b>
-            </button>
-
-            <nav
-              id="public-navigation"
-              className={menu ? "az-site-links is-open" : "az-site-links"}
-              aria-label="فهرست اصلی"
-              onKeyDown={(event) => { if (event.key === "Escape") setMenu(false); }}
-            >
-              <a href="/" aria-current={pathname === "/" ? "page" : undefined}>صفحهٔ نخست</a>
-              {links.map(([href, label]) => <a href={href} aria-current={isCurrent(href)} key={href}>{label}</a>)}
-              <details className="az-site-more">
-                <summary>بیشتر</summary>
-                <div>
-                  <a href="/standards" aria-current={isCurrent("/standards")}>معیارهای پژوهش</a>
-                  <a href="/governance" aria-current={isCurrent("/governance")}>ساختار و پاسخ‌گویی</a>
-                  <a href="/contribute" aria-current={isCurrent("/contribute")}>همکاری و ارسال منبع</a>
-                  {extraPages.map((page) => (
-                    <a href={"/pages/" + page.slug} aria-current={isCurrent("/pages/" + page.slug)} key={page.slug}>{page.title}</a>
-                  ))}
-                  <a href="/contact" aria-current={isCurrent("/contact")}>تماس</a>
-                </div>
-              </details>
-            </nav>
-
-            <a className="az-site-cta" href="/contribute">ارسال منبع</a>
-          </div>
+        <div className="az2-nav-wrap">
+          <nav
+            id="az2-navigation"
+            className={menu ? "az2-nav az-container is-open" : "az2-nav az-container"}
+            aria-label="فهرست اصلی"
+            onKeyDown={(event) => { if (event.key === "Escape") setMenu(false); }}
+          >
+            <a href="/" aria-current={pathname === "/" ? "page" : undefined}>آغاز</a>
+            {links.map(([href, label]) => (
+              <a href={href} aria-current={isCurrent(href)} key={href}>{label}</a>
+            ))}
+            <a href="/standards" aria-current={isCurrent("/standards")}>روش پژوهش</a>
+            <a href="/contribute" aria-current={isCurrent("/contribute")}>ارسال سند و خاطره</a>
+            {extraPages.slice(0, 2).map((page) => (
+              <a href={"/pages/" + page.slug} aria-current={isCurrent("/pages/" + page.slug)} key={page.slug}>
+                {page.title}
+              </a>
+            ))}
+            <a href="/contact" aria-current={isCurrent("/contact")}>تماس</a>
+          </nav>
         </div>
       </header>
 
       <div id="public-content" tabIndex={-1}>{children}</div>
 
-      <footer className="az-site-footer">
-        <div className="az-container az-footer-shell">
-          <div className="az-footer-brand">
-            <div className="az-footer-name">{settings.identity.siteName}</div>
+      <footer className="az2-footer">
+        <div className="az-container az2-footer-grid">
+          <div className="az2-footer-brand">
+            <div className="az2-footer-brandline">
+              <img src={settings.identity.logoUrl} width="54" height="54" alt="" />
+              <div>
+                <strong>{settings.identity.siteName}</strong>
+                <span>پژوهش، اسناد و حافظهٔ تاریخی افغانستان</span>
+              </div>
+            </div>
             <p>{settings.footer.mission}</p>
-            <span className="az-footer-motto">درخششی برای روشن‌کردن حافظهٔ تاریخ.</span>
+            <a className="az2-footer-email" href={"mailto:" + settings.contact.email} dir="ltr">
+              {settings.contact.email}
+            </a>
           </div>
 
-          <nav className="az-footer-utility" aria-label="پیوندهای پایانی">
+          <nav className="az2-footer-links" aria-label="پیوندهای پایانی">
             <a href="/about">دربارهٔ بنیاد</a>
             <a href="/standards">روش پژوهش</a>
             <a href="/archive">آرشیف</a>
+            <a href="/publications">نشریات</a>
             <a href="/contribute">ارسال سند و خاطره</a>
-            <a href="/contact">تماس</a>
             <a href="/privacy">حریم خصوصی و حقوق نشر</a>
-            {extraPages.map((page) => (
-              <a href={"/pages/" + page.slug} key={page.slug}>{page.title}</a>
-            ))}
+            <a href="/contact">تماس با ما</a>
           </nav>
 
-          <div className="az-footer-contact">
-            <span>ارتباط پژوهشی</span>
-            <a className="az-email" href={"mailto:" + settings.contact.email} dir="ltr">{settings.contact.email}</a>
+          <div className="az2-footer-motto">
+            <span>تاریخ</span>
+            <strong>برای فهم آینده</strong>
+            <p>منبع را حفظ می‌کنیم، روایت را می‌سنجیم و مرز میان سند و تفسیر را روشن نگه می‌داریم.</p>
           </div>
         </div>
 
-        <div className="az-container az-footer-bottom">
+        <div className="az-container az2-footer-bottom">
           <span>{settings.footer.copyright}</span>
-          <span>گذشته برای فهم آینده</span>
+          <span>بنیاد آذرخش</span>
         </div>
       </footer>
     </div>
