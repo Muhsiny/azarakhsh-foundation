@@ -394,14 +394,14 @@
   .az-home-hero::after{display:none}
   .az-home-hero-grid{min-height:0;grid-template-columns:1fr;gap:24px;padding-block:28px 36px}
   .az-home-copy{max-width:none;order:1}
-  .az-home-portrait{order:2;justify-self:stretch;width:100%;max-width:520px;margin-inline:auto}
-  .az-home-portrait-frame{aspect-ratio:auto;height:min(52vw,250px)}
-  .az-home-portrait-frame img{object-position:center 18%}
+  .az-home-portrait{order:2;justify-self:stretch;width:100%;max-width:380px;margin-inline:auto}
+  .az-home-portrait-frame{aspect-ratio:auto;height:auto}
+  .az-home-portrait-frame img{width:100%;height:auto;object-fit:contain;object-position:center top}
   .az-research-index-grid{grid-template-columns:1fr}
   .az-research-index-grid>a:nth-child(odd),
   .az-research-index-grid>a:nth-child(even){padding-inline:0;border-inline-end:0}
   .az-council-feature-grid{grid-template-columns:1fr;gap:38px}
-  .az-council-feature-emblem{order:-1}
+  .az-council-feature-emblem{order:2}
   .az-home-latest-grid{grid-template-columns:1fr 1fr}
   .az-home-latest-grid article:last-child{grid-column:1/-1;max-width:calc(50% - 12px)}
   .az-home-method-grid{grid-template-columns:1fr;gap:18px}
