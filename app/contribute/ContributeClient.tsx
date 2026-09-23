@@ -6,6 +6,7 @@ export default function ContributeClient() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
+  const [attachmentName, setAttachmentName] = useState("");
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -20,6 +21,7 @@ export default function ContributeClient() {
       setSuccess(true);
       setMessage(data.message || "منبع شما ثبت شد.");
       form.reset();
+      setAttachmentName("");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "ثبت روایت انجام نشد.");
     } finally {
@@ -112,12 +114,16 @@ export default function ContributeClient() {
           </label>
 
           <label className="az-file-field">ضمیمهٔ اختیاری ـ تصویر، PDF، صوت یا ویدیوی MP4 تا ۱۰ مگابایت
-            <input
-              className="az-form-control"
-              name="attachment"
-              type="file"
-              accept="image/jpeg,image/png,image/webp,application/pdf,audio/mpeg,audio/mp4,audio/ogg,video/mp4"
-            />
+            <span className="az-file-picker-world">
+              <span className="az-file-name">{attachmentName || "فایلی انتخاب نشده است"}</span>
+              <b>انتخاب فایل</b>
+              <input
+                name="attachment"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,application/pdf,audio/mpeg,audio/mp4,audio/ogg,video/mp4"
+                onChange={(event) => setAttachmentName(event.target.files?.[0]?.name || "")}
+              />
+            </span>
           </label>
         </fieldset>
 
