@@ -4,7 +4,6 @@ import { Noto_Naskh_Arabic, Vazirmatn } from "next/font/google";
 import "./globals.css";
 
 import "./public-system.css";
-import OfflineBootstrap from "./OfflineBootstrap";
 import PublicChrome from "./components/PublicChrome";
 import { loadSiteSettings } from "./load-site-settings";
 import { SITE_URL } from "./site-url";
@@ -64,15 +63,12 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
   },
-  icons: { icon: "/app-icon.png", shortcut: "/app-icon.png", apple: "/app-icon.png" },
-  manifest: "/manifest.webmanifest",
-  appleWebApp: {
-    capable: true,
-    title: "بنیاد آذرخش",
-    statusBarStyle: "black-translucent",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/app-icon.png",
   },
   applicationName: "بنیاد آذرخش",
-  other: { "mobile-web-app-capable": "yes" },
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -134,7 +130,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     <html lang="fa" dir="rtl" className={`${naskh.variable} ${vazirmatn.variable}`}>
       <body>
         <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} type="application/ld+json" />
-        <OfflineBootstrap />
         <PublicChrome settings={chromeSettings} extraPages={extraPages}>{children}</PublicChrome>
       </body>
     </html>
