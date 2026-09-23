@@ -61,7 +61,7 @@ export default function PublicChrome({
           </a>
 
           <a href="/" className="az2-basmala" aria-label="صفحهٔ نخست">
-            <img src="/bismillah.jpg" alt="بسم الله الرحمن الرحیم" width="1000" height="1000" />
+            <img src="/bismillah-original.svg" alt="بسم الله الرحمن الرحیم" width="160" height="76" />
           </a>
 
           <div className="az2-header-tools">
