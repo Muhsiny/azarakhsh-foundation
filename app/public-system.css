@@ -1,5 +1,4 @@
-/* Azarakhsh public visual system — one coherent public layer.
-   Public pages only. Admin and utility screens remain in globals.css. */
+/* Azarakhsh public visual system — public routes only. */
 
 .public-redesign{
   --az-forest:#10352c;
@@ -448,8 +447,6 @@
   .az-home-portrait figcaption{position:static;inset:auto;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:14px;align-items:center;padding:11px 13px;border-inline-start:2px solid #c9aa63;background:#0a3028;backdrop-filter:none}
   .az-home-portrait figcaption span,.az-home-portrait figcaption strong{grid-column:1}
   .az-home-portrait figcaption a{grid-column:2;grid-row:1/3;align-self:center;white-space:nowrap}
-  .az-home-file-links{grid-template-columns:1fr;margin-top:24px}
-  .az-home-file-links a+a{border-inline-start:0;border-top:1px solid var(--az-line);padding-inline-start:0;margin-inline-start:0}
   .az-research-index{padding-block:40px}
   .az-section-title,.az-section-heading{align-items:flex-start}
   .az-section-title h2,.az-section-heading h2{font-size:25px;line-height:1.6}
