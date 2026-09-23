@@ -223,10 +223,23 @@ jobs:
           await capture("home-desktop", "/", 1440, 1000, false);
           await capture("home-mobile", "/", 390, 844, true);
           await capture("leader-desktop", "/beheshti", 1440, 1000, false);
+          await capture("leader-mobile", "/beheshti", 390, 844, true);
           await capture("council-desktop", "/council", 1440, 1000, false);
           await capture("council-mobile", "/council", 390, 844, true);
+          await capture("about-desktop", "/about", 1440, 1000, false);
+          await capture("about-mobile", "/about", 390, 844, true);
+          await capture("standards-desktop", "/standards", 1440, 1000, false);
+          await capture("governance-desktop", "/governance", 1440, 1000, false);
           await capture("publications-desktop", "/publications", 1440, 1000, false);
+          await capture("publications-mobile", "/publications", 390, 844, true);
+          await capture("archive-desktop", "/archive", 1440, 1000, false);
+          await capture("contribute-desktop", "/contribute", 1440, 1000, false);
+          await capture("contribute-mobile", "/contribute", 390, 844, true);
+          await capture("contact-desktop", "/contact", 1440, 1000, false);
+          await capture("english-desktop", "/en", 1440, 1000, false);
+          await capture("join-desktop", "/join", 1440, 1000, false);
           await capture("join-mobile", "/join", 390, 844, true);
+          await capture("login-desktop", "/login", 1440, 1000, false);
           await capture("login-mobile", "/login", 390, 844, true);
           await capture("admin-login-mobile", "/admin/login", 390, 844, true);
 
