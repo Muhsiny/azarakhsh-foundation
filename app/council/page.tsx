@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { siteSettings as settings } from "../site-settings";
-import HistoricalCouncilEmblem from "../components/HistoricalCouncilEmblem";
 
 export const metadata: Metadata = {
   title: "حکومت شورای اتفاق اسلامی افغانستان",
@@ -45,7 +44,7 @@ export default async function CouncilPage() {
 
           <div className="az-flagship-emblem">
             <div className="az-emblem-frame">
-              <HistoricalCouncilEmblem alt={settings.media.councilEmblemAlt} />
+              <img src={settings.media.councilEmblemUrl} alt={settings.media.councilEmblemAlt} width="1075" height="1100" />
             </div>
             <p>{settings.media.councilEmblemCaption}</p>
           </div>
