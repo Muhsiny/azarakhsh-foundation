@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useState, type CSSProperties, type ReactNode } from "react";
+
 export type PublicChromeSettings = {
   identity: { siteName: string; logoUrl: string };
   colors: { primary: string; dark: string; gold: string; paper: string };
@@ -9,6 +10,14 @@ export type PublicChromeSettings = {
   footer: { mission: string; copyright: string };
   contact: { email: string };
 };
+
+const links = [
+  ["/about", "دربارهٔ بنیاد"],
+  ["/council", "حکومت شورای اتفاق"],
+  ["/beheshti", "آیت‌الله بهشتی"],
+  ["/archive", "آرشیف"],
+  ["/publications", "نشریات"],
+] as const;
 
 export default function PublicChrome({ children, settings }: { children: ReactNode; settings: PublicChromeSettings }) {
   const pathname = usePathname() || "/";
@@ -30,28 +39,24 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
     <div className="public-redesign" style={theme}>
       <a className="az-skip" href="#public-content">رفتن به محتوای صفحه</a>
 
-      <header className="az-masthead az-masthead-reference" data-inline-static>
-        <div className="az-reference-top">
-          <div className="az-reference-top-side az-reference-top-side-right">
+      <header className="az-site-header">
+        <div className="az-sacred-strip">
+          <div className="az-container az-sacred-inner">
             <span>بنیاد مستقل پژوهشی تاریخ افغانستان</span>
-          </div>
-
-          <a href="/" className="az-reference-basmala" aria-label="صفحهٔ نخست">
-            <img src="/media/bismillah" alt="بسم الله الرحمن الرحیم" />
-          </a>
-
-          <div className="az-reference-top-side az-reference-top-side-left">
-            <a href="/en" lang="en" dir="ltr">EN</a>
-            <span className="az-reference-separator" aria-hidden="true" />
-            <a href="/publications">جست‌وجو در منابع</a>
-            <span className="az-reference-search-icon" aria-hidden="true">⌕</span>
+            <a href="/" className="az-sacred-basmala" aria-label="صفحهٔ نخست">
+              <img src="/media/bismillah" alt="بسم الله الرحمن الرحیم" />
+            </a>
+            <div>
+              <a href="/en" lang="en" dir="ltr">EN</a>
+              <a href="/publications">جست‌وجو در منابع</a>
+            </div>
           </div>
         </div>
 
-        <div className="az-reference-nav-shell">
-          <div className="az-container az-reference-nav">
-            <a href="/" className="az-reference-brand" aria-label={settings.identity.siteName + "، صفحهٔ نخست"}>
-              <img src={settings.identity.logoUrl} width="56" height="56" alt="" />
+        <div className="az-site-nav-shell">
+          <div className="az-container az-site-nav">
+            <a href="/" className="az-site-brand" aria-label={settings.identity.siteName + "، صفحهٔ نخست"}>
+              <img src={settings.identity.logoUrl} width="52" height="52" alt="" />
               <span>
                 <strong>{settings.identity.siteName}</strong>
                 <small>پژوهش، سند و حافظهٔ تاریخی</small>
@@ -59,29 +64,25 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
             </a>
 
             <button
-              className="az-menu-toggle"
+              className="az-menu-button"
               type="button"
               aria-controls="public-navigation"
               aria-expanded={menu}
               onClick={() => setMenu(!menu)}
             >
-              {menu ? "بستن ✕" : "فهرست ☰"}
+              <span aria-hidden="true"><i /><i /><i /></span>
+              <b>{menu ? "بستن" : "فهرست"}</b>
             </button>
 
             <nav
               id="public-navigation"
-              className={menu ? "az-reference-menu is-open" : "az-reference-menu"}
+              className={menu ? "az-site-links is-open" : "az-site-links"}
               aria-label="فهرست اصلی"
               onKeyDown={(event) => { if (event.key === "Escape") setMenu(false); }}
             >
               <a href="/" aria-current={pathname === "/" ? "page" : undefined}>صفحهٔ نخست</a>
-              <a href="/about" aria-current={isCurrent("/about")}>دربارهٔ بنیاد</a>
-              <a href="/council" aria-current={isCurrent("/council")}>حکومت شورای اتفاق</a>
-              <a href="/beheshti" aria-current={isCurrent("/beheshti")}>آیت‌الله بهشتی</a>
-              <a href="/archive" aria-current={isCurrent("/archive")}>آرشیف</a>
-              <a href="/publications" aria-current={isCurrent("/publications")}>نشریات</a>
-
-              <details className="az-reference-more">
+              {links.map(([href, label]) => <a href={href} aria-current={isCurrent(href)} key={href}>{label}</a>)}
+              <details className="az-site-more">
                 <summary>بیشتر</summary>
                 <div>
                   <a href="/standards" aria-current={isCurrent("/standards")}>معیارهای پژوهش</a>
@@ -92,29 +93,34 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
               </details>
             </nav>
 
-            <a className="az-reference-support" href="/contribute">ارسال سند و خاطره ←</a>
+            <a className="az-site-cta" href="/contribute">ارسال منبع</a>
           </div>
         </div>
       </header>
 
       <div id="public-content" tabIndex={-1}>{children}</div>
 
-      <footer className="az-site-footer az-site-footer-final" data-inline-static>
+      <footer className="az-site-footer">
         <div className="az-container az-footer-shell">
           <div className="az-footer-brand">
             <div className="az-footer-name">{settings.identity.siteName}</div>
             <p>{settings.footer.mission}</p>
             <span className="az-footer-motto">درخششی برای روشن‌کردن حافظهٔ تاریخ.</span>
-            <a className="az-email" href={"mailto:" + settings.contact.email} dir="ltr">{settings.contact.email}</a>
           </div>
 
           <nav className="az-footer-utility" aria-label="پیوندهای پایانی">
             <a href="/about">دربارهٔ بنیاد</a>
             <a href="/standards">روش پژوهش</a>
+            <a href="/archive">آرشیف</a>
             <a href="/contribute">ارسال سند و خاطره</a>
             <a href="/contact">تماس</a>
             <a href="/privacy">حریم خصوصی و حقوق نشر</a>
           </nav>
+
+          <div className="az-footer-contact">
+            <span>ارتباط پژوهشی</span>
+            <a className="az-email" href={"mailto:" + settings.contact.email} dir="ltr">{settings.contact.email}</a>
+          </div>
         </div>
 
         <div className="az-container az-footer-bottom">

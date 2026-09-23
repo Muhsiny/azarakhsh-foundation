@@ -27,3 +27,104 @@ jobs:
         run: npm run build
       - name: Audit production dependencies
         run: npm audit --omit=dev
+
+      - name: Start local visual QA server
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run dev -- --host 127.0.0.1 --port 4173 > /tmp/azarakhsh-visual.log 2>&1 &
+          for i in {1..60}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/azarakhsh-visual.log
+          exit 1
+
+      - name: Capture desktop and real mobile renders
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHROME=""
+          for bin in google-chrome google-chrome-stable chromium chromium-browser; do
+            if command -v "$bin" >/dev/null 2>&1; then CHROME=$(command -v "$bin"); break; fi
+          done
+          test -n "$CHROME"
+          mkdir -p visual-qa
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --remote-debugging-port=9222             --user-data-dir=/tmp/azarakhsh-cdp about:blank >/tmp/chrome.log 2>&1 &
+          for i in {1..30}; do
+            curl -fsS http://127.0.0.1:9222/json >/dev/null && break
+            sleep 1
+          done
+          cat > /tmp/capture.mjs <<'NODE'
+          import fs from "node:fs";
+          const pages = await (await fetch("http://127.0.0.1:9222/json")).json();
+          const page = pages.find((item) => item.type === "page");
+          if (!page) throw new Error("Chrome page target not found");
+          const ws = new WebSocket(page.webSocketDebuggerUrl);
+          await new Promise((resolve, reject) => {
+            ws.addEventListener("open", resolve, { once: true });
+            ws.addEventListener("error", reject, { once: true });
+          });
+          let id = 0;
+          const pending = new Map();
+          ws.addEventListener("message", (event) => {
+            const msg = JSON.parse(event.data);
+            if (msg.id && pending.has(msg.id)) {
+              pending.get(msg.id)(msg);
+              pending.delete(msg.id);
+            }
+          });
+          const send = (method, params = {}) => new Promise((resolve) => {
+            const next = ++id;
+            pending.set(next, resolve);
+            ws.send(JSON.stringify({ id: next, method, params }));
+          });
+          await send("Page.enable");
+          await send("Runtime.enable");
+
+          async function capture(name, path, width, height, mobile) {
+            await send("Emulation.setDeviceMetricsOverride", {
+              width, height, deviceScaleFactor: 1, mobile,
+              screenWidth: width, screenHeight: height
+            });
+            await send("Page.navigate", { url: "http://127.0.0.1:4173" + path });
+            await new Promise((resolve) => setTimeout(resolve, 1800));
+            const metrics = await send("Runtime.evaluate", {
+              expression: `(()=>({innerWidth,innerHeight,scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight,title:document.title}))()`,
+              returnByValue: true
+            });
+            fs.appendFileSync("visual-qa/metrics.jsonl", JSON.stringify({name,...metrics.result.result.value})+"\n");
+            const layout = await send("Page.getLayoutMetrics");
+            const contentHeight = Math.min(Math.ceil(layout.result.cssContentSize.height), mobile ? 2600 : 2200);
+            const shot = await send("Page.captureScreenshot", {
+              format: "png",
+              fromSurface: true,
+              captureBeyondViewport: true,
+              clip: { x: 0, y: 0, width, height: contentHeight, scale: 1 }
+            });
+            fs.writeFileSync("visual-qa/" + name + ".png", Buffer.from(shot.result.data, "base64"));
+          }
+
+          await capture("home-desktop", "/", 1440, 1000, false);
+          await capture("home-mobile", "/", 390, 844, true);
+          await capture("leader-desktop", "/beheshti", 1440, 1000, false);
+          await capture("council-desktop", "/council", 1440, 1000, false);
+          await capture("publications-desktop", "/publications", 1440, 1000, false);
+          await capture("about-desktop", "/about", 1440, 1000, false);
+          await capture("about-mobile", "/about", 390, 844, true);
+          await capture("contribute-mobile", "/contribute", 390, 844, true);
+          ws.close();
+          NODE
+          node /tmp/capture.mjs
+
+      - name: Upload visual QA
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: azarakhsh-visual-qa
+          path: visual-qa/
+          retention-days: 2
