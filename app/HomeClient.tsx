@@ -55,10 +55,6 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
               <a className="az-action az-action-primary" href="/archive">کاوش در آرشیف</a>
               <a className="az-action az-action-secondary" href="/standards">معیارهای پژوهش</a>
             </div>
-            <div className="az-home-file-links" aria-label="پرونده‌های محوری">
-              <a href="/beheshti"><span>پروندهٔ ۰۲</span><strong>آیت‌الله سید علی بهشتی</strong></a>
-              <a href="/council"><span>پروندهٔ ۰۱</span><strong>حکومت شورای اتفاق</strong></a>
-            </div>
           </div>
 
           <figure className="az-home-portrait">
