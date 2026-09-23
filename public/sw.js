@@ -1,4 +1,4 @@
-const CACHE = "azarakhsh-v5";
+const CACHE = "azarakhsh-v6";
 const CORE = [
   "/",
   "/publications",
