@@ -21,17 +21,6 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
-      - name: Recover historical council emblem
-        shell: bash
-        run: |
-          set -euo pipefail
-          curl -fsSL --max-time 30 "https://azarakhsh-foundation.com14.workers.dev/api/media/site%2Fshura-e-ettefaq-emblem.webp" -o /tmp/historical-council-emblem.webp
-          test -s /tmp/historical-council-emblem.webp
-          echo "AZ_EMBLEM_BASE64_BEGIN"
-          base64 -w0 /tmp/historical-council-emblem.webp
-          echo
-          echo "AZ_EMBLEM_BASE64_END"
-
       - name: Reject incomplete source markers
         shell: bash
         run: |
