@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { siteSettings } from "../site-settings";
 
-const historicalColorEmblem = "/api/media/site%2Fshura-e-ettefaq-emblem.webp";
+const historicalColorEmblem = siteSettings.media.councilEmblemUrl;
 const localFallback = "/media/council-emblem.webp";
 
 export default function HistoricalCouncilEmblem({
