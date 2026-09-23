@@ -1,7 +1,5 @@
 "use client";
 
-import HistoricalCouncilEmblem from "./components/HistoricalCouncilEmblem";
-
 export type LatestItem = {
   id: number;
   slug: string;
@@ -25,6 +23,7 @@ const typeLabels: Record<string, string> = {
 };
 
 export type HomeMedia = {
+  councilEmblemUrl: string;
   councilEmblemAlt: string;
 };
 
@@ -111,7 +110,7 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
             </div>
           </div>
           <figure className="az-council-feature-emblem">
-            <div><HistoricalCouncilEmblem alt={media.councilEmblemAlt} /></div>
+            <div><img src={media.councilEmblemUrl} alt={media.councilEmblemAlt} width="1075" height="1100" loading="lazy" /></div>
             <figcaption>نشان تاریخی حکومت شورای اتفاق اسلامی افغانستان</figcaption>
           </figure>
         </div>
