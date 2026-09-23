@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { and, desc, eq } from "drizzle-orm";
 import HomeClient, { type LatestItem } from "./HomeClient";
-import { loadSiteSettings } from "./load-site-settings";
+import { siteSettings as settings } from "./site-settings";
 import { ensurePlatformSchema } from "../db/platform";
 import { getDb } from "../db";
 import { posts } from "../db/schema";
@@ -14,7 +14,6 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const settings = await loadSiteSettings();
   let latest: LatestItem[] = [];
 
   try {
