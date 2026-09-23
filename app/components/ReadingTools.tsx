@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 
 export default function ReadingTools() {
   const [large, setLarge] = useState(false);
 
-  function toggleSize(event: React.MouseEvent<HTMLButtonElement>) {
+  function toggleSize(event: MouseEvent<HTMLButtonElement>) {
     const next = !large;
     setLarge(next);
     const article = event.currentTarget.closest("article");
