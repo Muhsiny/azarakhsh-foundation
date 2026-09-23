@@ -68,8 +68,10 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
               />
             </div>
             <figcaption>
-              <span>پروندهٔ زندگی و زمانه</span>
-              <strong>آیت‌الله سید علی بهشتی</strong>
+              <div className="az-home-portrait-meta">
+                <span>پروندهٔ زندگی و زمانه</span>
+                <strong>آیت‌الله سید علی بهشتی</strong>
+              </div>
               <a href="/beheshti">مطالعهٔ پرونده ←</a>
             </figcaption>
           </figure>

@@ -552,3 +552,38 @@
   .public-redesign .admin-access-card{padding:24px}
   .public-redesign .admin-access-card h1{font-size:29px}
 }
+
+
+/* 2026-09-23 final visual correction: sacred mark, portrait integrity, council cover */
+.az-sacred-basmala{width:84px;height:26px;overflow:hidden}
+.az-sacred-basmala img{width:84px;height:26px;object-fit:cover;object-position:center 48%;mix-blend-mode:multiply}
+.az-home-portrait-frame::after{display:none}
+.az-home-portrait-frame img{filter:none}
+.az-home-portrait figcaption{position:static;inset:auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 14px;border-inline-start:2px solid #c9aa63;background:#0a3028;color:#fff;backdrop-filter:none}
+.az-home-portrait-meta{min-width:0}
+.az-home-portrait figcaption span{display:block;color:#dbc98f;font-size:9px}
+.az-home-portrait figcaption strong{display:block;margin:2px 0 0;font:600 15px/1.6 var(--az-reading)}
+.az-home-portrait figcaption a{flex:0 0 auto;white-space:nowrap;font-size:10px;color:#f1e2b6}
+.az-council-cover{width:100%;overflow:hidden;background:#08231d;border-bottom:1px solid rgba(179,145,72,.3)}
+.az-council-cover img{display:block;width:100%;height:auto;max-height:620px;object-fit:cover;object-position:center}
+.az-flagship-emblem img,.az-council-feature-emblem img{filter:none!important;opacity:1!important}
+
+@media(max-width:900px){
+  .az-home-portrait-frame{height:300px}
+  .az-home-portrait-frame img{object-position:center 8%}
+  .az-council-cover img{height:auto;max-height:none;object-fit:contain}
+}
+@media(max-width:620px){
+  .az-sacred-strip,.az-sacred-inner{height:32px}
+  .az-sacred-basmala{width:76px;height:23px}
+  .az-sacred-basmala img{width:76px;height:23px;object-position:center 48%}
+  .az-home-portrait-frame{height:300px}
+  .az-home-portrait-frame img{object-position:center 5%}
+  .az-home-portrait figcaption{display:flex;grid-template-columns:none;padding:10px 12px}
+  .az-home-portrait figcaption span,.az-home-portrait figcaption strong,.az-home-portrait figcaption a{grid-column:auto;grid-row:auto}
+  .az-home-portrait figcaption strong{font-size:16px}
+  .az-council-cover{background:#0a3028}
+  .az-council-cover img{width:100%;height:auto;max-height:none;object-fit:contain}
+  .az-flagship-emblem{margin-top:0}
+  .az-emblem-frame{width:132px;padding:7px;background:#fffdf7}
+}
