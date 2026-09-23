@@ -8,7 +8,6 @@ type Health = {
     owner: boolean;
     database: boolean;
     posts: boolean;
-    settings: boolean;
     media: boolean;
   };
   errors: string[];
@@ -18,7 +17,6 @@ const labels: Record<keyof Health["checks"], string> = {
   owner: "دسترسی مالک",
   database: "پایگاه داده D1",
   posts: "ذخیره مطالب",
-  settings: "ذخیره تنظیمات",
   media: "آپلود تصویر و فایل",
 };
 
