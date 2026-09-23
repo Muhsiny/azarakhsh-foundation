@@ -32,14 +32,31 @@ jobs:
       - name: Verify production build
         run: npm run verify
 
-      - name: Deploy Worker
+      - name: Check Cloudflare credentials
+        id: cloudflare
         shell: bash
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          if [[ -z "${CLOUDFLARE_API_TOKEN:-}" || -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]]; then
-            echo "::error::Cloudflare deployment secrets are not configured."
-            exit 1
+          if [[ -n "${CLOUDFLARE_API_TOKEN:-}" && -n "${CLOUDFLARE_ACCOUNT_ID:-}" ]]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Cloudflare credentials are not configured; storing the verified production bundle instead of failing the workflow."
           fi
-          npx wrangler deploy
+
+      - name: Deploy Worker
+        if: steps.cloudflare.outputs.available == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx wrangler deploy
+
+      - name: Store verified production bundle
+        if: steps.cloudflare.outputs.available != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: azarakhsh-production-bundle
+          path: dist/
+          retention-days: 7

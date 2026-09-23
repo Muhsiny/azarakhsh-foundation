@@ -502,3 +502,46 @@
     animation:none!important;
   }
 }
+
+
+/* Membership and member login */
+.membership-page{
+  min-height:calc(100vh - 106px);
+  padding:48px max(24px,calc((100vw - var(--az-content-width))/2));
+  background:linear-gradient(145deg,#0a2b24,#103b31);
+  color:#fff;
+}
+.membership-back{display:inline-flex;margin-bottom:34px;color:#d7c488;font-size:11px;font-weight:650}
+.membership-layout{display:grid;grid-template-columns:minmax(0,.9fr) minmax(360px,.7fr);gap:clamp(44px,7vw,92px);align-items:start;max-width:1050px;margin:auto}
+.membership-intro{padding-top:18px}
+.membership-intro img{width:120px;height:96px;object-fit:contain;margin-bottom:24px;filter:drop-shadow(0 8px 24px rgba(0,0,0,.2))}
+.membership-intro h1{max-width:650px;margin:0;color:#fff;font:620 clamp(38px,4.5vw,58px)/1.55 var(--az-reading)}
+.membership-intro>p:last-child{max-width:620px;color:rgba(255,255,255,.68);font:500 15px/2 var(--az-reading)}
+.membership-form,
+.public-redesign .admin-access-card{display:grid;gap:15px;padding:30px;background:#fbf8f1;color:var(--az-ink);border-top:2px solid var(--az-gold);box-shadow:0 24px 60px rgba(0,0,0,.15)}
+.membership-form label,
+.public-redesign .admin-access-card label{display:grid;gap:6px;color:#52625b;font-size:11px;font-weight:650}
+.membership-form input,
+.membership-form textarea,
+.public-redesign .admin-access-card input{width:100%;min-height:45px;border:1px solid rgba(16,53,44,.2);border-radius:7px;background:#fff;padding:10px 11px;color:#243e36}
+.membership-form textarea{min-height:140px;resize:vertical}
+.public-redesign .admin-message{margin:2px 0 0;padding:10px 12px;border-inline-start:2px solid var(--az-gold);background:#f1ede2;color:#5d655f;font-size:11px}
+.public-redesign .admin-shell{min-height:calc(100vh - 106px);display:grid;place-items:center;padding:48px 20px;background:#efebe1}
+.public-redesign .admin-access-card{width:min(500px,100%);margin:0;text-align:start}
+.public-redesign .admin-access-card h1{margin:0;color:#193e34;font:620 32px/1.55 var(--az-reading)}
+.public-redesign .admin-access-card>p:not(.section-kicker){margin:0;color:#68756e;font-size:12.5px}
+.public-redesign .admin-access-card form{display:grid;gap:13px;margin:8px 0 2px}
+.public-redesign .admin-seal{width:52px;height:52px;display:grid;place-items:center;border-radius:50%;background:var(--az-forest);color:#ead89f;font:600 24px var(--az-reading)}
+.public-redesign .admin-access-card>a:last-child{margin-top:5px;color:#8b6a2f;font-size:10.5px}
+
+@media(max-width:760px){
+  .membership-page{padding:34px 18px 48px}
+  .membership-layout{grid-template-columns:1fr;gap:28px}
+  .membership-intro{padding-top:0}
+  .membership-intro img{width:92px;height:72px;margin-bottom:16px}
+  .membership-intro h1{font-size:35px}
+  .membership-form{padding:22px}
+  .public-redesign .admin-shell{padding:28px 16px}
+  .public-redesign .admin-access-card{padding:24px}
+  .public-redesign .admin-access-card h1{font-size:29px}
+}
