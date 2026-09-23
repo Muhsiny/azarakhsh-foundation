@@ -4,6 +4,7 @@ import { Noto_Naskh_Arabic, Vazirmatn } from "next/font/google";
 import "./globals.css";
 
 import "./public-system.css";
+import "./apple-home.css";
 import PublicChrome from "./components/PublicChrome";
 import { siteSettings as settings } from "./site-settings";
 import { SITE_URL } from "./site-url";

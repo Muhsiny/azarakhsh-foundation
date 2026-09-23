@@ -28,119 +28,186 @@ export type HomeMedia = {
 };
 
 const researchPaths = [
-  ["۰۱", "اسناد تاریخی", "نامه‌ها، اعلامیه‌ها، فرمان‌ها و منابع مکتوب", "/publications?type=document"],
-  ["۰۲", "مقالات و پژوهش‌ها", "تحلیل‌ها و پژوهش‌های مستند بنیاد", "/publications?type=article"],
-  ["۰۳", "کتاب‌ها و نشریات", "آثار منتشرشده و منابع پژوهشی", "/publications?type=book"],
-  ["۰۴", "تاریخ شفاهی", "خاطرات و روایت‌های شاهدان", "/publications?type=oral-history"],
+  {
+    title: "اسناد تاریخی",
+    text: "متون و مدارک",
+    href: "/publications?type=document",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h7l4 4V20H7z" /><path d="M14 3.5V8h4M9.5 12h6M9.5 15.5h6" /></svg>
+    ),
+  },
+  {
+    title: "روایت‌ها",
+    text: "گفت‌وگوها و خاطرات",
+    href: "/publications?type=oral-history",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5c3.2-.8 5.8-.4 8 1.2v12c-2.2-1.6-4.8-2-8-1.2zM20 5.5c-3.2-.8-5.8-.4-8 1.2v12c2.2-1.6 4.8-2 8-1.2z" /></svg>
+    ),
+  },
+  {
+    title: "تاریخ شفاهی",
+    text: "شاهدان تاریخ",
+    href: "/publications?type=oral-history",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="2.4" /><circle cx="16" cy="8" r="2.4" /><path d="M3.8 18c.3-3.2 1.8-5 4.2-5s3.9 1.8 4.2 5M11.8 18c.3-3.2 1.8-5 4.2-5s3.9 1.8 4.2 5" /></svg>
+    ),
+  },
+  {
+    title: "تحلیل و پژوهش",
+    text: "مقالات و مطالعات",
+    href: "/publications?type=article",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 8 8-4 8 4-8 4zM6 11l6 3 6-3M6 15l6 3 6-3" /></svg>
+    ),
+  },
 ] as const;
 
 export default function HomeClient({ media, latest }: { media: HomeMedia; latest: LatestItem[] }) {
   const featured = latest.slice(0, 3);
 
   return (
-    <main className="az-home">
-      <section className="az-home-hero" aria-labelledby="az-home-title">
-        <div className="az-container az-home-hero-grid">
-          <div className="az-home-copy">
-            <span className="az-home-kicker">بنیاد پژوهشی تاریخی آذرخش</span>
-            <h1 id="az-home-title">
+    <main className="az2-home">
+      <section className="az2-hero" aria-labelledby="az2-home-title">
+        <div className="az-container az2-hero-grid">
+          <div className="az2-hero-copy">
+            <span className="az2-eyebrow">بنیاد پژوهشی تاریخی آذرخش</span>
+            <h1 id="az2-home-title">
               تاریخ، آنگاه روشن می‌شود
               <em>که اسناد سخن بگویند.</em>
             </h1>
-            <p className="az-home-lead">
+            <p>
               نهاد مستقل پژوهشی برای گردآوری، سنجش و بازخوانی مستند تاریخ افغانستان؛
               با تفکیک روشن میان سند، روایت، خاطره و تفسیر.
             </p>
-            <div className="az-home-actions">
-              <a className="az-action az-action-primary" href="/archive">کاوش در آرشیف</a>
-              <a className="az-action az-action-secondary" href="/standards">معیارهای پژوهش</a>
+            <div className="az2-actions">
+              <a className="az2-button az2-button-primary" href="/archive">
+                <span>کاوش در آرشیف</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7.5h14v11H5zM8 4.5h8l1 3H7zM9 12h6" /></svg>
+              </a>
+              <a className="az2-button az2-button-ghost" href="/standards">
+                <span>معیارهای پژوهش</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h10l2 2v14H6zM9 9h6M9 13h6M9 17h4" /></svg>
+              </a>
             </div>
           </div>
 
-          <figure className="az-home-portrait">
-            <div className="az-home-portrait-frame">
-              <img
-                src="/media/beheshti-original.webp"
-                alt="آیت‌الله سید علی بهشتی"
-                width="1182"
-                height="1200"
-                fetchPriority="high"
-              />
-            </div>
+          <figure className="az2-hero-visual">
+            <img
+              src="/media/council-flag-cover.webp"
+              alt="پرچم تاریخی حکومت شورای اتفاق اسلامی افغانستان"
+              width="1600"
+              height="900"
+              fetchPriority="high"
+            />
+            <div className="az2-hero-shade" aria-hidden="true" />
             <figcaption>
-              <div className="az-home-portrait-meta">
-                <span>پروندهٔ زندگی و زمانه</span>
-                <strong>آیت‌الله سید علی بهشتی</strong>
-              </div>
-              <a href="/beheshti">مطالعهٔ پرونده ←</a>
+              <span>از آرشیف تصویری</span>
+              <strong>پرچم تاریخی حکومت شورای اتفاق اسلامی افغانستان</strong>
             </figcaption>
           </figure>
         </div>
       </section>
 
-      <section className="az-container az-research-index" aria-labelledby="research-index-title">
-        <div className="az-section-heading">
-          <div>
-            <span className="az-overline">مسیرهای پژوهش</span>
-            <h2 id="research-index-title">از منبع تا روایت قابل بررسی</h2>
-          </div>
-          <a href="/publications">همهٔ منابع ←</a>
-        </div>
-        <div className="az-research-index-grid">
-          {researchPaths.map(([no, title, text, href]) => (
-            <a href={href} key={title}>
-              <span>{no}</span>
-              <div><strong>{title}</strong><small>{text}</small></div>
-              <b aria-hidden="true">←</b>
-            </a>
-          ))}
-        </div>
+      <section className="az-container az2-research-dock" aria-label="مسیرهای پژوهش">
+        {researchPaths.map((item) => (
+          <a href={item.href} key={item.title}>
+            <span className="az2-dock-icon">{item.icon}</span>
+            <span>
+              <strong>{item.title}</strong>
+              <small>{item.text}</small>
+            </span>
+          </a>
+        ))}
       </section>
 
-      <section className="az-council-feature">
-        <div className="az-container az-council-feature-grid">
-          <div className="az-council-feature-copy">
-            <span className="az-overline az-overline-light">پروندهٔ محوری / ۰۱</span>
+      <section className="az-container az2-feature-stack" aria-label="پرونده‌های برجسته">
+        <article className="az2-feature az2-feature-leader">
+          <div className="az2-feature-media">
+            <img
+              src="/media/beheshti-original.webp"
+              alt="آیت‌الله سید علی بهشتی"
+              width="1182"
+              height="1200"
+              loading="lazy"
+            />
+          </div>
+          <div className="az2-feature-copy">
+            <span className="az2-feature-kicker">پروندهٔ زندگی و زمانه</span>
+            <h2>آیت‌الله سید علی بهشتی</h2>
+            <p>
+              پرونده‌ای پژوهشی دربارهٔ زندگی، فعالیت‌های علمی و سیاسی، اسناد و روایت‌های مرتبط
+              با یکی از چهره‌های تاریخ معاصر افغانستان.
+            </p>
+            <a className="az2-inline-button" href="/beheshti">مطالعهٔ پرونده <span aria-hidden="true">←</span></a>
+          </div>
+          <span className="az2-feature-watermark" aria-hidden="true">مردی در مسیر تاریخ</span>
+        </article>
+
+        <article className="az2-feature az2-feature-council">
+          <div className="az2-feature-media az2-emblem-media">
+            <img
+              src={media.councilEmblemUrl}
+              alt={media.councilEmblemAlt}
+              width="1075"
+              height="1100"
+              loading="lazy"
+            />
+          </div>
+          <div className="az2-feature-copy">
+            <span className="az2-feature-kicker">پروندهٔ محوری / ۰۱</span>
             <h2>حکومت شورای اتفاق اسلامی افغانستان</h2>
             <p>
-              بازخوانی یک تجربهٔ تاریخی حکومت‌داری از مسیر اسناد، روایت‌ها،
-              ساختار اداری و زمینهٔ سیاسی؛ بدون آمیختن بزرگداشت با داوری پژوهشی.
+              بازخوانی یک تجربهٔ تاریخی حکومت‌داری از مسیر اسناد، روایت‌ها، ساختار اداری
+              و زمینهٔ سیاسی، با تفکیک میان منبع و تفسیر پژوهشی.
             </p>
-            <div className="az-actions">
-              <a className="az-action az-action-gold" href="/council">گشودن پرونده</a>
-              <a className="az-text-link az-text-link-light" href="/publications?topic=council">منابع مرتبط ←</a>
-            </div>
+            <a className="az2-inline-button az2-inline-light" href="/council">مطالعهٔ پرونده <span aria-hidden="true">←</span></a>
           </div>
-          <figure className="az-council-feature-emblem">
-            <div><img src={media.councilEmblemUrl} alt={media.councilEmblemAlt} width="1075" height="1100" loading="lazy" /></div>
-            <figcaption>نشان تاریخی حکومت شورای اتفاق اسلامی افغانستان</figcaption>
-          </figure>
-        </div>
+        </article>
+
+        <article className="az2-feature az2-feature-oral">
+          <div className="az2-oral-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="12" rx="4" /><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3M9 21h6" /></svg>
+          </div>
+          <div className="az2-feature-copy">
+            <span className="az2-feature-kicker">حافظهٔ زنده</span>
+            <h2>تاریخ شفاهی</h2>
+            <p>
+              خاطرات و روایت‌های شاهدان، با ثبت زمینهٔ زمانی، موقعیت راوی و امکان مقایسه
+              با اسناد و روایت‌های دیگر.
+            </p>
+            <a className="az2-inline-button" href="/publications?type=oral-history">مشاهدهٔ روایت‌ها <span aria-hidden="true">←</span></a>
+          </div>
+          <div className="az2-oral-wave" aria-hidden="true">
+            {Array.from({ length: 24 }).map((_, index) => <i key={index} />)}
+          </div>
+        </article>
       </section>
 
-      <section className="az-container az-home-latest" aria-labelledby="latest-title">
-        <div className="az-section-heading">
-          <div>
-            <span className="az-overline">تازه‌ترین نشرها</span>
-            <h2 id="latest-title">مطالب و منابع تازه</h2>
+      {featured.length > 0 && (
+        <section className="az-container az2-latest" aria-labelledby="az2-latest-title">
+          <div className="az2-section-head">
+            <div>
+              <span>تازه‌ترین نشرها</span>
+              <h2 id="az2-latest-title">مطالب و منابع تازه</h2>
+            </div>
+            <a href="/publications">همهٔ نشرها ←</a>
           </div>
-          <a href="/publications">همهٔ نشرها ←</a>
-        </div>
 
-        {featured.length ? (
-          <div className="az-home-latest-grid">
+          <div className="az2-latest-grid">
             {featured.map((item) => {
               const href = "/publications/" + item.slug;
               const label = typeLabels[item.contentType] || item.category;
               return (
                 <article key={item.id}>
-                  <a className="az-home-latest-media" href={href}>
-                    {item.coverImage
-                      ? <img src={item.coverImage} alt="" loading="lazy" width="720" height="480" />
-                      : <div className="az-home-placeholder" aria-hidden="true">آذرخش</div>}
+                  <a className="az2-latest-media" href={href}>
+                    {item.coverImage ? (
+                      <img src={item.coverImage} alt="" loading="lazy" width="720" height="480" />
+                    ) : (
+                      <div className="az2-latest-placeholder" aria-hidden="true">آذرخش</div>
+                    )}
                     <span>{label}</span>
                   </a>
-                  <div className="az-home-latest-body">
+                  <div className="az2-latest-body">
                     <h3><a href={href}>{item.title}</a></h3>
                     {item.excerpt && <p>{item.excerpt}</p>}
                     <a href={href}>مطالعه و مشخصات منبع ←</a>
@@ -149,35 +216,16 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
               );
             })}
           </div>
-        ) : (
-          <div className="az-home-empty">
-            <strong>هنوز مطلبی در این بخش منتشر نشده است.</strong>
-            <p>پس از انتشار نخستین سند، مقاله یا کتاب، تازه‌ترین موارد در همین‌جا نمایش داده می‌شوند.</p>
-          </div>
-        )}
-      </section>
+        </section>
+      )}
 
-      <section className="az-home-method">
-        <div className="az-container az-home-method-grid">
-          <div>
-            <span className="az-overline">قاعدهٔ پژوهش</span>
-            <h2>سند، خاطره و تفسیر یک چیز نیستند.</h2>
-          </div>
-          <p>
-            هر ادعا باید تا جای ممکن به منبع قابل بررسی بازگردد. نوع شاهد، فاصلهٔ زمانی،
-            زمینهٔ تاریخی و درجهٔ اطمینان باید برای خواننده روشن بماند.
-          </p>
-          <a className="az-action az-action-secondary" href="/standards">روش و معیارها</a>
-        </div>
-      </section>
-
-      <section className="az-container az-home-contribute">
+      <section className="az-container az2-contribute">
         <div>
-          <span className="az-overline">حافظهٔ جمعی</span>
+          <span className="az2-feature-kicker">حافظهٔ جمعی</span>
           <h2>سند، تصویر یا خاطره‌ای در اختیار دارید؟</h2>
           <p>منشأ، زمینه و حقوق استفاده از هر منبع پیش از نشر بررسی می‌شود.</p>
         </div>
-        <a className="az-action az-action-primary" href="/contribute">ارسال سند و خاطره</a>
+        <a className="az2-button az2-button-primary" href="/contribute">ارسال سند و خاطره</a>
       </section>
     </main>
   );
