@@ -1,17 +1,22 @@
 # بنیاد آذرخش
 
-وب‌سایت رسمی بنیاد آذرخش، آمادهٔ استقرار مستقل روی Cloudflare Workers.
+وب‌سایت رسمی بنیاد آذرخش، مستقر بر Cloudflare Workers.
 
-## استقرار روی Cloudflare
+## اجرای پروژه
 
-- Build command: `npm run build`
-- Deploy command: `npx wrangler deploy`
-- Production branch: `main`
+- نصب: `npm ci`
+- توسعه: `npm run dev`
+- بررسی کامل: `npm run verify`
+- ساخت production: `npm run build`
+- انتشار: `npm run deploy`
 
-این پروژه شامل وب‌سایت عمومی، آرشیو پژوهش‌ها، مدیریت مقالات، تنظیمات کامل ظاهر، پایگاه D1 و ذخیره‌سازی R2 است.
+## زیرساخت
 
-<!-- visual QA trigger: desktop/footer/nav repair 2026-09-21 -->
-<!-- visual QA run: desktop repair verified -->
-<!-- cloudflare direct deploy trigger: desktop repair 2026-09-21 -->
-<!-- cloudflare direct deploy retrigger: 2026-09-21T10:22+04:30 -->
-<!-- smoke after direct deploy 2026-09-21 -->
+- Cloudflare Workers
+- Cloudflare D1 با binding `DB`
+- Cloudflare KV با binding `MEDIA`
+- Vite / Vinext
+- React / TypeScript
+- Drizzle ORM
+
+تنظیمات Cloudflare فقط در `wrangler.jsonc` و محیط deployment نگه‌داری می‌شوند. رمزها و tokenها نباید داخل repository قرار گیرند.
