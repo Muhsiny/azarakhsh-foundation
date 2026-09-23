@@ -149,7 +149,15 @@ jobs:
                 scrollWidth: document.documentElement.scrollWidth,
                 bodyText: document.body.innerText.slice(0,500),
                 brokenImages: [...document.images].filter(i => i.complete && i.naturalWidth === 0).map(i => i.getAttribute('src')),
-                leaderSrc: document.querySelector('.az-home-portrait img')?.getAttribute('src') || null
+                leaderSrc: document.querySelector('.az-home-portrait img')?.getAttribute('src') || null,
+                homeCopyTop: document.querySelector('.az-home-copy')?.getBoundingClientRect().top ?? null,
+                homePortraitTop: document.querySelector('.az-home-portrait')?.getBoundingClientRect().top ?? null,
+                homePortraitHeight: document.querySelector('.az-home-portrait')?.getBoundingClientRect().height ?? null,
+                basmalaCenter: document.querySelector('.az-sacred-basmala') ? (() => {
+                  const r = document.querySelector('.az-sacred-basmala').getBoundingClientRect();
+                  return r.left + r.width / 2;
+                })() : null,
+                homeLeadAlign: document.querySelector('.az-home-lead') ? getComputedStyle(document.querySelector('.az-home-lead')).textAlign : null
               }))()`,
               returnByValue: true
             });
@@ -172,6 +180,18 @@ jobs:
             if (path === "/" && metrics.leaderSrc !== "/media/beheshti-original.webp") {
               failures.push(`/: expected original Beheshti portrait, got ${metrics.leaderSrc}`);
             }
+            if (path === "/" && !(metrics.homeCopyTop < metrics.homePortraitTop)) {
+              failures.push(`/: mobile hero message must appear before the leader portrait`);
+            }
+            if (path === "/" && metrics.homePortraitHeight > 430) {
+              failures.push(`/: mobile leader feature is too tall (${metrics.homePortraitHeight}px)`);
+            }
+            if (path === "/" && Math.abs(metrics.basmalaCenter - metrics.innerWidth / 2) > 4) {
+              failures.push(`/: Bismillah is not centered in the mobile sacred strip`);
+            }
+            if (path === "/" && metrics.homeLeadAlign !== "justify") {
+              failures.push(`/: research lead text is not justified`);
+            }
           }
 
           async function capture(name, path, width, height, mobile) {
@@ -191,6 +211,7 @@ jobs:
           await capture("home-mobile", "/", 390, 844, true);
           await capture("leader-desktop", "/beheshti", 1440, 1000, false);
           await capture("council-desktop", "/council", 1440, 1000, false);
+          await capture("council-mobile", "/council", 390, 844, true);
           await capture("publications-desktop", "/publications", 1440, 1000, false);
           await capture("join-mobile", "/join", 390, 844, true);
           await capture("login-mobile", "/login", 390, 844, true);
