@@ -1,6 +1,6 @@
 import { getDb } from "../../../../db";
 import { ensurePlatformSchema } from "../../../../db/platform";
-import { posts, siteSettings } from "../../../../db/schema";
+import { posts } from "../../../../db/schema";
 import { canManageSiteRequest, getAdminUser } from "../../../admin-auth";
 
 type RuntimeEnv = {
@@ -18,7 +18,6 @@ export async function GET() {
     owner: user?.role === "owner" || user?.role === "admin",
     database: false,
     posts: false,
-    settings: false,
     media: false,
   };
   const errors: string[] = [];
@@ -36,8 +35,6 @@ export async function GET() {
       const db = await getDb();
       await db.select({ id: posts.id }).from(posts).limit(1);
       checks.posts = true;
-      await db.select({ id: siteSettings.id }).from(siteSettings).limit(1);
-      checks.settings = true;
     }
 
     if (!runtime.MEDIA) {
