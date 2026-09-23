@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "../admin-system.css";
 
 export const metadata: Metadata = {
   robots: {

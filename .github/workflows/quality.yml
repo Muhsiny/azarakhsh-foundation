@@ -30,6 +30,15 @@ jobs:
             exit 1
           fi
 
+      - name: Reject public CSS leaking into globals
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -nE '^\.(hero|site-header|membership-page|publications-hero|archive-placeholder|knowledge-page)\b' app/globals.css; then
+            echo "::error::Public presentation selector leaked back into globals.css."
+            exit 1
+          fi
+
       - name: Type check
         run: npm run typecheck
 
@@ -65,7 +74,7 @@ jobs:
           routes=(
             "/" "/about" "/council" "/beheshti" "/archive" "/publications"
             "/standards" "/governance" "/contribute" "/contact" "/privacy"
-            "/en" "/join" "/login"
+            "/en" "/join" "/login" "/admin/login"
           )
           for route in "${routes[@]}"; do
             echo "checking $route"
@@ -95,7 +104,7 @@ jobs:
           const routes = [
             "/", "/about", "/council", "/beheshti", "/archive", "/publications",
             "/standards", "/governance", "/contribute", "/contact", "/privacy",
-            "/en", "/join", "/login"
+            "/en", "/join", "/login", "/admin/login"
           ];
 
           const pages = await (await fetch("http://127.0.0.1:9222/json")).json();
@@ -185,6 +194,7 @@ jobs:
           await capture("publications-desktop", "/publications", 1440, 1000, false);
           await capture("join-mobile", "/join", 390, 844, true);
           await capture("login-mobile", "/login", 390, 844, true);
+          await capture("admin-login-mobile", "/admin/login", 390, 844, true);
 
           ws.close();
 
