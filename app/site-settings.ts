@@ -33,11 +33,7 @@ export type SiteSettings = {
   };
 };
 
-export type DeepPartial<T> = {
-  [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
-};
-
-export const defaultSiteSettings: SiteSettings = {
+export const siteSettings: Readonly<SiteSettings> = {
   identity: {
     siteName: "بنیاد آذرخش",
     logoUrl: "/azarakhsh-logo-transparent-web.png",
@@ -47,7 +43,7 @@ export const defaultSiteSettings: SiteSettings = {
     councilEmblemUrl: "/media/council-emblem.webp",
     leaderImageAlt: "آیت‌الله سید علی بهشتی",
     councilEmblemAlt: "نشان تاریخی حکومت شورای اتفاق اسلامی افغانستان",
-    councilEmblemCaption: "نسخهٔ آرشیوی نشان حکومت شورای اتفاق اسلامی افغانستان.",
+    councilEmblemCaption: "نشان تاریخی حکومت شورای اتفاق اسلامی افغانستان.",
   },
   council: {
     text: "این پرونده تجربهٔ حکومت شورای اتفاق اسلامی افغانستان را از مسیر اسناد، روایت‌ها و زمینهٔ تاریخی بررسی می‌کند.",
@@ -71,23 +67,3 @@ export const defaultSiteSettings: SiteSettings = {
     contentWidth: 1180,
   },
 };
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
-}
-
-function deepMerge<T>(base: T, override?: DeepPartial<T>): T {
-  if (override === undefined || override === null) return base;
-  if (!isPlainObject(base) || !isPlainObject(override)) return override as T;
-
-  const result: Record<string, unknown> = { ...base };
-  for (const [key, value] of Object.entries(override)) {
-    if (value === undefined || !(key in result)) continue;
-    result[key] = deepMerge(result[key], value as never);
-  }
-  return result as T;
-}
-
-export function mergeSiteSettings(settings?: DeepPartial<SiteSettings> | null): SiteSettings {
-  return deepMerge(defaultSiteSettings, settings ?? undefined);
-}
