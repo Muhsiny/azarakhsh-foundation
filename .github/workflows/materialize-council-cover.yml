@@ -17,20 +17,30 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: root-visual-final-2026-09-23
-      - name: Decode exact user cover
+      - name: Decode exact user cover and derive color emblem
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p public/media
           cat .tmp/council-cover.b64.* | tr -d '\n\r ' | base64 -d > public/media/council-cover.webp
           test -s public/media/council-cover.webp
-          file public/media/council-cover.webp
-      - name: Commit binary asset
+          python -m pip install --quiet pillow
+          python - <<'PY'
+          from PIL import Image
+          src = Image.open("public/media/council-cover.webp").convert("RGB")
+          if src.size != (960, 540):
+              raise SystemExit(f"Unexpected cover size: {src.size}")
+          emblem = src.crop((145, 85, 505, 445))
+          emblem.save("public/media/council-emblem-color.webp", "WEBP", quality=88, method=6)
+          PY
+          test -s public/media/council-emblem-color.webp
+          file public/media/council-cover.webp public/media/council-emblem-color.webp
+      - name: Commit binary assets
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/media/council-cover.webp
-          git commit -m "Add exact council flag cover asset" || exit 0
+          git add public/media/council-cover.webp public/media/council-emblem-color.webp
+          git commit -m "Add exact council cover and color emblem assets" || exit 0
           git push origin HEAD:root-visual-final-2026-09-23
