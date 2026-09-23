@@ -92,14 +92,15 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
           </div>
 
           <figure className="az2-hero-visual">
-            <img
-              src="/media/council-flag-hq.svg"
-              alt="پرچم تاریخی حکومت شورای اتفاق اسلامی افغانستان"
-              width="1280"
-              height="720"
-              fetchPriority="high"
-            />
-            <div className="az2-hero-shade" aria-hidden="true" />
+            <div className="az2-hero-media">
+              <img
+                src="/media/council-flag-hq.svg"
+                alt="پرچم تاریخی حکومت شورای اتفاق اسلامی افغانستان"
+                width="1280"
+                height="720"
+                fetchPriority="high"
+              />
+            </div>
             <figcaption>
               <span>از آرشیف تصویری</span>
               <strong>پرچم تاریخی حکومت شورای اتفاق اسلامی افغانستان</strong>
@@ -140,7 +141,6 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
             </p>
             <a className="az2-inline-button" href="/beheshti">مطالعهٔ پرونده <span aria-hidden="true">←</span></a>
           </div>
-          <span className="az2-feature-watermark" aria-hidden="true">مردی در مسیر تاریخ</span>
         </article>
 
         <article className="az2-feature az2-feature-council">
