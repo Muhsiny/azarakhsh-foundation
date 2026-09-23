@@ -998,3 +998,402 @@
     transition:none!important;
   }
 }
+
+
+/* 2026-09-23 refinement pass: image integrity, typography, mobile brand order, catalogue polish */
+.az2-header-main{
+  direction:ltr;
+  grid-template-areas:"tools basmala brand";
+}
+.az2-brand{
+  direction:rtl;
+}
+.az2-brand span{
+  direction:rtl;
+  text-align:right;
+}
+.az2-header-tools{
+  direction:ltr;
+}
+
+/* cleaner editorial type: modern Persian display, readable Naskh body */
+.az2-hero-copy h1,
+.az2-feature h2,
+.az2-section-head h2,
+.az2-contribute h2,
+.public-redesign .publications-hero h1,
+.public-redesign .knowledge-hero h1,
+.public-redesign .az-institutional-intro h1,
+.public-redesign .az-flagship-copy h1,
+.public-redesign .az-leader-copy h1,
+.public-redesign .article-page h1,
+.public-redesign .az-empty h2{
+  font-family:var(--az-ui);
+  font-weight:600;
+  letter-spacing:-.035em;
+  text-wrap:balance;
+}
+.az2-hero-copy h1{
+  font-size:clamp(39px,4.05vw,59px);
+  line-height:1.48;
+}
+.az2-feature h2{
+  line-height:1.58;
+}
+.az2-hero-copy>p,
+.az2-feature p,
+.public-redesign .publications-hero>p:last-child{
+  font-family:var(--az-reading);
+  letter-spacing:0;
+}
+
+/* keep the archival flag whole: no crop, no artificial zoom */
+.az2-hero-visual{
+  min-height:440px;
+  background:#092f27;
+}
+.az2-hero-visual::before{
+  content:"";
+  position:absolute;
+  inset:-22px;
+  z-index:0;
+  background:url("/media/council-flag-cover.webp") center/cover no-repeat;
+  filter:blur(20px) saturate(.92) brightness(.62);
+  transform:scale(1.07);
+  opacity:.82;
+}
+.az2-hero-visual::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:linear-gradient(180deg,rgba(5,32,27,.06) 34%,rgba(5,32,27,.46) 100%);
+  pointer-events:none;
+}
+.az2-hero-visual>img{
+  z-index:1;
+  inset:14px;
+  width:calc(100% - 28px);
+  height:calc(100% - 28px);
+  object-fit:contain;
+  object-position:center;
+  transform:none;
+  border-radius:20px;
+  filter:saturate(.98) contrast(1.02);
+  box-shadow:0 10px 40px rgba(0,0,0,.16);
+}
+.az2-hero-shade{
+  z-index:2;
+  background:linear-gradient(180deg,transparent 48%,rgba(5,32,27,.72) 100%);
+}
+.az2-hero-visual figcaption{
+  z-index:3;
+}
+.az2-hero-grid{
+  min-height:440px;
+  grid-template-columns:minmax(0,1.02fr) minmax(380px,.98fr);
+}
+
+/* refined card hierarchy */
+.az2-feature{
+  border-color:rgba(17,61,51,.085);
+  box-shadow:0 18px 48px rgba(5,38,31,.055);
+}
+.az2-feature-copy{
+  max-width:760px;
+}
+.az2-feature-kicker,
+.az2-eyebrow{
+  letter-spacing:0;
+}
+.az2-feature p{
+  color:#5f6d66;
+}
+.az2-feature-council{
+  background:
+    radial-gradient(circle at 12% 28%,rgba(199,164,91,.11),transparent 16rem),
+    linear-gradient(135deg,#0a3129,#0a392f 64%,#082b24);
+}
+.az2-emblem-media img{
+  width:min(184px,68%);
+  max-height:190px;
+}
+
+/* publication/archive pages: less empty, more intentional */
+.public-redesign .publications-hero{
+  width:min(1040px,calc(100% - 64px));
+  margin-inline:auto;
+  padding:58px 0 30px;
+  border-bottom:1px solid rgba(17,61,51,.12);
+}
+.public-redesign .publications-hero .section-kicker{
+  margin:0 0 9px;
+  color:#9a7430;
+  font-family:var(--az-ui);
+  font-size:10.5px;
+  font-weight:700;
+}
+.public-redesign .publications-hero h1{
+  max-width:850px;
+  margin:0;
+  color:#153f34;
+  font-size:clamp(38px,4.6vw,58px);
+  line-height:1.45;
+}
+.public-redesign .publications-hero>p:last-child{
+  max-width:760px;
+  margin:15px 0 0;
+  color:#69766f;
+  font-size:15px;
+  line-height:2;
+  text-align:start;
+}
+.public-redesign .publications-body{
+  width:min(1040px,calc(100% - 64px));
+  margin-inline:auto;
+  padding:28px 0 72px;
+}
+.public-redesign .az-empty{
+  position:relative;
+  min-height:0;
+  margin-top:8px;
+  padding:34px 36px 32px 104px;
+  overflow:hidden;
+  border:1px solid rgba(17,61,51,.10);
+  border-radius:22px;
+  background:rgba(255,254,250,.76);
+  box-shadow:0 16px 42px rgba(5,38,31,.05);
+}
+.public-redesign .az-empty::before{
+  content:"آ";
+  position:absolute;
+  left:28px;
+  top:30px;
+  width:54px;
+  height:54px;
+  display:grid;
+  place-items:center;
+  border-radius:16px;
+  background:#edf0e9;
+  color:#17483c;
+  font:700 25px/1 var(--az-reading);
+}
+.public-redesign .az-empty h2{
+  max-width:680px;
+  margin:0;
+  color:#1a493d;
+  font-size:26px;
+  line-height:1.55;
+}
+.public-redesign .az-empty p{
+  max-width:720px;
+  margin:9px 0 20px;
+  color:#6b7771;
+  font:500 14px/1.95 var(--az-reading);
+  text-align:start;
+}
+.public-redesign .az-empty .az-actions{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px 16px;
+}
+.public-redesign .az-empty .az-action{
+  min-height:40px;
+  padding:0 15px;
+  border:1px solid rgba(15,65,53,.22);
+  border-radius:11px;
+  background:#fff;
+  color:#17463a;
+}
+.public-redesign .az-empty .az-small-link{
+  color:#48645b;
+  font-size:10.5px;
+  font-weight:700;
+}
+
+/* footer: stronger hierarchy, less visual drift */
+.az2-footer{
+  padding-top:42px;
+}
+.az2-footer-grid{
+  gap:42px;
+}
+.az2-footer-motto strong{
+  font-family:var(--az-ui);
+  font-weight:600;
+  letter-spacing:-.02em;
+}
+.az2-footer-motto p{
+  max-width:330px;
+}
+
+/* mobile refinement */
+@media(max-width:860px){
+  .az2-hero-grid{
+    min-height:0;
+    grid-template-columns:1fr;
+    grid-template-areas:"visual" "copy";
+  }
+  .az2-hero-visual{
+    min-height:0;
+    aspect-ratio:16/10;
+  }
+  .az2-hero-visual>img{
+    inset:10px;
+    width:calc(100% - 20px);
+    height:calc(100% - 20px);
+    border-radius:16px;
+  }
+}
+
+@media(max-width:620px){
+  .az2-header-main{
+    width:calc(100% - 18px);
+    min-height:60px;
+    grid-template-columns:minmax(78px,1fr) 86px minmax(112px,1fr);
+    gap:6px;
+  }
+  .az2-brand{
+    justify-self:end;
+    gap:6px;
+  }
+  .az2-brand img{
+    width:30px;
+    height:30px;
+    flex-basis:30px;
+  }
+  .az2-brand strong{
+    display:block;
+    font-family:var(--az-ui);
+    font-size:11.5px;
+    line-height:1.25;
+  }
+  .az2-brand small{
+    display:block;
+    margin-top:1px;
+    font-size:6.8px;
+    line-height:1.35;
+    color:#7c8781;
+  }
+  .az2-basmala{
+    width:86px;
+    height:30px;
+  }
+  .az2-basmala img{
+    width:86px;
+    height:30px;
+  }
+  .az2-header-tools{
+    justify-self:start;
+    gap:0;
+  }
+  .az2-search,.az2-menu-button{
+    min-width:34px;
+    height:34px;
+  }
+  .az2-hero{
+    padding-top:12px;
+  }
+  .az2-hero-visual{
+    aspect-ratio:16/10;
+    height:auto;
+    border-radius:20px;
+  }
+  .az2-hero-visual figcaption{
+    inset-inline:16px;
+    bottom:14px;
+  }
+  .az2-hero-visual figcaption span{
+    font-size:8.5px;
+  }
+  .az2-hero-visual figcaption strong{
+    max-width:300px;
+    font-size:10.5px;
+    line-height:1.65;
+  }
+  .az2-hero-copy h1{
+    font-size:29px;
+    line-height:1.52;
+    letter-spacing:-.035em;
+  }
+  .az2-hero-copy>p{
+    font-size:12.7px;
+    line-height:1.92;
+    text-align:start;
+  }
+  .az2-feature h2{
+    font-size:18px;
+    line-height:1.55;
+    letter-spacing:-.025em;
+  }
+  .az2-feature p{
+    font-size:10.5px;
+    line-height:1.88;
+    text-align:start;
+  }
+  .az2-feature-council h2{
+    font-size:18.5px;
+  }
+  .az2-emblem-media img{
+    width:84px;
+    max-height:108px;
+  }
+  .az2-footer{
+    padding-top:34px;
+  }
+  .az2-footer-grid{
+    gap:24px;
+  }
+  .az2-footer-motto strong{
+    font-size:20px;
+  }
+  .public-redesign .publications-hero,
+  .public-redesign .publications-body{
+    width:calc(100% - 28px);
+  }
+  .public-redesign .publications-hero{
+    padding:36px 0 24px;
+  }
+  .public-redesign .publications-hero h1{
+    font-size:31px;
+    line-height:1.48;
+  }
+  .public-redesign .publications-hero>p:last-child{
+    font-size:13px;
+    line-height:1.9;
+  }
+  .public-redesign .az-empty{
+    padding:24px 20px 23px;
+    border-radius:18px;
+  }
+  .public-redesign .az-empty::before{
+    position:static;
+    width:42px;
+    height:42px;
+    margin-bottom:15px;
+    border-radius:13px;
+    font-size:20px;
+  }
+  .public-redesign .az-empty h2{
+    font-size:21px;
+    line-height:1.55;
+  }
+  .public-redesign .az-empty p{
+    font-size:12.5px;
+    line-height:1.9;
+  }
+  .public-redesign .az-empty .az-actions{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:8px;
+  }
+}
+
+@media(max-width:390px){
+  .az2-brand strong{display:block}
+  .az2-brand small{display:block}
+  .az2-header-main{
+    grid-template-columns:minmax(70px,1fr) 82px minmax(105px,1fr);
+  }
+}
