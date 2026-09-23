@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { and, desc, eq } from "drizzle-orm";
 import { Noto_Naskh_Arabic, Vazirmatn } from "next/font/google";
 import "./globals.css";
 
@@ -7,6 +8,9 @@ import OfflineBootstrap from "./OfflineBootstrap";
 import PublicChrome from "./components/PublicChrome";
 import { loadSiteSettings } from "./load-site-settings";
 import { SITE_URL } from "./site-url";
+import { ensurePlatformSchema } from "../db/platform";
+import { getDb } from "../db";
+import { posts } from "../db/schema";
 
 const naskh = Noto_Naskh_Arabic({
   subsets: ["arabic"],
@@ -73,6 +77,24 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const settings = await loadSiteSettings();
+  let extraPages: Array<{ slug: string; title: string }> = [];
+  try {
+    await ensurePlatformSchema();
+    const db = await getDb();
+    extraPages = await db
+      .select({ slug: posts.slug, title: posts.title })
+      .from(posts)
+      .where(and(
+        eq(posts.contentType, "page"),
+        eq(posts.status, "published"),
+        eq(posts.visibility, "public"),
+        eq(posts.featured, 1),
+      ))
+      .orderBy(desc(posts.updatedAt))
+      .limit(6);
+  } catch {
+    extraPages = [];
+  }
   const chromeSettings = {
     identity: {
       siteName: settings.identity.siteName,
@@ -113,7 +135,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       <body>
         <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} type="application/ld+json" />
         <OfflineBootstrap />
-        <PublicChrome settings={chromeSettings}>{children}</PublicChrome>
+        <PublicChrome settings={chromeSettings} extraPages={extraPages}>{children}</PublicChrome>
       </body>
     </html>
   );
