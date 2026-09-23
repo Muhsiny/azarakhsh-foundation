@@ -5,7 +5,7 @@ import "./globals.css";
 
 import "./public-system.css";
 import PublicChrome from "./components/PublicChrome";
-import { loadSiteSettings } from "./load-site-settings";
+import { siteSettings as settings } from "./site-settings";
 import { SITE_URL } from "./site-url";
 import { ensurePlatformSchema } from "../db/platform";
 import { getDb } from "../db";
@@ -72,7 +72,6 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const settings = await loadSiteSettings();
   let extraPages: Array<{ slug: string; title: string }> = [];
   try {
     await ensurePlatformSchema();
