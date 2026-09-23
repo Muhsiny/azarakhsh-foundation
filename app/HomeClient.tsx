@@ -93,10 +93,10 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
 
           <figure className="az2-hero-visual">
             <img
-              src="/media/council-flag-cover.webp"
+              src="/media/council-flag-hq.svg"
               alt="پرچم تاریخی حکومت شورای اتفاق اسلامی افغانستان"
-              width="1600"
-              height="900"
+              width="1280"
+              height="720"
               fetchPriority="high"
             />
             <div className="az2-hero-shade" aria-hidden="true" />
