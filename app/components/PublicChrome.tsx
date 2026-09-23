@@ -19,7 +19,7 @@ const links = [
   ["/publications", "نشریات"],
 ] as const;
 
-export default function PublicChrome({ children, settings }: { children: ReactNode; settings: PublicChromeSettings }) {
+export default function PublicChrome({ children, settings, extraPages = [] }: { children: ReactNode; settings: PublicChromeSettings; extraPages?: Array<{ slug: string; title: string }> }) {
   const pathname = usePathname() || "/";
   const [menu, setMenu] = useState(false);
   if (pathname.startsWith("/admin")) return <>{children}</>;
@@ -88,6 +88,9 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
                   <a href="/standards" aria-current={isCurrent("/standards")}>معیارهای پژوهش</a>
                   <a href="/governance" aria-current={isCurrent("/governance")}>ساختار و پاسخ‌گویی</a>
                   <a href="/contribute" aria-current={isCurrent("/contribute")}>همکاری و ارسال منبع</a>
+                  {extraPages.map((page) => (
+                    <a href={"/pages/" + page.slug} aria-current={isCurrent("/pages/" + page.slug)} key={page.slug}>{page.title}</a>
+                  ))}
                   <a href="/contact" aria-current={isCurrent("/contact")}>تماس</a>
                 </div>
               </details>
@@ -115,6 +118,9 @@ export default function PublicChrome({ children, settings }: { children: ReactNo
             <a href="/contribute">ارسال سند و خاطره</a>
             <a href="/contact">تماس</a>
             <a href="/privacy">حریم خصوصی و حقوق نشر</a>
+            {extraPages.map((page) => (
+              <a href={"/pages/" + page.slug} key={page.slug}>{page.title}</a>
+            ))}
           </nav>
 
           <div className="az-footer-contact">
