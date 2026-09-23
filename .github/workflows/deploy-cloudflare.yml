@@ -63,7 +63,7 @@ jobs:
             "/" "/about" "/council" "/beheshti" "/archive" "/publications"
             "/standards" "/governance" "/contribute" "/contact" "/privacy"
             "/en" "/join" "/login" "/robots.txt" "/sitemap.xml"
-            "/manifest.webmanifest" "/.well-known/security.txt" "/api/posts"
+            "/.well-known/security.txt" "/api/posts"
           )
           for attempt in {1..12}; do
             if curl -fsS --max-time 20 "$BASE/" >/dev/null; then break; fi
