@@ -149,19 +149,19 @@ jobs:
                 scrollWidth: document.documentElement.scrollWidth,
                 bodyText: document.body.innerText.slice(0,500),
                 brokenImages: [...document.images].filter(i => i.complete && i.naturalWidth === 0).map(i => i.getAttribute('src')),
-                leaderSrc: document.querySelector('.az-home-portrait img')?.getAttribute('src') || null,
-                homeCopyTop: document.querySelector('.az-home-copy')?.getBoundingClientRect().top ?? null,
-                homePortraitTop: document.querySelector('.az-home-portrait')?.getBoundingClientRect().top ?? null,
-                homePortraitHeight: document.querySelector('.az-home-portrait')?.getBoundingClientRect().height ?? null,
+                leaderSrc: document.querySelector('.az2-feature-leader .az2-feature-media img')?.getAttribute('src') || null,
+                homeCopyTop: document.querySelector('.az2-hero-copy')?.getBoundingClientRect().top ?? null,
+                homePortraitTop: document.querySelector('.az2-feature-leader .az2-feature-media')?.getBoundingClientRect().top ?? null,
+                homePortraitHeight: document.querySelector('.az2-feature-leader .az2-feature-media')?.getBoundingClientRect().height ?? null,
                 councilCopyTop: document.querySelector('.az-flagship-copy')?.getBoundingClientRect().top ?? null,
                 councilEmblemTop: document.querySelector('.az-flagship-emblem')?.getBoundingClientRect().top ?? null,
                 councilEmblemWidth: document.querySelector('.az-emblem-frame')?.getBoundingClientRect().width ?? null,
                 councilHeroBackground: document.querySelector('.az-flagship-hero') ? getComputedStyle(document.querySelector('.az-flagship-hero')).backgroundColor : null,
-                basmalaCenter: document.querySelector('.az-sacred-basmala') ? (() => {
-                  const r = document.querySelector('.az-sacred-basmala').getBoundingClientRect();
+                basmalaCenter: document.querySelector('.az2-basmala') ? (() => {
+                  const r = document.querySelector('.az2-basmala').getBoundingClientRect();
                   return r.left + r.width / 2;
                 })() : null,
-                homeLeadAlign: document.querySelector('.az-home-lead') ? getComputedStyle(document.querySelector('.az-home-lead')).textAlign : null
+                homeLeadAlign: document.querySelector('.az2-hero-copy > p') ? getComputedStyle(document.querySelector('.az2-hero-copy > p')).textAlign : null
               }))()`,
               returnByValue: true
             });
