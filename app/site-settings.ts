@@ -38,7 +38,7 @@ export const siteSettings: Readonly<SiteSettings> = {
   },
   media: {
     leaderImageUrl: "/media/beheshti-original.webp",
-    councilEmblemUrl: "/media/council-emblem-hq.svg",
+    councilEmblemUrl: "/media/council-emblem-color-master.svg",
     leaderImageAlt: "آیت‌الله سید علی بهشتی",
     councilEmblemAlt: "نشان تاریخی حکومت شورای اتفاق اسلامی افغانستان",
     councilEmblemCaption: "نشان تاریخی حکومت شورای اتفاق اسلامی افغانستان.",
