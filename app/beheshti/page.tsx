@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import LeaderProfile from "./LeaderProfile";
-import { loadSiteSettings } from "../load-site-settings";
+import { siteSettings as settings } from "../site-settings";
 
 export const metadata: Metadata = {
   title: "پروندهٔ رهبر ۱ | زندگی و زمانهٔ آیت‌الله سید علی بهشتی",
@@ -10,7 +10,6 @@ export const metadata: Metadata = {
 };
 
 export default async function BeheshtiPage() {
-  const settings = await loadSiteSettings();
   return (
     <LeaderProfile
       imageUrl={settings.media.leaderImageUrl}
