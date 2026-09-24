@@ -90,9 +90,9 @@ jobs:
           grep -Fq 'return `pbkdf2${iterations}${digest}`;' app/admin-auth.ts
           grep -q 'knowledge-layout-single' 'app/pages/[slug]/page.tsx'
           grep -q 'DownloadQuizGate' 'app/pages/[slug]/page.tsx'
-          grep -q 'href="/contribute"' app/components/PublicHeader.tsx
-          grep -q 'href="/join"' app/components/PublicHeader.tsx
-          grep -q 'href="/login"' app/components/PublicHeader.tsx
+          grep -Fq '["/contribute", "ارسال سند"]' app/components/PublicHeader.tsx
+          grep -q 'href="/join"' app/components/PublicFooter.tsx
+          grep -q 'href="/login"' app/components/PublicFooter.tsx
           grep -q 'AdminArchiveViewer' app/admin/page.tsx
           grep -q 'TextFormattingTools' app/admin/page.tsx
           grep -q 'LeaderPageManager' app/admin/page.tsx
