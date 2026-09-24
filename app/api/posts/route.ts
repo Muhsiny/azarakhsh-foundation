@@ -61,6 +61,10 @@ export async function GET(request: Request) {
       if (!post) {
         return Response.json({ error: "مطلب یافت نشد." }, { status: 404 });
       }
+      const legacyTargetCategories = new Set(["حکومت شورای اتفاق", "آیت‌الله بهشتی"]);
+      if (post.contentType === "article" && legacyTargetCategories.has(post.category)) {
+        return Response.json({ error: "مطلب یافت نشد." }, { status: 404 });
+      }
       const { fileUrl, ...safePost } = post;
       return Response.json(
         { post: publicShape(safePost, Boolean(fileUrl)) },
@@ -85,9 +89,14 @@ export async function GET(request: Request) {
 
     return Response.json(
       {
-        posts: rows.map(({ fileUrl, ...post }) =>
-          publicShape(post, Boolean(fileUrl)),
-        ),
+        posts: rows
+          .filter((post) => !(
+            post.contentType === "article" &&
+            new Set(["حکومت شورای اتفاق", "آیت‌الله بهشتی"]).has(post.category)
+          ))
+          .map(({ fileUrl, ...post }) =>
+            publicShape(post, Boolean(fileUrl)),
+          ),
       },
       { headers: { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" } },
     );
