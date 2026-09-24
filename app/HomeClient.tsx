@@ -1,5 +1,3 @@
-"use client";
-
 export type LatestItem = {
   id: number;
   slug: string;
