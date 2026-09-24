@@ -83,11 +83,11 @@ async function equalSecret(left: string, right: string, secret: string) {
 
 const PBKDF2_ITERATIONS = 210_000;
 
-async function derivePasswordHash(
+async function derivePasswordDigest(
   password: string,
   salt: string,
   secret: string,
-  iterations = PBKDF2_ITERATIONS,
+  iterations: number,
 ) {
   const keyMaterial = await crypto.subtle.importKey(
     "raw",
@@ -106,7 +106,17 @@ async function derivePasswordHash(
     keyMaterial,
     256,
   );
-  return `pbkdf2${iterations}${bytesToBase64Url(new Uint8Array(bits))}`;
+  return bytesToBase64Url(new Uint8Array(bits));
+}
+
+async function derivePasswordHash(
+  password: string,
+  salt: string,
+  secret: string,
+  iterations = PBKDF2_ITERATIONS,
+) {
+  const digest = await derivePasswordDigest(password, salt, secret, iterations);
+  return `pbkdf2${iterations}${digest}`;
 }
 
 async function verifyStoredPassword(
@@ -130,6 +140,24 @@ async function verifyStoredPassword(
       valid: await equalSecret(actual, stored.password_hash, secret),
       needsUpgrade: iterations < PBKDF2_ITERATIONS,
     };
+  }
+
+  // Repair hashes created by the short-lived malformed PBKDF2 serializer.
+  const malformed = stored.password_hash.match(/^pbkdf2(\\d{6})([A-Za-z0-9_-]+)$/);
+  if (malformed) {
+    const iterations = Number(malformed[1]);
+    if (iterations >= 100_000) {
+      const digest = await derivePasswordDigest(
+        password,
+        stored.password_salt,
+        secret,
+        iterations,
+      );
+      return {
+        valid: await equalSecret(digest, malformed[2], secret),
+        needsUpgrade: true,
+      };
+    }
   }
 
   // Compatibility with accounts created before PBKDF2 hardening.
