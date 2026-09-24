@@ -91,9 +91,13 @@ export default async function PublicationsPage({ searchParams }: { searchParams:
     }));
 
   const canonicalSlugs = new Set(canonicalRows.map((post) => post.slug));
+  const legacyTargetCategories = new Set(["حکومت شورای اتفاق", "آیت‌الله بهشتی"]);
   const mergedRows = [
     ...canonicalRows,
-    ...rows.filter((post) => !canonicalSlugs.has(post.slug)),
+    ...rows.filter((post) =>
+      !canonicalSlugs.has(post.slug) &&
+      !(post.contentType === "article" && legacyTargetCategories.has(post.category)),
+    ),
   ].sort((a, b) => (b.publishedAt || "").localeCompare(a.publishedAt || ""));
 
   return <PublicationsClient initialPosts={mergedRows} initialFilters={readFilters(params)} />;
