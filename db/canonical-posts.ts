@@ -37,7 +37,7 @@ export const canonicalPosts: CanonicalPost[] = [
     tags: "council,beheshti,history,government,governance,72-articles,article-02,شورای اتفاق,آیت‌الله بهشتی,هزاره‌جات,۱۳۵۸",
     featured: 1,
     status: "published",
-  },,
+  },
   {
     articleNo: 3,
     publishedAt: "2026-09-24T19:35:00.000Z",
