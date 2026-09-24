@@ -133,10 +133,7 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
           <div className="az2-feature-copy">
             <span className="az2-feature-kicker">پروندهٔ زندگی و زمانه</span>
             <h2>آیت‌الله سید علی بهشتی</h2>
-            <p>
-              پرونده‌ای پژوهشی از آموزش و فعالیت اجتماعی در ورس تا نقش او در شکل‌گیری و رهبری
-              شورای اتفاق؛ با تفکیک میان سند آرشیفی، روایت شاهد و تحلیل تاریخی.
-            </p>
+            <p>پروندهٔ مقاله‌های پژوهشیِ شماره‌دار.</p>
             <a className="az2-inline-button" href="/beheshti">مطالعهٔ پرونده <span aria-hidden="true">←</span></a>
           </div>
         </article>
@@ -154,10 +151,7 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
           <div className="az2-feature-copy">
             <span className="az2-feature-kicker">پروندهٔ محوری / ۰۱</span>
             <h2>حکومت شورای اتفاق اسلامی افغانستان</h2>
-            <p>
-              بازسازی شکل‌گیری شورای اتفاق در ورس در سال ۱۳۵۸، ساختار اداری، قلمرو نفوذ،
-              ظرفیت حکومت‌داری و محدودیت‌های آن بر پایهٔ اسناد و پژوهش‌های قابل ارزیابی.
-            </p>
+            <p>پروندهٔ مقاله‌های پژوهشیِ شماره‌دار.</p>
             <a className="az2-inline-button az2-inline-light" href="/council">مطالعهٔ پرونده <span aria-hidden="true">←</span></a>
           </div>
         </article>
