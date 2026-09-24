@@ -11,6 +11,7 @@ import { SITE_URL } from "./site-url";
 import { ensurePlatformSchema } from "../db/platform";
 import { getDb } from "../db";
 import { posts } from "../db/schema";
+import { getAdminUser } from "./admin-auth";
 
 const naskh = Noto_Naskh_Arabic({
   subsets: ["arabic"],
@@ -91,6 +92,14 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   } catch {
     extraPages = [];
   }
+  let canEdit = false;
+  try {
+    const adminUser = await getAdminUser();
+    canEdit = Boolean(adminUser && ["owner", "admin", "reviewer", "editor"].includes(adminUser.role));
+  } catch {
+    canEdit = false;
+  }
+
   const chromeSettings = {
     identity: {
       siteName: settings.identity.siteName,
@@ -130,7 +139,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     <html lang="fa" dir="rtl" className={`${naskh.variable} ${vazirmatn.variable}`}>
       <body>
         <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} type="application/ld+json" />
-        <PublicChrome settings={chromeSettings} extraPages={extraPages}>{children}</PublicChrome>
+        <PublicChrome settings={chromeSettings} extraPages={extraPages} canEdit={canEdit}>{children}</PublicChrome>
       </body>
     </html>
   );
