@@ -6,6 +6,7 @@ import {
   updateAdminUser,
   type AdminRole,
 } from "../../../admin-auth";
+import { isSameOriginMutation } from "../../../security";
 
 export async function GET() {
   if (!(await isOwnerRequest())) {
@@ -15,6 +16,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  if (!isSameOriginMutation(request)) return Response.json({ error: "درخواست نامعتبر است." }, { status: 403 });
   if (!(await isOwnerRequest())) {
     return Response.json({ error: "فقط مالک اجازه دارد." }, { status: 403 });
   }
@@ -34,6 +36,7 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
+  if (!isSameOriginMutation(request)) return Response.json({ error: "درخواست نامعتبر است." }, { status: 403 });
   if (!(await isOwnerRequest())) {
     return Response.json({ error: "فقط مالک اجازه دارد." }, { status: 403 });
   }
@@ -50,6 +53,7 @@ export async function PATCH(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  if (!isSameOriginMutation(request)) return Response.json({ error: "درخواست نامعتبر است." }, { status: 403 });
   if (!(await isOwnerRequest())) {
     return Response.json({ error: "فقط مالک اجازه دارد." }, { status: 403 });
   }
