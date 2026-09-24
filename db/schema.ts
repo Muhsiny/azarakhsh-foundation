@@ -37,3 +37,85 @@ export const membershipRequests = sqliteTable("membership_requests", {
   reviewedAt: text("reviewed_at"),
 });
 
+export const adminUsers = sqliteTable("admin_users", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  email: text("email").notNull().unique(),
+  displayName: text("display_name").notNull().default(""),
+  role: text("role").notNull().default("editor"),
+  passwordHash: text("password_hash").notNull(),
+  passwordSalt: text("password_salt").notNull(),
+  status: text("status").notNull().default("active"),
+  mustChangePassword: integer("must_change_password").notNull().default(0),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const auditLog = sqliteTable("audit_log", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  actorEmail: text("actor_email").notNull(),
+  action: text("action").notNull(),
+  entityType: text("entity_type").notNull(),
+  entityId: text("entity_id").notNull().default(""),
+  details: text("details").notNull().default(""),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const publicContributions = sqliteTable("public_contributions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  fullName: text("full_name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone").notNull().default(""),
+  relationToStory: text("relation_to_story").notNull().default(""),
+  contributionType: text("contribution_type").notNull().default("memory"),
+  title: text("title").notNull(),
+  narrative: text("narrative").notNull(),
+  eventDate: text("event_date").notNull().default(""),
+  eventPlace: text("event_place").notNull().default(""),
+  peoplePresent: text("people_present").notNull().default(""),
+  sourceNote: text("source_note").notNull().default(""),
+  namingPreference: text("naming_preference").notNull().default("full-name"),
+  publicationConsent: integer("publication_consent").notNull().default(0),
+  attachmentKey: text("attachment_key").notNull().default(""),
+  attachmentName: text("attachment_name").notNull().default(""),
+  attachmentType: text("attachment_type").notNull().default(""),
+  attachmentSize: integer("attachment_size").notNull().default(0),
+  status: text("status").notNull().default("pending"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  reviewedAt: text("reviewed_at"),
+});
+
+export const quizResponses = sqliteTable("quiz_responses", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  postId: integer("post_id").notNull(),
+  fullName: text("full_name").notNull(),
+  email: text("email").notNull(),
+  occupation: text("occupation").notNull(),
+  answersJson: text("answers_json").notNull(),
+  analyticalAnswer: text("analytical_answer").notNull(),
+  historicalScore: integer("historical_score").notNull(),
+  consent: integer("consent").notNull().default(1),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const quizAttemptLocks = sqliteTable("quiz_attempt_locks", {
+  postId: integer("post_id").notNull(),
+  email: text("email").notNull(),
+  lockedUntil: text("locked_until").notNull(),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const downloadPermits = sqliteTable("download_permits", {
+  nonce: text("nonce").primaryKey(),
+  postId: integer("post_id").notNull(),
+  emailHash: text("email_hash").notNull().default(""),
+  expiresAt: integer("expires_at").notNull(),
+  consumedAt: integer("consumed_at"),
+  createdAt: integer("created_at").notNull(),
+});
+
+export const securityRateLimits = sqliteTable("security_rate_limits", {
+  bucket: text("bucket").primaryKey(),
+  count: integer("count").notNull().default(0),
+  resetAt: integer("reset_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});

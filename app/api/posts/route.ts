@@ -1,14 +1,13 @@
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray, ne } from "drizzle-orm";
 import { getDb } from "../../../db";
 import { ensurePlatformSchema } from "../../../db/platform";
 import { posts } from "../../../db/schema";
-import { getAdminUser } from "../../admin-auth";
+import { readableVisibilities } from "../../content-access";
 
 export async function GET(request: Request) {
   try {
     await ensurePlatformSchema();
-    const user = await getAdminUser();
-    const visibility = user ? ["public", "members"] : ["public"];
+    const { visibility } = await readableVisibilities();
     const db = await getDb();
     const slug = new URL(request.url).searchParams.get("slug")?.trim();
 
@@ -21,6 +20,7 @@ export async function GET(request: Request) {
             eq(posts.slug, slug),
             eq(posts.status, "published"),
             inArray(posts.visibility, visibility),
+            ne(posts.contentType, "page"),
           ),
         )
         .limit(1);
@@ -38,6 +38,7 @@ export async function GET(request: Request) {
         and(
           eq(posts.status, "published"),
           inArray(posts.visibility, visibility),
+          ne(posts.contentType, "page"),
         ),
       )
       .orderBy(desc(posts.publishedAt), desc(posts.id))

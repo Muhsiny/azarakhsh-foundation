@@ -1,6 +1,12 @@
+import { getPlatformDbBinding } from "../db/platform";
+
 type RuntimeEnv = { SESSION_SECRET?: string };
 
-type PermitPayload = { postId: number; exp: number; nonce: string };
+type PermitPayload = {
+  postId: number;
+  exp: number;
+  nonce: string;
+};
 
 function bytesToBase64Url(bytes: Uint8Array) {
   let value = "";
@@ -29,36 +35,103 @@ async function hmac(value: string, keyValue: string) {
     false,
     ["sign"],
   );
-  return new Uint8Array(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(value)));
+  return new Uint8Array(
+    await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(value)),
+  );
+}
+
+async function sha256(value: string) {
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(value.trim().toLowerCase()),
+  );
+  return bytesToBase64Url(new Uint8Array(digest));
 }
 
 function equalBytes(left: Uint8Array, right: Uint8Array) {
   if (left.length !== right.length) return false;
   let difference = 0;
-  for (let index = 0; index < left.length; index += 1) difference |= left[index] ^ right[index];
+  for (let index = 0; index < left.length; index += 1) {
+    difference |= left[index] ^ right[index];
+  }
   return difference === 0;
 }
 
-export async function createDownloadPermit(postId: number) {
+async function decodeAndVerify(token: string) {
+  const [encoded, signature, extra] = token.split(".");
+  if (!encoded || !signature || extra) return null;
+
+  const expected = await hmac(`download:${encoded}`, await secret());
+  let actual: Uint8Array;
+  try {
+    actual = base64UrlToBytes(signature);
+  } catch {
+    return null;
+  }
+  if (!equalBytes(expected, actual)) return null;
+
+  try {
+    const payload = JSON.parse(
+      new TextDecoder().decode(base64UrlToBytes(encoded)),
+    ) as PermitPayload;
+    if (
+      !Number.isInteger(payload.postId) ||
+      payload.postId <= 0 ||
+      !payload.nonce ||
+      !Number.isInteger(payload.exp)
+    ) {
+      return null;
+    }
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+export async function createDownloadPermit(postId: number, email: string) {
+  const now = Math.floor(Date.now() / 1000);
   const payload: PermitPayload = {
     postId,
-    exp: Math.floor(Date.now() / 1000) + 10 * 60,
+    exp: now + 10 * 60,
     nonce: crypto.randomUUID(),
   };
-  const encoded = bytesToBase64Url(new TextEncoder().encode(JSON.stringify(payload)));
-  const signature = bytesToBase64Url(await hmac(`download:${encoded}`, await secret()));
+  const encoded = bytesToBase64Url(
+    new TextEncoder().encode(JSON.stringify(payload)),
+  );
+  const signature = bytesToBase64Url(
+    await hmac(`download:${encoded}`, await secret()),
+  );
+
+  const db = await getPlatformDbBinding();
+  await db
+    .prepare(`
+      INSERT INTO download_permits
+        (nonce, post_id, email_hash, expires_at, consumed_at, created_at)
+      VALUES (?, ?, ?, ?, NULL, ?)
+    `)
+    .bind(payload.nonce, postId, await sha256(email), payload.exp, now)
+    .run();
+
   return `${encoded}.${signature}`;
 }
 
-export async function verifyDownloadPermit(token: string, postId: number) {
-  const [encoded, signature, extra] = token.split(".");
-  if (!encoded || !signature || extra) return false;
-  const expected = await hmac(`download:${encoded}`, await secret());
-  if (!equalBytes(expected, base64UrlToBytes(signature))) return false;
-  try {
-    const payload = JSON.parse(new TextDecoder().decode(base64UrlToBytes(encoded))) as PermitPayload;
-    return payload.postId === postId && payload.exp >= Math.floor(Date.now() / 1000);
-  } catch {
-    return false;
-  }
+export async function consumeDownloadPermit(token: string, postId: number) {
+  const payload = await decodeAndVerify(token);
+  const now = Math.floor(Date.now() / 1000);
+  if (!payload || payload.postId !== postId || payload.exp < now) return false;
+
+  const db = await getPlatformDbBinding();
+  const result = await db
+    .prepare(`
+      UPDATE download_permits
+      SET consumed_at = ?
+      WHERE nonce = ?
+        AND post_id = ?
+        AND expires_at >= ?
+        AND consumed_at IS NULL
+    `)
+    .bind(now, payload.nonce, postId, now)
+    .run();
+
+  return (result.meta.changes ?? 0) === 1;
 }

@@ -1,4 +1,4 @@
-Contact: mailto:Azrakhshfoundation75@yahoo.com
+Contact: mailto:info@azarakhsh.foundation
 Canonical: https://azarakhsh-foundation.com14.workers.dev/.well-known/security.txt
 Preferred-Languages: fa, en
 Policy: https://azarakhsh-foundation.com14.workers.dev/privacy

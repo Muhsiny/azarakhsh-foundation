@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray, isNotNull, ne } from "drizzle-orm";
 import { getDb } from "../../db";
 import { ensurePlatformSchema } from "../../db/platform";
 import { posts } from "../../db/schema";
-import { getAdminUser } from "../admin-auth";
+import { readableVisibilities } from "../content-access";
 import PublicationsClient from "../publications/PublicationsClient";
 import { readFilters } from "../publications/search";
 
@@ -28,21 +28,35 @@ export default async function ArchivePage({ searchParams }: { searchParams: Prom
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(raw)) if (typeof value === "string") params.set(key, value);
   await ensurePlatformSchema();
-  const user = await getAdminUser();
-  const visibility = user ? ["public", "members"] : ["public"];
+  const { visibility } = await readableVisibilities();
   const db = await getDb();
-  const archivePosts = await db
-    .select()
+  const files = await db
+    .select({
+      id: posts.id,
+      slug: posts.slug,
+      title: posts.title,
+      excerpt: posts.excerpt,
+      category: posts.category,
+      contentType: posts.contentType,
+      language: posts.language,
+      visibility: posts.visibility,
+      authorName: posts.authorName,
+      coverImage: posts.coverImage,
+      tags: posts.tags,
+      publishedAt: posts.publishedAt,
+    })
     .from(posts)
     .where(
       and(
         eq(posts.status, "published"),
         inArray(posts.visibility, visibility),
+        inArray(posts.contentType, ["book", "document", "oral-history", "image", "audio", "video"]),
+        isNotNull(posts.fileUrl),
+        ne(posts.fileUrl, ""),
       ),
     )
     .orderBy(desc(posts.publishedAt), desc(posts.id))
     .limit(200);
-  const files = archivePosts.filter(post => ["book", "document", "oral-history", "image", "audio", "video"].includes(post.contentType) && Boolean(post.fileUrl));
   return (
     <>
       <PublicationsClient initialPosts={files} initialFilters={readFilters(params)} archive />

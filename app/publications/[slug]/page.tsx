@@ -1,35 +1,18 @@
-import { Fragment, cache, type ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import type { Metadata } from "next";
-import { and, eq, inArray } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { getDb } from "../../../db";
-import { ensurePlatformSchema } from "../../../db/platform";
-import { posts } from "../../../db/schema";
-import { getAdminUser } from "../../admin-auth";
+import { loadReadablePublicationBySlug } from "../../content-access";
 import ReadingTools from "../../components/ReadingTools";
 import DownloadQuizGate from "../../components/DownloadQuizGate";
+import ViewTracker from "../../components/ViewTracker";
 
 export const dynamic = "force-dynamic";
 
 
-const loadArticle = cache(async (slug: string) => {
-  await ensurePlatformSchema();
-  const user = await getAdminUser();
-  const visibility = user ? ["public", "members"] : ["public"];
-  const db = await getDb();
-  const [post] = await db
-    .select()
-    .from(posts)
-    .where(
-      and(
-        eq(posts.slug, slug),
-        eq(posts.status, "published"),
-        inArray(posts.visibility, visibility),
-      ),
-    )
-    .limit(1);
-  return post ?? null;
-});
+async function loadArticle(slug: string) {
+  const { post } = await loadReadablePublicationBySlug(slug);
+  return post;
+}
 
 export async function generateMetadata({
   params,
@@ -105,6 +88,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     <main className="article-page">
       <div className="az-breadcrumb" data-inline-static><a href="/publications">نشریات</a><span aria-hidden="true"> / </span><span>مطالعهٔ مطلب</span></div>
       <article>
+        <ViewTracker postId={post.id} />
         <ReadingTools />
         <div className="article-meta"><span>{post.category}</span><time>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("fa-AF") : ""}</time></div>
         <h1>{post.title}</h1>

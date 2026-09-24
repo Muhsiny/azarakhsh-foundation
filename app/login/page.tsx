@@ -22,6 +22,7 @@ export default async function MemberLoginPage({
         <h1>ورود به گنجینهٔ پژوهشی آذرخش</h1>
         <p>با ایمیل و رمز حساب تأییدشدهٔ خود وارد شوید.</p>
         <form action="/api/auth/login" method="post">
+          <input name="loginPath" type="hidden" value="/login" />
           <input name="returnTo" type="hidden" value={returnTo || "/publications"} />
           <label>
             ایمیل

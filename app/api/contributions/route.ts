@@ -1,4 +1,8 @@
-import { saveContribution, storeContributionFile } from "../../contribution-store";
+import {
+  deleteContributionFile,
+  saveContribution,
+  storeContributionFile,
+} from "../../contribution-store";
 import {
   consumeRateLimit,
   detectUploadType,
@@ -53,6 +57,7 @@ function rateLimited(retryAfter: number) {
 
 export async function POST(request: Request) {
   let uploadedKey = "";
+  let contributionSaved = false;
   try {
     if (!isSameOriginMutation(request)) {
       return Response.json({ error: "درخواست نامعتبر است." }, { status: 403 });
@@ -148,12 +153,16 @@ export async function POST(request: Request) {
       attachment_type: attachmentType,
       attachment_size: attachmentSize,
     });
+    contributionSaved = true;
 
     return Response.json(
       { ok: true, message: "خاطره یا منبع شما ثبت شد و پس از بررسی مالک پاسخ داده می‌شود." },
       { status: 201, headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
+    if (uploadedKey && !contributionSaved) {
+      await deleteContributionFile(uploadedKey).catch(() => undefined);
+    }
     console.error("public contribution failed", error);
     return Response.json(
       { error: "ثبت روایت انجام نشد. لطفاً دوباره تلاش کنید." },

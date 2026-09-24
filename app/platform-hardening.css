@@ -1,0 +1,93 @@
+/* Structural styles for account, managed pages, and lifecycle controls. */
+
+.custom-managed-layout{
+  width:min(860px,calc(100% - 64px));
+  margin:0 auto 72px;
+}
+.custom-managed-layout .knowledge-article{
+  width:100%;
+  min-width:0;
+  max-width:none;
+}
+
+.account-shell{
+  min-height:auto;
+  padding:58px 20px 72px;
+}
+.account-card{
+  width:min(620px,100%);
+}
+.account-actions{
+  margin-top:20px;
+  align-items:center;
+}
+.account-actions form{
+  margin:0;
+}
+.account-success{
+  border-color:rgba(38,115,75,.18)!important;
+  background:#e9f3ec!important;
+  color:#205c3e!important;
+}
+
+.az2-nav-logout{
+  margin:0;
+}
+.az2-nav-logout button{
+  width:100%;
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  padding:0 12px;
+  border:0;
+  border-radius:10px;
+  background:transparent;
+  color:rgba(255,255,255,.78);
+  font:650 12.5px/1.4 var(--az-ui);
+  cursor:pointer;
+  text-align:inherit;
+}
+.az2-nav-logout button:hover,
+.az2-nav-logout button:focus-visible{
+  background:rgba(255,255,255,.07);
+  color:#fffaf0;
+  outline:none;
+}
+
+.admin-danger-button{
+  min-height:40px;
+  padding:8px 13px;
+  border:1px solid rgba(139,53,38,.28);
+  border-radius:9px;
+  background:#fff6f3;
+  color:#873f32;
+  font:700 12px/1.4 var(--font-vazir),sans-serif;
+  cursor:pointer;
+}
+.admin-danger-button:hover,
+.admin-danger-button:focus-visible{
+  border-color:#9b4b3c;
+  background:#fbeae5;
+  color:#6f2f25;
+  outline:none;
+}
+
+@media(max-width:900px){
+  .az2-nav-logout button{
+    min-height:46px;
+    padding-inline:22px;
+    border-bottom:1px solid rgba(255,255,255,.045);
+    border-radius:0;
+    color:rgba(255,255,255,.73);
+    font-size:13.5px;
+  }
+}
+@media(max-width:620px){
+  .custom-managed-layout{
+    width:calc(100% - 28px);
+    margin-bottom:54px;
+  }
+  .account-shell{
+    padding:38px 14px 54px;
+  }
+}

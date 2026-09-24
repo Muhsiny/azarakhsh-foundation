@@ -6,6 +6,7 @@ import {
   updateAdminUser,
   type AdminRole,
 } from "../../../admin-auth";
+import { isSameOriginMutation } from "../../../security";
 
 export async function GET() {
   if (!(await isOwnerRequest())) {
@@ -17,6 +18,9 @@ export async function GET() {
 export async function POST(request: Request) {
   if (!(await isOwnerRequest())) {
     return Response.json({ error: "فقط مالک اجازه دارد." }, { status: 403 });
+  }
+  if (!isSameOriginMutation(request)) {
+    return Response.json({ error: "درخواست نامعتبر است." }, { status: 403 });
   }
   const payload = (await request.json()) as {
     email?: string;
@@ -37,6 +41,9 @@ export async function PATCH(request: Request) {
   if (!(await isOwnerRequest())) {
     return Response.json({ error: "فقط مالک اجازه دارد." }, { status: 403 });
   }
+  if (!isSameOriginMutation(request)) {
+    return Response.json({ error: "درخواست نامعتبر است." }, { status: 403 });
+  }
   const payload = (await request.json()) as {
     id?: number;
     displayName?: string;
@@ -52,6 +59,9 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   if (!(await isOwnerRequest())) {
     return Response.json({ error: "فقط مالک اجازه دارد." }, { status: 403 });
+  }
+  if (!isSameOriginMutation(request)) {
+    return Response.json({ error: "درخواست نامعتبر است." }, { status: 403 });
   }
   const id = Number(new URL(request.url).searchParams.get("id"));
   if (!Number.isInteger(id)) return Response.json({ error: "شناسه نامعتبر است." }, { status: 400 });

@@ -8,6 +8,7 @@ import {
   getAdminUser,
   isAdminRequest,
 } from "../../../admin-auth";
+import { isSameOriginMutation } from "../../../security";
 
 function slugify(value: string) {
   return value
@@ -47,6 +48,9 @@ export async function GET() {
 export async function POST(request: Request) {
   if (!(await isAdminRequest())) {
     return Response.json({ error: "اجازهٔ دسترسی ندارید." }, { status: 403 });
+  }
+  if (!isSameOriginMutation(request)) {
+    return Response.json({ error: "درخواست نامعتبر است." }, { status: 403 });
   }
 
   try {

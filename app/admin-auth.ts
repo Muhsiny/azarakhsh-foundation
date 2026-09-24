@@ -1,4 +1,8 @@
 import { cookies } from "next/headers";
+import {
+  ensurePlatformSchema,
+  getPlatformDbBinding,
+} from "../db/platform";
 
 export type AdminRole = "owner" | "admin" | "reviewer" | "editor" | "member";
 
@@ -7,10 +11,10 @@ export type AdminUser = {
   email: string;
   displayName: string;
   role: AdminRole;
+  mustChangePassword: boolean;
 };
 
 type RuntimeEnv = {
-  DB?: D1Database;
   ADMIN_EMAIL?: string;
   ADMIN_PASSWORD?: string;
   SESSION_SECRET?: string;
@@ -24,33 +28,17 @@ type StoredAdmin = {
   password_hash: string;
   password_salt: string;
   status: string;
+  must_change_password: number;
 };
 
 const COOKIE_NAME = "__Host-azarakhsh_admin";
 const LEGACY_COOKIE_NAME = "azarakhsh_admin";
 const SESSION_SECONDS = 60 * 60 * 8;
+const PBKDF2_ITERATIONS = 210_000;
 
 async function runtimeEnv() {
   const { env } = await import("cloudflare:workers");
   return env as unknown as RuntimeEnv;
-}
-
-async function ensureUsersTable(db: D1Database) {
-  await db
-    .prepare(
-      `CREATE TABLE IF NOT EXISTS admin_users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        email TEXT NOT NULL UNIQUE,
-        display_name TEXT NOT NULL DEFAULT '',
-        role TEXT NOT NULL DEFAULT 'editor',
-        password_hash TEXT NOT NULL,
-        password_salt TEXT NOT NULL,
-        status TEXT NOT NULL DEFAULT 'active',
-        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-      )`,
-    )
-    .run();
 }
 
 function bytesToBase64Url(bytes: Uint8Array) {
@@ -95,8 +83,6 @@ async function equalSecret(left: string, right: string, secret: string) {
   return equalBytes(leftHash, rightHash);
 }
 
-const PBKDF2_ITERATIONS = 210_000;
-
 async function derivePasswordHash(
   password: string,
   salt: string,
@@ -120,7 +106,7 @@ async function derivePasswordHash(
     keyMaterial,
     256,
   );
-  return `pbkdf2${iterations}${bytesToBase64Url(new Uint8Array(bits))}`;
+  return `pbkdf2$${iterations}$${bytesToBase64Url(new Uint8Array(bits))}`;
 }
 
 async function verifyStoredPassword(
@@ -146,7 +132,6 @@ async function verifyStoredPassword(
     };
   }
 
-  // Compatibility with accounts created before PBKDF2 hardening.
   const legacyHash = bytesToBase64Url(
     await hmac(`password:${stored.password_salt}:${password}`, secret),
   );
@@ -172,8 +157,14 @@ async function createSessionToken(user: AdminUser, secret: string) {
 async function readSessionToken(token: string, secret: string) {
   const [payload, signature, extra] = token.split(".");
   if (!payload || !signature || extra) return null;
+  let actual: Uint8Array;
+  try {
+    actual = base64UrlToBytes(signature);
+  } catch {
+    return null;
+  }
   const expected = await hmac(payload, secret);
-  if (!equalBytes(expected, base64UrlToBytes(signature))) return null;
+  if (!equalBytes(expected, actual)) return null;
 
   try {
     const data = JSON.parse(
@@ -188,8 +179,35 @@ async function readSessionToken(token: string, secret: string) {
   }
 }
 
+async function storedUserByEmail(email: string) {
+  await ensurePlatformSchema();
+  const db = await getPlatformDbBinding();
+  return db
+    .prepare(
+      `SELECT id, email, display_name, role, password_hash, password_salt,
+              status, must_change_password
+       FROM admin_users
+       WHERE email = ?
+       LIMIT 1`,
+    )
+    .bind(email)
+    .first<StoredAdmin>();
+}
+
+function publicUser(stored: StoredAdmin): AdminUser {
+  return {
+    id: stored.id,
+    email: stored.email,
+    displayName: stored.display_name || stored.email,
+    role: stored.role,
+    mustChangePassword: stored.must_change_password === 1,
+  };
+}
+
 export function sessionCookie(token: string) {
-  return `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${SESSION_SECONDS}; Priority=High`;
+  return `${COOKIE_NAME}=${encodeURIComponent(
+    token,
+  )}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${SESSION_SECONDS}; Priority=High`;
 }
 
 export function expiredSessionCookies() {
@@ -199,7 +217,6 @@ export function expiredSessionCookies() {
   ];
 }
 
-// Compatibility for any older route importing the singular helper.
 export function expiredSessionCookie() {
   return expiredSessionCookies()[0];
 }
@@ -227,19 +244,14 @@ export async function authenticateAdmin(emailValue: string, password: string) {
       email,
       displayName: "مالک بنیاد",
       role: "owner",
+      mustChangePassword: false,
     };
     return { user, token: await createSessionToken(user, secret) };
   }
 
-  if (!env.DB) return null;
-  await ensureUsersTable(env.DB);
-  const stored = await env.DB.prepare(
-    "SELECT id, email, display_name, role, password_hash, password_salt, status FROM admin_users WHERE email = ? LIMIT 1",
-  )
-    .bind(email)
-    .first<StoredAdmin>();
-
+  const stored = await storedUserByEmail(email);
   if (!stored || stored.status !== "active") return null;
+
   const passwordCheck = await verifyStoredPassword(
     normalizedPassword,
     stored,
@@ -248,24 +260,21 @@ export async function authenticateAdmin(emailValue: string, password: string) {
   if (!passwordCheck.valid) return null;
 
   if (passwordCheck.needsUpgrade) {
+    const db = await getPlatformDbBinding();
     const upgraded = await derivePasswordHash(
       normalizedPassword,
       stored.password_salt,
       secret,
     );
-    await env.DB.prepare(
-      "UPDATE admin_users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-    )
+    await db
+      .prepare(
+        "UPDATE admin_users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+      )
       .bind(upgraded, stored.id)
       .run();
   }
 
-  const user: AdminUser = {
-    id: stored.id,
-    email: stored.email,
-    displayName: stored.display_name || stored.email,
-    role: stored.role,
-  };
+  const user = publicUser(stored);
   return { user, token: await createSessionToken(user, secret) };
 }
 
@@ -279,6 +288,7 @@ export async function getAdminUser(): Promise<AdminUser | null> {
     cookieStore.get(COOKIE_NAME)?.value ||
     cookieStore.get(LEGACY_COOKIE_NAME)?.value;
   if (!token) return null;
+
   const email = await readSessionToken(token, secret);
   if (!email) return null;
 
@@ -289,24 +299,13 @@ export async function getAdminUser(): Promise<AdminUser | null> {
       email,
       displayName: "مالک بنیاد",
       role: "owner",
+      mustChangePassword: false,
     };
   }
 
-  if (!env.DB) return null;
-  await ensureUsersTable(env.DB);
-  const stored = await env.DB.prepare(
-    "SELECT id, email, display_name, role, password_hash, password_salt, status FROM admin_users WHERE email = ? LIMIT 1",
-  )
-    .bind(email)
-    .first<StoredAdmin>();
-
+  const stored = await storedUserByEmail(email);
   if (!stored || stored.status !== "active") return null;
-  return {
-    id: stored.id,
-    email: stored.email,
-    displayName: stored.display_name || stored.email,
-    role: stored.role,
-  };
+  return publicUser(stored);
 }
 
 export async function isAdminRequest() {
@@ -336,24 +335,58 @@ export async function requireAdminPage() {
     user?.role === "reviewer" ||
     user?.role === "editor";
   return {
-    user: user ?? {
-      id: null,
-      email: "",
-      displayName: "مدیر بنیاد",
-      role: "editor" as const,
-    },
+    user:
+      user ??
+      ({
+        id: null,
+        email: "",
+        displayName: "مدیر بنیاد",
+        role: "editor",
+        mustChangePassword: false,
+      } satisfies AdminUser),
     authorized,
   };
 }
 
 export async function listAdminUsers() {
-  const env = await runtimeEnv();
-  if (!env.DB) return [];
-  await ensureUsersTable(env.DB);
-  const result = await env.DB.prepare(
-    "SELECT id, email, display_name, role, status, created_at, updated_at FROM admin_users ORDER BY id DESC",
-  ).all();
+  const db = await getPlatformDbBinding();
+  const result = await db
+    .prepare(
+      `SELECT id, email, display_name, role, status, must_change_password,
+              created_at, updated_at
+       FROM admin_users
+       ORDER BY id DESC`,
+    )
+    .all();
   return result.results;
+}
+
+async function writeUserPassword(
+  id: number,
+  password: string,
+  mustChangePassword: boolean,
+) {
+  const env = await runtimeEnv();
+  if (!env.SESSION_SECRET) throw new Error("تنظیمات امنیتی کامل نیست.");
+  if (password.length < 12) {
+    throw new Error("رمز حساب باید حداقل ۱۲ نویسه داشته باشد.");
+  }
+  const salt = crypto.randomUUID();
+  const passwordHash = await derivePasswordHash(
+    password.normalize("NFKC"),
+    salt,
+    env.SESSION_SECRET,
+  );
+  const db = await getPlatformDbBinding();
+  await db
+    .prepare(
+      `UPDATE admin_users
+       SET password_hash = ?, password_salt = ?, must_change_password = ?,
+           updated_at = CURRENT_TIMESTAMP
+       WHERE id = ?`,
+    )
+    .bind(passwordHash, salt, mustChangePassword ? 1 : 0, id)
+    .run();
 }
 
 export async function createAdminUser(input: {
@@ -361,15 +394,18 @@ export async function createAdminUser(input: {
   displayName: string;
   role: Exclude<AdminRole, "owner">;
   password: string;
+  mustChangePassword?: boolean;
 }) {
   const env = await runtimeEnv();
-  if (!env.DB || !env.SESSION_SECRET) throw new Error("تنظیمات امنیتی کامل نیست.");
-  await ensureUsersTable(env.DB);
+  if (!env.SESSION_SECRET) throw new Error("تنظیمات امنیتی کامل نیست.");
+  await ensurePlatformSchema();
 
   const email = input.email.trim().toLowerCase();
-  if (!email || !email.includes("@")) throw new Error("ایمیل معتبر نیست.");
+  if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+    throw new Error("ایمیل معتبر نیست.");
+  }
   if (input.password.length < 12) {
-    throw new Error("رمز همکار باید حداقل ۱۲ نویسه داشته باشد.");
+    throw new Error("رمز حساب باید حداقل ۱۲ نویسه داشته باشد.");
   }
   const ownerEmail = env.ADMIN_EMAIL?.trim().toLowerCase() ?? "";
   if (email === ownerEmail) throw new Error("ایمیل مالک قابل افزودن نیست.");
@@ -380,19 +416,93 @@ export async function createAdminUser(input: {
     salt,
     env.SESSION_SECRET,
   );
-  await env.DB.prepare(
-    `INSERT INTO admin_users
-      (email, display_name, role, password_hash, password_salt, status, updated_at)
-      VALUES (?, ?, ?, ?, ?, 'active', CURRENT_TIMESTAMP)`,
-  )
+  const db = await getPlatformDbBinding();
+  await db
+    .prepare(
+      `INSERT INTO admin_users
+        (email, display_name, role, password_hash, password_salt, status,
+         must_change_password, updated_at)
+       VALUES (?, ?, ?, ?, ?, 'active', ?, CURRENT_TIMESTAMP)`,
+    )
     .bind(
       email,
       input.displayName.trim() || email,
       input.role,
       passwordHash,
       salt,
+      input.mustChangePassword ? 1 : 0,
     )
     .run();
+}
+
+export async function createOrResetMemberUser(input: {
+  email: string;
+  displayName: string;
+  password: string;
+}) {
+  const email = input.email.trim().toLowerCase();
+  const existing = await storedUserByEmail(email);
+
+  if (existing && existing.role !== "member") {
+    throw new Error("این ایمیل پیش‌تر برای یک حساب مدیریتی استفاده شده است.");
+  }
+
+  if (!existing) {
+    await createAdminUser({
+      email,
+      displayName: input.displayName,
+      role: "member",
+      password: input.password,
+      mustChangePassword: true,
+    });
+    return;
+  }
+
+  const db = await getPlatformDbBinding();
+  await db
+    .prepare(
+      `UPDATE admin_users
+       SET display_name = ?, status = 'active', role = 'member',
+           must_change_password = 1, updated_at = CURRENT_TIMESTAMP
+       WHERE id = ?`,
+    )
+    .bind(input.displayName.trim() || email, existing.id)
+    .run();
+  await writeUserPassword(existing.id, input.password, true);
+}
+
+export async function setMemberAccountStatus(
+  emailValue: string,
+  status: "active" | "disabled",
+) {
+  const email = emailValue.trim().toLowerCase();
+  const db = await getPlatformDbBinding();
+  await db
+    .prepare(
+      `UPDATE admin_users
+       SET status = ?, updated_at = CURRENT_TIMESTAMP
+       WHERE email = ? AND role = 'member'`,
+    )
+    .bind(status, email)
+    .run();
+}
+
+export async function changeCurrentUserPassword(
+  currentPassword: string,
+  nextPassword: string,
+) {
+  const user = await getAdminUser();
+  if (!user || user.role === "owner" || user.id === null) {
+    throw new Error("حساب قابل تغییر نیست.");
+  }
+  if (nextPassword.length < 12) {
+    throw new Error("رمز جدید باید حداقل ۱۲ نویسه داشته باشد.");
+  }
+
+  const verified = await authenticateAdmin(user.email, currentPassword);
+  if (!verified) throw new Error("رمز فعلی درست نیست.");
+
+  await writeUserPassword(user.id, nextPassword, false);
 }
 
 export async function updateAdminUser(
@@ -404,50 +514,17 @@ export async function updateAdminUser(
     password?: string;
   },
 ) {
-  const env = await runtimeEnv();
-  if (!env.DB || !env.SESSION_SECRET) throw new Error("تنظیمات امنیتی کامل نیست.");
-  await ensureUsersTable(env.DB);
+  const db = await getPlatformDbBinding();
 
-  if (input.password) {
-    if (input.password.length < 12) {
-      throw new Error("رمز همکار باید حداقل ۱۲ نویسه داشته باشد.");
-    }
-    const salt = crypto.randomUUID();
-    const passwordHash = await derivePasswordHash(
-      input.password.normalize("NFKC"),
-      salt,
-      env.SESSION_SECRET,
-    );
-    await env.DB.prepare(
+  await db
+    .prepare(
       `UPDATE admin_users
        SET display_name = COALESCE(?, display_name),
            role = COALESCE(?, role),
            status = COALESCE(?, status),
-           password_hash = ?,
-           password_salt = ?,
            updated_at = CURRENT_TIMESTAMP
        WHERE id = ?`,
     )
-      .bind(
-        input.displayName?.trim() || null,
-        input.role ?? null,
-        input.status ?? null,
-        passwordHash,
-        salt,
-        id,
-      )
-      .run();
-    return;
-  }
-
-  await env.DB.prepare(
-    `UPDATE admin_users
-     SET display_name = COALESCE(?, display_name),
-         role = COALESCE(?, role),
-         status = COALESCE(?, status),
-         updated_at = CURRENT_TIMESTAMP
-     WHERE id = ?`,
-  )
     .bind(
       input.displayName?.trim() || null,
       input.role ?? null,
@@ -455,11 +532,13 @@ export async function updateAdminUser(
       id,
     )
     .run();
+
+  if (input.password) {
+    await writeUserPassword(id, input.password, false);
+  }
 }
 
 export async function deleteAdminUser(id: number) {
-  const env = await runtimeEnv();
-  if (!env.DB) throw new Error("پایگاه داده فعال نیست.");
-  await ensureUsersTable(env.DB);
-  await env.DB.prepare("DELETE FROM admin_users WHERE id = ?").bind(id).run();
+  const db = await getPlatformDbBinding();
+  await db.prepare("DELETE FROM admin_users WHERE id = ?").bind(id).run();
 }
