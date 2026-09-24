@@ -23,12 +23,10 @@ export default function PublicChrome({
   children,
   settings,
   extraPages = [],
-  canEdit = false,
 }: {
   children: ReactNode;
   settings: PublicChromeSettings;
   extraPages?: Array<{ slug: string; title: string }>;
-  canEdit?: boolean;
 }) {
   const pathname = usePathname() || "/";
   const [menu, setMenu] = useState(false);
@@ -67,7 +65,6 @@ export default function PublicChrome({
           </a>
 
           <div className="az2-header-tools">
-            {canEdit && <a className="az2-owner-edit" href="/admin" aria-label="ویرایش و مدیریت سایت">ویرایش</a>}
             <a className="az2-lang" href="/en" lang="en" dir="ltr">EN</a>
             <a className="az2-search" href="/archive" aria-label="جست‌وجو در آرشیف">
               <svg viewBox="0 0 24 24" aria-hidden="true">
