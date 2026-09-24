@@ -39,6 +39,20 @@ jobs:
             exit 1
           fi
 
+      - name: Preserve research platform capabilities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f app/api/contributions/route.ts
+          test -f 'app/api/posts/[id]/quiz/route.ts'
+          test -f 'app/api/posts/[id]/download/route.ts'
+          test -f app/admin/contributions/page.tsx
+          test -f app/admin/research-responses/page.tsx
+          grep -q 'DownloadQuizGate' 'app/publications/[slug]/page.tsx'
+          grep -q 'href="/contribute"' app/components/PublicChrome.tsx
+          grep -q 'AdminArchiveViewer' app/admin/page.tsx
+          grep -q 'TextFormattingTools' app/admin/page.tsx
+
       - name: Type check
         run: npm run typecheck
 
@@ -161,6 +175,8 @@ jobs:
                   const r = document.querySelector('.az2-basmala').getBoundingClientRect();
                   return r.left + r.width / 2;
                 })() : null,
+                basmalaSrc: document.querySelector('.az2-basmala img')?.getAttribute('src') || null,
+                flagCaptionHeight: document.querySelector('.az2-hero-visual figcaption')?.getBoundingClientRect().height ?? null,
                 homeLeadAlign: document.querySelector('.az2-hero-copy > p') ? getComputedStyle(document.querySelector('.az2-hero-copy > p')).textAlign : null
               }))()`,
               returnByValue: true
@@ -201,6 +217,12 @@ jobs:
             }
             if (path === "/" && Math.abs(metrics.basmalaCenter - metrics.innerWidth / 2) > 4) {
               failures.push(`/: Bismillah is not centered in the mobile sacred strip`);
+            }
+            if (path === "/" && metrics.basmalaSrc !== "/bismillah-transparent.svg") {
+              failures.push(`/: approved transparent Bismillah asset regressed: ${metrics.basmalaSrc}`);
+            }
+            if (path === "/" && metrics.flagCaptionHeight > 46) {
+              failures.push(`/: archival flag caption is too tall (${metrics.flagCaptionHeight}px)`);
             }
             if (path === "/" && metrics.homeLeadAlign !== "justify") {
               failures.push(`/: research lead text is not justified`);
