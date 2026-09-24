@@ -43,7 +43,8 @@ jobs:
             echo "available=true" >> "$GITHUB_OUTPUT"
           else
             echo "available=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::Cloudflare credentials are not configured; storing the verified production bundle instead of failing the workflow."
+            echo "::error::Cloudflare deployment credentials are missing. Production was NOT deployed."
+            exit 1
           fi
 
       - name: Deploy Worker
@@ -111,10 +112,3 @@ jobs:
             exit 1
           fi
 
-      - name: Store verified production bundle
-        if: steps.cloudflare.outputs.available != 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: azarakhsh-production-bundle
-          path: dist/
-          retention-days: 7
