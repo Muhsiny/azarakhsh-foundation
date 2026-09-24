@@ -1,3 +1,5 @@
+import { ensurePlatformSchema } from "../db/platform";
+
 type RuntimeEnv = {
   DB?: D1Database;
 };
@@ -61,14 +63,7 @@ export async function consumeRateLimit(
   const env = await runtimeEnv();
   if (!env.DB) return { allowed: true, remaining: limit, retryAfter: 0 };
 
-  await env.DB.prepare(`
-    CREATE TABLE IF NOT EXISTS security_rate_limits (
-      bucket TEXT PRIMARY KEY NOT NULL,
-      count INTEGER NOT NULL DEFAULT 0,
-      reset_at INTEGER NOT NULL,
-      updated_at INTEGER NOT NULL
-    )
-  `).run();
+  await ensurePlatformSchema();
 
   const now = Math.floor(Date.now() / 1000);
   const resetAt = now + windowSeconds;
@@ -99,13 +94,9 @@ export async function consumeRateLimit(
     .bind(bucket)
     .first<{ count: number; reset_at: number }>();
 
-  // Opportunistic cleanup; no raw IP addresses are stored.
-  if (Math.random() < 0.01) {
-    env.DB.prepare("DELETE FROM security_rate_limits WHERE reset_at < ?")
-      .bind(now - 86400)
-      .run()
-      .catch(() => undefined);
-  }
+  await env.DB.prepare("DELETE FROM security_rate_limits WHERE reset_at < ?")
+    .bind(now - 86400)
+    .run();
 
   const count = row?.count ?? 1;
   const retryAfter = Math.max(0, (row?.reset_at ?? resetAt) - now);
