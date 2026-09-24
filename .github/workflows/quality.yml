@@ -48,11 +48,23 @@ jobs:
           test -f 'app/api/posts/[id]/download/route.ts'
           test -f app/api/membership/route.ts
           test -f app/api/auth/login/route.ts
+          test -f app/api/auth/change-password/route.ts
+          test -f app/account/page.tsx
+          test -f app/content-access.ts
           test -f app/admin/contributions/page.tsx
           test -f app/admin/research-responses/page.tsx
           grep -q 'DownloadQuizGate' 'app/publications/[slug]/page.tsx'
           grep -q 'acceptedAnswers' 'app/api/posts/[id]/quiz/route.ts'
           grep -q 'quiz_attempt_locks' 'app/api/posts/[id]/quiz/route.ts'
+          grep -q 'consumeDownloadPermit' 'app/api/posts/[id]/download/route.ts'
+          grep -q 'loadReadableDownloadablePostById' 'app/api/posts/[id]/download/route.ts'
+          grep -q 'must_change_password' db/platform.ts
+          grep -q 'platform_schema_meta' db/platform.ts
+          grep -q 'detectUploadType' app/api/admin/upload/route.ts
+          if head -n 1 app/HomeClient.tsx | grep -q 'use client'; then
+            echo "::error::HomeClient regressed to unnecessary client hydration."
+            exit 1
+          fi
           grep -q 'href="/contribute"' app/components/PublicChrome.tsx
           grep -q 'href="/join"' app/components/PublicChrome.tsx
           grep -q 'href="/login"' app/components/PublicChrome.tsx
@@ -96,12 +108,41 @@ jobs:
           routes=(
             "/" "/about" "/council" "/beheshti" "/archive" "/publications"
             "/standards" "/governance" "/contribute" "/contact" "/privacy"
-            "/en" "/join" "/login" "/admin/login"
+            "/en" "/join" "/login" "/account" "/admin/login"
           )
           for route in "${routes[@]}"; do
             echo "checking $route"
             curl -fsS --max-time 20 "http://127.0.0.1:4173$route" >/dev/null
           done
+
+      - name: Architecture regression checks
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          ORIGIN="http://127.0.0.1:4173"
+
+          headers=$(mktemp)
+          curl -sS -D "$headers" -o /dev/null -X POST "$ORIGIN/api/auth/login" \
+            -H "Origin: $ORIGIN" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            --data 'loginPath=%2Flogin&returnTo=%2Fpublications&email=nobody%40example.invalid&password=wrong-password'
+          grep -qiE '^location: .*\/login\?error=credentials' "$headers"
+
+          code=$(curl -sS -o /dev/null -w "%{http_code}" -X POST "$ORIGIN/api/membership" \
+            -H 'Origin: https://cross-site.invalid' \
+            -H 'Content-Type: application/json' \
+            --data '{"fullName":"Test User","email":"test@example.invalid","reason":"This request must be rejected as cross-site."}')
+          test "$code" = "403"
+
+          code=$(curl -sS -o /dev/null -w "%{http_code}" -X POST "$ORIGIN/api/posts/0/quiz" \
+            -H "Origin: $ORIGIN" \
+            -H 'Content-Type: application/json' \
+            --data '{}')
+          test "$code" = "400"
+
+          grep -q 'custom-managed-layout' 'app/pages/[slug]/page.tsx'
+          grep -q 'contentType === "page" ? "/pages/"' app/sitemap.ts
 
       - name: Real desktop and mobile browser QA
         if: github.event_name == 'pull_request'
