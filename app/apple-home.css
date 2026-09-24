@@ -2262,3 +2262,31 @@
 @media(max-width:620px){
   .public-redesign .az-emblem-frame{width:150px}
 }
+
+
+/* Final mobile/menu correction after visual QA */
+.az2-nav>a,.az2-more>summary{font-size:13.5px}
+.az2-hero-visual figcaption{min-height:40px;padding-block:6px}
+@media(max-width:900px){
+  .az2-nav{
+    min-height:0;
+    max-height:0;
+    padding-block:0;
+  }
+  .az2-nav.is-open{
+    min-height:0;
+    max-height:760px;
+    padding-block:8px 14px;
+  }
+  .az2-nav>a,.az2-more>summary{font-size:13.5px}
+}
+@media(max-width:620px){
+  .az2-hero-visual figcaption{min-height:36px;padding-block:5px}
+  .public-redesign .az-emblem-frame{
+    width:150px;
+    padding:12px;
+    border-radius:24px;
+    background:linear-gradient(145deg,#0d493c,#073329);
+    box-shadow:0 14px 28px rgba(6,43,35,.12);
+  }
+}
