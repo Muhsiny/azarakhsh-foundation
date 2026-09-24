@@ -1,6 +1,6 @@
 import { Fragment, cache, type ReactNode } from "react";
 import type { Metadata } from "next";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, ne } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { getDb } from "../../../db";
 import { ensurePlatformSchema } from "../../../db/platform";
@@ -24,6 +24,7 @@ const loadArticle = cache(async (slug: string) => {
       and(
         eq(posts.slug, slug),
         eq(posts.status, "published"),
+        ne(posts.contentType, "page"),
         inArray(posts.visibility, visibility),
       ),
     )
