@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { getDb } from "../../../db";
 import { ensurePlatformSchema } from "../../../db/platform";
 import { posts } from "../../../db/schema";
+import { canonicalPosts } from "../../../db/canonical-posts";
 import { getAdminUser } from "../../admin-auth";
 import ReadingTools from "../../components/ReadingTools";
 import DownloadQuizGate from "../../components/DownloadQuizGate";
@@ -14,6 +15,23 @@ export const dynamic = "force-dynamic";
 
 
 const loadArticle = cache(async (slug: string) => {
+  const canonical = canonicalPosts.find(
+    (post) => post.slug === slug && post.status === "published" && post.visibility === "public",
+  );
+
+  if (canonical) {
+    return {
+      ...canonical,
+      id: -canonical.articleNo,
+      fileUrl: null,
+      fileName: null,
+      views: 0,
+      downloads: 0,
+      createdAt: canonical.publishedAt,
+      canonical: true as const,
+    };
+  }
+
   await ensurePlatformSchema();
   const user = await getAdminUser();
   const visibility = user ? ["public", "members"] : ["public"];
@@ -30,7 +48,7 @@ const loadArticle = cache(async (slug: string) => {
       ),
     )
     .limit(1);
-  return post ?? null;
+  return post ? { ...post, canonical: false as const } : null;
 });
 
 export async function generateMetadata({
@@ -107,17 +125,17 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     <main className="article-page">
       <div className="az-breadcrumb" data-inline-static><a href="/publications">نشریات</a><span aria-hidden="true"> / </span><span>مطالعهٔ مطلب</span></div>
       <article>
-        {post.visibility === "public" && <ViewTracker postId={post.id} />}
+        {post.visibility === "public" && !post.canonical && <ViewTracker postId={post.id} />}
         <ReadingTools />
         <div className="article-meta"><span>{post.category}</span><time>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("fa-AF") : ""}</time></div>
         <h1>{post.title}</h1>
         <p className="article-deck">{post.excerpt}</p>
         {post.coverImage && <figure><img src={post.coverImage} alt={`تصویر شاخص ${post.title}`} /><figcaption>تصویر مرتبط با این پرونده — منبع باید در متن پژوهش درج شود.</figcaption></figure>}
-        <div className="article-provenance"><div><b>پدیدآورنده</b><span>{post.authorName || "تحریریهٔ بنیاد آذرخش"}</span></div><div><b>شناسه</b><span>AZ-{post.id}</span></div><div><b>آخرین ویرایش</b><span>{new Date(post.updatedAt).toLocaleDateString("fa-AF")}</span></div></div>
+        <div className="article-provenance"><div><b>پدیدآورنده</b><span>{post.authorName || "تحریریهٔ بنیاد آذرخش"}</span></div><div><b>شناسه</b><span>{post.canonical ? `AZ-R${String(Math.abs(post.id)).padStart(2, "0")}` : `AZ-${post.id}`}</span></div><div><b>آخرین ویرایش</b><span>{new Date(post.updatedAt).toLocaleDateString("fa-AF")}</span></div></div>
         <div className="article-body">{paragraphs.map(formattedParagraph)}</div>
         {post.sourceNote && <section className="source-note"><strong>منبع و یادداشت آرشیوی</strong><p>{post.sourceNote}</p></section>}
         {post.fileUrl && <DownloadQuizGate postId={post.id} fileName={post.fileName || "فایل آرشیوی"} downloads={post.downloads} />}
-        <aside className="citation-box"><strong>شیوهٔ پیشنهادی ارجاع</strong><p>بنیاد آذرخش، «{post.title}»، شناسهٔ AZ-{post.id}، تاریخ دسترسی: {new Date().toLocaleDateString("fa-AF")}.</p></aside>
+        <aside className="citation-box"><strong>شیوهٔ پیشنهادی ارجاع</strong><p>بنیاد آذرخش، «{post.title}»، شناسهٔ {post.canonical ? `AZ-R${String(Math.abs(post.id)).padStart(2, "0")}` : `AZ-${post.id}`}, تاریخ دسترسی: {new Date().toLocaleDateString("fa-AF")}.</p></aside>
       </article>
     </main>
   );
