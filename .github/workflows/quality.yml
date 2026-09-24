@@ -48,11 +48,19 @@ jobs:
           test -f 'app/api/posts/[id]/download/route.ts'
           test -f app/api/membership/route.ts
           test -f app/api/auth/login/route.ts
+          test -f app/api/auth/password/route.ts
+          test -f app/account/page.tsx
           test -f app/admin/contributions/page.tsx
           test -f app/admin/research-responses/page.tsx
           grep -q 'DownloadQuizGate' 'app/publications/[slug]/page.tsx'
           grep -q 'acceptedAnswers' 'app/api/posts/[id]/quiz/route.ts'
           grep -q 'quiz_attempt_locks' 'app/api/posts/[id]/quiz/route.ts'
+          grep -q 'download-quiz-ip' 'app/api/posts/[id]/quiz/route.ts'
+          grep -q 'item.status !== "published"' 'app/api/posts/[id]/download/route.ts'
+          grep -q 'verifyAndConsumeDownloadPermit' 'app/api/posts/[id]/download/route.ts'
+          grep -q 'used_at IS NULL' app/download-gate.ts
+          grep -q 'knowledge-layout-single' 'app/pages/[slug]/page.tsx'
+          grep -q 'DownloadQuizGate' 'app/pages/[slug]/page.tsx'
           grep -q 'href="/contribute"' app/components/PublicChrome.tsx
           grep -q 'href="/join"' app/components/PublicChrome.tsx
           grep -q 'href="/login"' app/components/PublicChrome.tsx
@@ -96,12 +104,31 @@ jobs:
           routes=(
             "/" "/about" "/council" "/beheshti" "/archive" "/publications"
             "/standards" "/governance" "/contribute" "/contact" "/privacy"
-            "/en" "/join" "/login" "/admin/login"
+            "/en" "/join" "/login" "/account" "/admin/login"
           )
           for route in "${routes[@]}"; do
             echo "checking $route"
             curl -fsS --max-time 20 "http://127.0.0.1:4173$route" >/dev/null
           done
+
+      - name: Verify member/admin login error routing
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          member_location=$(curl -sS -o /dev/null -D - --max-time 20 \
+            -X POST -H "Origin: http://127.0.0.1:4173" \
+            -F "loginPath=/login" -F "returnTo=/publications" \
+            -F "email=qa-member@example.invalid" -F "password=invalid-password" \
+            http://127.0.0.1:4173/api/auth/login | tr -d '\r' | awk 'tolower($1)=="location:" {print $2}')
+          admin_location=$(curl -sS -o /dev/null -D - --max-time 20 \
+            -X POST -H "Origin: http://127.0.0.1:4173" \
+            -F "loginPath=/admin/login" -F "returnTo=/admin" \
+            -F "email=qa-admin@example.invalid" -F "password=invalid-password" \
+            http://127.0.0.1:4173/api/auth/login | tr -d '\r' | awk 'tolower($1)=="location:" {print $2}')
+          [[ "$member_location" == *"/login?"* ]]
+          [[ "$member_location" != *"/admin/login?"* ]]
+          [[ "$admin_location" == *"/admin/login?"* ]]
 
       - name: Real desktop and mobile browser QA
         if: github.event_name == 'pull_request'
