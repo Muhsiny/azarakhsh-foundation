@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import type { PublicChromeSettings } from "./PublicChrome";
+import type { PublicChromeSettings } from "./public-chrome-types";
 
 const links = [
   ["/about", "دربارهٔ بنیاد"],
