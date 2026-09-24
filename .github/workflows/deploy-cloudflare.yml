@@ -62,6 +62,7 @@ jobs:
           routes=(
             "/" "/about" "/council" "/beheshti" "/archive" "/publications"
             "/standards" "/governance" "/contribute" "/contact" "/privacy"
+            "/publications/hazarajat-1358-uprising-to-regional-government"
             "/en" "/join" "/login" "/robots.txt" "/sitemap.xml"
             "/.well-known/security.txt" "/api/posts"
           )
