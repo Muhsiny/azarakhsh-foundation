@@ -1,3 +1,4 @@
+import { ensurePlatformSchema } from "../db/platform";
 import { safeOriginalFileName } from "./security";
 
 type RuntimeEnv = { DB?: D1Database; MEDIA?: KVNamespace };
@@ -31,36 +32,10 @@ async function runtimeEnv() {
   return env as unknown as RuntimeEnv;
 }
 
-async function ensureTable(db: D1Database) {
-  await db.prepare(`CREATE TABLE IF NOT EXISTS public_contributions (
-    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    full_name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    phone TEXT NOT NULL DEFAULT '',
-    relation_to_story TEXT NOT NULL DEFAULT '',
-    contribution_type TEXT NOT NULL DEFAULT 'memory',
-    title TEXT NOT NULL,
-    narrative TEXT NOT NULL,
-    event_date TEXT NOT NULL DEFAULT '',
-    event_place TEXT NOT NULL DEFAULT '',
-    people_present TEXT NOT NULL DEFAULT '',
-    source_note TEXT NOT NULL DEFAULT '',
-    naming_preference TEXT NOT NULL DEFAULT 'full-name',
-    publication_consent INTEGER NOT NULL DEFAULT 0,
-    attachment_key TEXT NOT NULL DEFAULT '',
-    attachment_name TEXT NOT NULL DEFAULT '',
-    attachment_type TEXT NOT NULL DEFAULT '',
-    attachment_size INTEGER NOT NULL DEFAULT 0,
-    status TEXT NOT NULL DEFAULT 'pending',
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    reviewed_at TEXT
-  )`).run();
-}
-
 export async function saveContribution(input: Omit<ContributionRecord, "id" | "status" | "created_at" | "reviewed_at">) {
   const env = await runtimeEnv();
   if (!env.DB) throw new Error("پایگاه دادهٔ سایت در دسترس نیست.");
-  await ensureTable(env.DB);
+  await ensurePlatformSchema();
   await env.DB.prepare(`INSERT INTO public_contributions (
     full_name,email,phone,relation_to_story,contribution_type,title,narrative,event_date,event_place,
     people_present,source_note,naming_preference,publication_consent,attachment_key,attachment_name,
@@ -94,7 +69,7 @@ export async function storeContributionFile(
 export async function listContributions() {
   const env = await runtimeEnv();
   if (!env.DB) return [] as ContributionRecord[];
-  await ensureTable(env.DB);
+  await ensurePlatformSchema();
   const result = await env.DB.prepare("SELECT * FROM public_contributions ORDER BY id DESC LIMIT 1000").all<ContributionRecord>();
   return result.results;
 }
@@ -102,14 +77,14 @@ export async function listContributions() {
 export async function getContribution(id: number) {
   const env = await runtimeEnv();
   if (!env.DB) return null;
-  await ensureTable(env.DB);
+  await ensurePlatformSchema();
   return env.DB.prepare("SELECT * FROM public_contributions WHERE id=? LIMIT 1").bind(id).first<ContributionRecord>();
 }
 
 export async function updateContributionStatus(id: number, status: "pending" | "reviewed" | "accepted" | "rejected") {
   const env = await runtimeEnv();
   if (!env.DB) throw new Error("پایگاه داده در دسترس نیست.");
-  await ensureTable(env.DB);
+  await ensurePlatformSchema();
   await env.DB.prepare("UPDATE public_contributions SET status=?, reviewed_at=CURRENT_TIMESTAMP WHERE id=?")
     .bind(status, id).run();
 }
@@ -119,4 +94,11 @@ export async function readContributionFile(key: string) {
   const env = await runtimeEnv();
   if (!env.MEDIA) return null;
   return env.MEDIA.getWithMetadata<{ contentType?: string; fileName?: string; verified?: string }>(key, "arrayBuffer");
+}
+
+export async function deleteContributionFile(key: string) {
+  if (!key.startsWith("public-contributions/")) return;
+  const env = await runtimeEnv();
+  if (!env.MEDIA) return;
+  await env.MEDIA.delete(key);
 }
