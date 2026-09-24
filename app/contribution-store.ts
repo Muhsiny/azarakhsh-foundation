@@ -102,3 +102,21 @@ export async function deleteContributionFile(key: string) {
   if (!env.MEDIA) return;
   await env.MEDIA.delete(key);
 }
+
+
+export async function deleteContributionRecord(id: number) {
+  const env = await runtimeEnv();
+  if (!env.DB) throw new Error("پایگاه داده در دسترس نیست.");
+  await ensurePlatformSchema();
+  const existing = await getContribution(id);
+  if (!existing) return false;
+
+  await env.DB.prepare("DELETE FROM public_contributions WHERE id = ?")
+    .bind(id)
+    .run();
+
+  if (existing.attachment_key) {
+    await deleteContributionFile(existing.attachment_key).catch(() => undefined);
+  }
+  return true;
+}
