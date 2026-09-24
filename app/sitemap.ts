@@ -20,7 +20,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ["/contribute", 0.6, "monthly"],
   ] as const;
 
-  const staticLastModified = new Date("2026-09-19T00:00:00Z");
+  const staticLastModified = new Date("2026-09-24T00:00:00Z");
   const result: MetadataRoute.Sitemap = staticPages.map(
     ([path, priority, changeFrequency]) => ({
       url: `${SITE_URL}${path}`,
@@ -38,6 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         slug: posts.slug,
         updatedAt: posts.updatedAt,
         publishedAt: posts.publishedAt,
+        contentType: posts.contentType,
       })
       .from(posts)
       .where(
@@ -51,7 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     for (const post of publicPosts) {
       result.push({
-        url: `${SITE_URL}/publications/${encodeURIComponent(post.slug)}`,
+        url: `${SITE_URL}${post.contentType === "page" ? "/pages/" : "/publications/"}${encodeURIComponent(post.slug)}`,
         lastModified: new Date(post.updatedAt || post.publishedAt || staticLastModified),
         changeFrequency: "monthly",
         priority: 0.7,
