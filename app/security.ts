@@ -1,14 +1,5 @@
 import { getPlatformDbBinding } from "../db/platform";
 
-type RuntimeEnv = {
-  DB?: D1Database;
-};
-
-async function runtimeEnv() {
-  const { env } = await import("cloudflare:workers");
-  return env as unknown as RuntimeEnv;
-}
-
 function bytesToBase64Url(bytes: Uint8Array) {
   let value = "";
   for (const byte of bytes) value += String.fromCharCode(byte);
