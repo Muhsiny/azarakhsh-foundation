@@ -99,8 +99,6 @@ CREATE TABLE IF NOT EXISTS platform_schema (
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 --> statement-breakpoint
-CREATE INDEX IF NOT EXISTS posts_publication_idx ON posts(status, visibility, published_at DESC);
-CREATE INDEX IF NOT EXISTS posts_content_type_idx ON posts(content_type, status);
 CREATE INDEX IF NOT EXISTS membership_status_idx ON membership_requests(status, id DESC);
 CREATE INDEX IF NOT EXISTS contribution_status_idx ON public_contributions(status, id DESC);
 CREATE INDEX IF NOT EXISTS quiz_responses_post_idx ON quiz_responses(post_id, id DESC);
