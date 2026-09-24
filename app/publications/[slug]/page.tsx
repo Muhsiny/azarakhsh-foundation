@@ -8,6 +8,7 @@ import { posts } from "../../../db/schema";
 import { getAdminUser } from "../../admin-auth";
 import ReadingTools from "../../components/ReadingTools";
 import DownloadQuizGate from "../../components/DownloadQuizGate";
+import ViewTracker from "../../components/ViewTracker";
 
 export const dynamic = "force-dynamic";
 
@@ -106,6 +107,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     <main className="article-page">
       <div className="az-breadcrumb" data-inline-static><a href="/publications">نشریات</a><span aria-hidden="true"> / </span><span>مطالعهٔ مطلب</span></div>
       <article>
+        {post.visibility === "public" && <ViewTracker postId={post.id} />}
         <ReadingTools />
         <div className="article-meta"><span>{post.category}</span><time>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("fa-AF") : ""}</time></div>
         <h1>{post.title}</h1>
