@@ -51,7 +51,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     return Response.json({ error: "فایل معتبر نیست." }, { status: 400 });
   }
 
-  const { post } = await loadReadablePublicationById(id);
+  const { post } = await loadReadableDownloadablePostById(id);
   if (!post?.fileUrl) {
     return Response.json({ error: "این فایل برای دانلود در دسترس نیست." }, { status: 404 });
   }
