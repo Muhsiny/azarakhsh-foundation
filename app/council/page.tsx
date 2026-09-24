@@ -32,6 +32,10 @@ export default async function CouncilPage() {
     <main className="az-flagship-page">
       <section className="az-council-cover" aria-label="کاور پروندهٔ حکومت شورای اتفاق اسلامی افغانستان">
         <img src="/media/council-flag-hq.svg" alt="پرچم حکومت شورای اتفاق اسلامی افغانستان" width="1280" height="720" fetchPriority="high" />
+        <div className="az-council-cover-caption">
+          <span>آرشیف تصویری</span>
+          <strong>پرچم تاریخی شورای اتفاق اسلامی افغانستان</strong>
+        </div>
       </section>
       <section className="az-flagship-hero">
         <div className="az-container az-flagship-hero-grid">
