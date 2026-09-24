@@ -23,10 +23,12 @@ export default function PublicChrome({
   children,
   settings,
   extraPages = [],
+  canEdit = false,
 }: {
   children: ReactNode;
   settings: PublicChromeSettings;
   extraPages?: Array<{ slug: string; title: string }>;
+  canEdit?: boolean;
 }) {
   const pathname = usePathname() || "/";
   const [menu, setMenu] = useState(false);
@@ -61,10 +63,11 @@ export default function PublicChrome({
           </a>
 
           <a href="/" className="az2-basmala" aria-label="صفحهٔ نخست">
-            <img src="/bismillah.jpg" alt="بسم الله الرحمن الرحیم" width="1000" height="1000" />
+            <img src="/bismillah-transparent.svg" alt="بسم الله الرحمن الرحیم" width="854" height="1000" />
           </a>
 
           <div className="az2-header-tools">
+            {canEdit && <a className="az2-owner-edit" href="/admin" aria-label="ویرایش و مدیریت سایت">ویرایش</a>}
             <a className="az2-lang" href="/en" lang="en" dir="ltr">EN</a>
             <a className="az2-search" href="/archive" aria-label="جست‌وجو در آرشیف">
               <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -106,6 +109,8 @@ export default function PublicChrome({
                     {page.title}
                   </a>
                 ))}
+                <a href="/governance" aria-current={isCurrent("/governance")}>ساختار و پاسخ‌گویی</a>
+                <a href="/join" aria-current={isCurrent("/join")}>عضویت پژوهشی</a>
                 <a href="/contact" aria-current={isCurrent("/contact")}>تماس</a>
               </div>
             </details>
