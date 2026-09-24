@@ -144,6 +144,23 @@ export default async function CouncilPage() {
         </div>
       </section>
 
+      <section className="az-container az-evidence-section" aria-labelledby="council-articles-title">
+        <div className="az-evidence-heading">
+          <span className="az-overline">مقالات تفصیلی پرونده</span>
+          <h2 id="council-articles-title">بازسازی حکومت شورای اتفاق، مقاله‌به‌مقاله</h2>
+          <p>این مجموعه، مواد کتابی و آرشیفی را با منابع مستقل می‌سنجد و هر بخش را به یک پژوهش مستقل دربارهٔ رهبری، مردم، نهادها، جنگ، اقتصاد و مناسبات قدرت تبدیل می‌کند.</p>
+        </div>
+        <div className="az-evidence-list">
+          <article>
+            <span>۰۲</span>
+            <div>
+              <h3><a href="/publications/hazarajat-1358-uprising-to-regional-government">از قیام پراکنده تا حکومت منطقه‌ای؛ هزاره‌جات ۱۳۵۸ و پیدایش شورای اتفاق</a></h3>
+              <p>گذار قیام‌های محلی به ادارهٔ منطقه‌ای، جایگاه آیت‌الله سید علی بهشتی، سازوکارهای مشروعیت و حکومت‌داری و محدودیت‌های درونی و بیرونی این تجربه.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
       <section className="az-container az-evidence-section" aria-labelledby="council-source-title">
         <div className="az-evidence-heading">
           <span className="az-overline">منابع پایهٔ پرونده</span>
