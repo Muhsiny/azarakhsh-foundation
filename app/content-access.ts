@@ -31,6 +31,24 @@ export async function loadReadablePublicationById(id: number) {
   return { post: post ?? null, user };
 }
 
+export async function loadReadableDownloadablePostById(id: number) {
+  await ensurePlatformSchema();
+  const { user, visibility } = await readableVisibilities();
+  const db = await getDb();
+  const [post] = await db
+    .select()
+    .from(posts)
+    .where(
+      and(
+        eq(posts.id, id),
+        eq(posts.status, "published"),
+        inArray(posts.visibility, [...visibility]),
+      ),
+    )
+    .limit(1);
+  return { post: post ?? null, user };
+}
+
 export async function loadReadablePublicationBySlug(slug: string) {
   await ensurePlatformSchema();
   const { user, visibility } = await readableVisibilities();
