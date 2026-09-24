@@ -1,3 +1,5 @@
+import { getPlatformDbBinding } from "../db/platform";
+
 type RuntimeEnv = {
   DB?: D1Database;
 };
@@ -58,17 +60,7 @@ export async function consumeRateLimit(
   windowSeconds: number,
   discriminator = "",
 ) {
-  const env = await runtimeEnv();
-  if (!env.DB) return { allowed: true, remaining: limit, retryAfter: 0 };
-
-  await env.DB.prepare(`
-    CREATE TABLE IF NOT EXISTS security_rate_limits (
-      bucket TEXT PRIMARY KEY NOT NULL,
-      count INTEGER NOT NULL DEFAULT 0,
-      reset_at INTEGER NOT NULL,
-      updated_at INTEGER NOT NULL
-    )
-  `).run();
+  const db = await getPlatformDbBinding();
 
   const now = Math.floor(Date.now() / 1000);
   const resetAt = now + windowSeconds;
@@ -76,7 +68,7 @@ export async function consumeRateLimit(
     `${scope}|${requestIp(request)}|${discriminator.trim().toLowerCase()}`,
   );
 
-  await env.DB.prepare(`
+  await db.prepare(`
     INSERT INTO security_rate_limits (bucket, count, reset_at, updated_at)
     VALUES (?, 1, ?, ?)
     ON CONFLICT(bucket) DO UPDATE SET
@@ -93,19 +85,11 @@ export async function consumeRateLimit(
     .bind(bucket, resetAt, now, now, now)
     .run();
 
-  const row = await env.DB.prepare(
+  const row = await db.prepare(
     "SELECT count, reset_at FROM security_rate_limits WHERE bucket = ? LIMIT 1",
   )
     .bind(bucket)
     .first<{ count: number; reset_at: number }>();
-
-  // Opportunistic cleanup; no raw IP addresses are stored.
-  if (Math.random() < 0.01) {
-    env.DB.prepare("DELETE FROM security_rate_limits WHERE reset_at < ?")
-      .bind(now - 86400)
-      .run()
-      .catch(() => undefined);
-  }
 
   const count = row?.count ?? 1;
   const retryAfter = Math.max(0, (row?.reset_at ?? resetAt) - now);
