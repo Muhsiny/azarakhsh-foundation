@@ -29,7 +29,20 @@ export default async function PublicationsPage({ searchParams }: { searchParams:
   const visibility = user ? ["public", "members"] : ["public"];
   const db = await getDb();
   const rows = await db
-    .select()
+    .select({
+      id: posts.id,
+      slug: posts.slug,
+      title: posts.title,
+      excerpt: posts.excerpt,
+      category: posts.category,
+      contentType: posts.contentType,
+      language: posts.language,
+      visibility: posts.visibility,
+      authorName: posts.authorName,
+      coverImage: posts.coverImage,
+      tags: posts.tags,
+      publishedAt: posts.publishedAt,
+    })
     .from(posts)
     .where(
       and(
