@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import type { PublicChromeSettings } from "./PublicChrome";
+import type { PublicChromeSettings } from "./public-chrome-types";
 
 export default function PublicFooter({ settings }: { settings: PublicChromeSettings }) {
   const pathname = usePathname() || "/";
