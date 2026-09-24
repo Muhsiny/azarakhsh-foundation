@@ -1,10 +1,17 @@
+import { eq } from "drizzle-orm";
+import { getDb } from "../../../../../db";
+import { ensurePlatformSchema } from "../../../../../db/platform";
+import { posts } from "../../../../../db/schema";
+import { getAdminUser } from "../../../../admin-auth";
 import { createDownloadPermit } from "../../../../download-gate";
 import {
-  ensureQuizResearchTables,
-  getQuizDb,
   isAcceptableExplanatoryAnswer,
   normalizeQuizAnswer,
 } from "../../../../quiz-research";
+import {
+  consumeRateLimit,
+  isSameOriginMutation,
+} from "../../../../security";
 
 const acceptedAnswers: Record<number, string[]> = {
   0: ["15 سنبله 1358", "۱۵ سنبله ۱۳۵۸", "15سنبله1358", "۱۵سنبله۱۳۵۸"],
@@ -31,13 +38,58 @@ function emailIsValid(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
+function boundedText(value: unknown, max: number) {
+  return typeof value === "string" ? value.trim().slice(0, max) : "";
+}
+
+async function downloadablePost(id: number) {
+  await ensurePlatformSchema();
+  const db = await getDb();
+  const [item] = await db
+    .select({
+      id: posts.id,
+      status: posts.status,
+      visibility: posts.visibility,
+      fileUrl: posts.fileUrl,
+    })
+    .from(posts)
+    .where(eq(posts.id, id))
+    .limit(1);
+
+  if (!item || item.status !== "published" || !item.fileUrl) return null;
+  if (item.visibility === "public") return item;
+  if (item.visibility !== "members") return null;
+  return (await getAdminUser()) ? item : null;
+}
+
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
+  if (!isSameOriginMutation(request)) {
+    return Response.json({ error: "درخواست نامعتبر است." }, { status: 403 });
+  }
+
   const id = Number((await context.params).id);
   if (!Number.isInteger(id) || id <= 0) {
     return Response.json({ error: "فایل معتبر نیست." }, { status: 400 });
   }
 
+  const contentLength = Number(request.headers.get("Content-Length") || "0");
+  if (contentLength > 72 * 1024) {
+    return Response.json({ error: "حجم پاسخ بیش از حد مجاز است." }, { status: 413 });
+  }
+
+  const ipLimit = await consumeRateLimit(request, "download-quiz-ip", 12, 10 * 60, String(id));
+  if (!ipLimit.allowed) {
+    return Response.json(
+      { error: "تعداد تلاش‌ها بیش از حد مجاز است. کمی بعد دوباره تلاش کنید." },
+      { status: 429, headers: { "Retry-After": String(ipLimit.retryAfter) } },
+    );
+  }
+
   try {
+    if (!(await downloadablePost(id))) {
+      return Response.json({ error: "این فایل برای دانلود در دسترس نیست." }, { status: 404 });
+    }
+
     const payload = (await request.json()) as {
       answers?: unknown[];
       fullName?: unknown;
@@ -45,10 +97,11 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       occupation?: unknown;
       consent?: unknown;
     };
-    const answers = Array.isArray(payload.answers) ? payload.answers : [];
-    const fullName = typeof payload.fullName === "string" ? payload.fullName.trim() : "";
-    const email = typeof payload.email === "string" ? payload.email.trim().toLowerCase() : "";
-    const occupation = typeof payload.occupation === "string" ? payload.occupation.trim() : "";
+    const rawAnswers = Array.isArray(payload.answers) ? payload.answers : [];
+    const answers = rawAnswers.map((answer) => boundedText(answer, 5000));
+    const fullName = boundedText(payload.fullName, 160);
+    const email = boundedText(payload.email, 254).toLowerCase();
+    const occupation = boundedText(payload.occupation, 240);
     const consent = payload.consent === true;
 
     if (fullName.length < 3 || !emailIsValid(email) || occupation.length < 2) {
@@ -57,27 +110,49 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     if (!consent) {
       return Response.json({ error: "برای ثبت پاسخ پژوهشی، موافقت شما لازم است." }, { status: 400 });
     }
-    if (answers.length !== 15 || answers.some((answer) => typeof answer !== "string" || !answer.trim())) {
-      return Response.json({ error: "لطفاً به هر ۱۵ پرسش پاسخ دهید." }, { status: 400 });
+    if (
+      answers.length !== 15 ||
+      answers.some((answer) => !answer) ||
+      answers.some((answer, index) => answer.length > (index === 14 ? 5000 : 2500))
+    ) {
+      return Response.json({ error: "لطفاً به هر ۱۵ پرسش در اندازهٔ مجاز پاسخ دهید." }, { status: 400 });
     }
 
-    const db = await getQuizDb();
-    if (!db) return Response.json({ error: "پایگاه دادهٔ پژوهش فعال نیست." }, { status: 503 });
-    await ensureQuizResearchTables(db);
+    const accountLimit = await consumeRateLimit(
+      request,
+      "download-quiz-account",
+      6,
+      10 * 60,
+      `${id}|${email}`,
+    );
+    if (!accountLimit.allowed) {
+      return Response.json(
+        { error: "تعداد تلاش‌های این حساب بیش از حد مجاز است. کمی بعد دوباره تلاش کنید." },
+        { status: 429, headers: { "Retry-After": String(accountLimit.retryAfter) } },
+      );
+    }
+
+    await ensurePlatformSchema();
+    const db = await getDb();
 
     const lock = await db.prepare(
       "SELECT locked_until FROM quiz_attempt_locks WHERE post_id = ? AND email = ? LIMIT 1",
     ).bind(id, email).first<{ locked_until: string }>();
     if (lock && new Date(lock.locked_until).getTime() > Date.now()) {
-      const remaining = Math.max(1, Math.ceil((new Date(lock.locked_until).getTime() - Date.now()) / 60000));
+      const remaining = Math.max(
+        1,
+        Math.ceil((new Date(lock.locked_until).getTime() - Date.now()) / 60000),
+      );
       return Response.json({ error: `تلاش بعدی پس از ${remaining} دقیقه ممکن است.` }, { status: 429 });
     }
 
     const wrongHistorical = Object.entries(acceptedAnswers)
       .map(([indexValue, accepted]) => {
         const index = Number(indexValue);
-        const candidate = normalizeQuizAnswer(String(answers[index]));
-        return accepted.some((answer) => normalizeQuizAnswer(answer) === candidate) ? null : index + 1;
+        const candidate = normalizeQuizAnswer(answers[index]);
+        return accepted.some((answer) => normalizeQuizAnswer(answer) === candidate)
+          ? null
+          : index + 1;
       })
       .filter((value): value is number => value !== null);
 
@@ -96,7 +171,9 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     const unacceptable = Object.entries(explanatoryRules)
       .map(([indexValue, minimumLength]) => {
         const index = Number(indexValue);
-        return isAcceptableExplanatoryAnswer(String(answers[index]), minimumLength) ? null : index + 1;
+        return isAcceptableExplanatoryAnswer(answers[index], minimumLength)
+          ? null
+          : index + 1;
       })
       .filter((value): value is number => value !== null);
 
@@ -107,19 +184,33 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       );
     }
 
-    await db.prepare("DELETE FROM quiz_attempt_locks WHERE post_id = ? AND email = ?").bind(id, email).run();
+    await db.prepare(
+      "DELETE FROM quiz_attempt_locks WHERE post_id = ? AND email = ?",
+    ).bind(id, email).run();
+
     await db.prepare(`INSERT INTO quiz_responses
       (post_id, full_name, email, occupation, answers_json, analytical_answer, historical_score, consent)
       VALUES (?, ?, ?, ?, ?, ?, ?, 1)`)
-      .bind(id, fullName, email, occupation, JSON.stringify(answers), String(answers[14]), Object.keys(acceptedAnswers).length)
+      .bind(
+        id,
+        fullName,
+        email,
+        occupation,
+        JSON.stringify(answers),
+        answers[14],
+        Object.keys(acceptedAnswers).length,
+      )
       .run();
 
-    const token = await createDownloadPermit(id);
-    return Response.json({ token, expiresInSeconds: 600 });
-  } catch (error) {
+    const token = await createDownloadPermit(id, email);
     return Response.json(
-      { error: error instanceof Error ? error.message : "مجوز دانلود صادر نشد." },
-      { status: 500 },
+      { token, expiresInSeconds: 600 },
+      { headers: { "Cache-Control": "no-store" } },
+    );
+  } catch {
+    return Response.json(
+      { error: "مجوز دانلود صادر نشد. لطفاً دوباره تلاش کنید." },
+      { status: 500, headers: { "Cache-Control": "no-store" } },
     );
   }
 }
