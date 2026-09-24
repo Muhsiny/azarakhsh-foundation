@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray, ne } from "drizzle-orm";
 import { getDb } from "../../db";
 import { ensurePlatformSchema } from "../../db/platform";
 import { posts } from "../../db/schema";
@@ -29,12 +29,26 @@ export default async function PublicationsPage({ searchParams }: { searchParams:
   const visibility = user ? ["public", "members"] : ["public"];
   const db = await getDb();
   const rows = await db
-    .select()
+    .select({
+      id: posts.id,
+      slug: posts.slug,
+      title: posts.title,
+      excerpt: posts.excerpt,
+      category: posts.category,
+      contentType: posts.contentType,
+      language: posts.language,
+      visibility: posts.visibility,
+      authorName: posts.authorName,
+      coverImage: posts.coverImage,
+      tags: posts.tags,
+      publishedAt: posts.publishedAt,
+    })
     .from(posts)
     .where(
       and(
         eq(posts.status, "published"),
         inArray(posts.visibility, visibility),
+        ne(posts.contentType, "page"),
       ),
     )
     .orderBy(desc(posts.publishedAt), desc(posts.id))
