@@ -188,7 +188,9 @@ jobs:
                 homeLeadAlign: document.querySelector('.az2-hero-copy > p') ? getComputedStyle(document.querySelector('.az2-hero-copy > p')).textAlign : null,
                 navClosedHeight: document.querySelector('.az2-nav')?.getBoundingClientRect().height ?? null,
                 headerBackground: document.querySelector('.az2-header') ? getComputedStyle(document.querySelector('.az2-header')).backgroundImage : null,
-                councilEmblemSrc: document.querySelector('.az-flagship-emblem img')?.getAttribute('src') || null
+                councilEmblemSrc: document.querySelector('.az-flagship-emblem img')?.getAttribute('src') || null,
+                knowledgeArticleWidth: document.querySelector('.knowledge-article')?.getBoundingClientRect().width ?? null,
+                knowledgeLayoutWidth: document.querySelector('.knowledge-layout')?.getBoundingClientRect().width ?? null
               }))()`,
               returnByValue: true
             });
@@ -246,6 +248,12 @@ jobs:
             }
             if (path === "/council" && metrics.councilEmblemSrc !== "/media/council-emblem-color.webp") {
               failures.push(`/council: authentic color emblem regressed: ${metrics.councilEmblemSrc}`);
+            }
+            if (path === "/about" && metrics.knowledgeArticleWidth !== null && metrics.knowledgeArticleWidth < 330) {
+              failures.push(`/about: mobile institutional article is squeezed (${metrics.knowledgeArticleWidth}px)`);
+            }
+            if (path === "/about" && metrics.knowledgeLayoutWidth !== null && metrics.knowledgeLayoutWidth > metrics.innerWidth) {
+              failures.push(`/about: institutional layout overflows mobile viewport`);
             }
           }
 
