@@ -3,7 +3,7 @@ import { and, desc, eq, inArray, isNotNull, ne } from "drizzle-orm";
 import { getDb } from "../../db";
 import { ensurePlatformSchema } from "../../db/platform";
 import { posts } from "../../db/schema";
-import { getAdminUser } from "../admin-auth";
+import { readableVisibilities } from "../content-access";
 import PublicationsClient from "../publications/PublicationsClient";
 import { readFilters } from "../publications/search";
 
@@ -28,8 +28,7 @@ export default async function ArchivePage({ searchParams }: { searchParams: Prom
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(raw)) if (typeof value === "string") params.set(key, value);
   await ensurePlatformSchema();
-  const user = await getAdminUser();
-  const visibility = user ? ["public", "members"] : ["public"];
+  const { visibility } = await readableVisibilities();
   const db = await getDb();
   const files = await db
     .select({
