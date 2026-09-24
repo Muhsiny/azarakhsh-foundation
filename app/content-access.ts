@@ -6,9 +6,14 @@ import { getAdminUser } from "./admin-auth";
 
 export async function readableVisibilities() {
   const user = await getAdminUser();
+  const canReadMembers =
+    Boolean(user) &&
+    !(user?.role === "member" && user.mustChangePassword);
   return {
     user,
-    visibility: user ? (["public", "members"] as const) : (["public"] as const),
+    visibility: canReadMembers
+      ? (["public", "members"] as const)
+      : (["public"] as const),
   };
 }
 
