@@ -25,7 +25,7 @@ export async function GET(
     return new Response("Not found", { status: 404 });
   }
 
-  const { post } = await loadReadablePublicationById(id);
+  const { post } = await loadReadableDownloadablePostById(id);
   if (!post?.fileUrl) return new Response("Not found", { status: 404 });
 
   const target = resolveDownloadUrl(post.fileUrl, request.url);
