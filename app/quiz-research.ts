@@ -1,31 +1,14 @@
-type RuntimeEnv = { DB?: D1Database };
+import { ensurePlatformSchema, getPlatformDbBinding } from "../db/platform";
 
 export async function getQuizDb() {
-  const { env } = await import("cloudflare:workers");
-  return (env as unknown as RuntimeEnv).DB;
+  await ensurePlatformSchema();
+  return getPlatformDbBinding();
 }
 
-export async function ensureQuizResearchTables(db: D1Database) {
-  await db.prepare(`CREATE TABLE IF NOT EXISTS quiz_responses (
-    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    post_id INTEGER NOT NULL,
-    full_name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    occupation TEXT NOT NULL,
-    answers_json TEXT NOT NULL,
-    analytical_answer TEXT NOT NULL,
-    historical_score INTEGER NOT NULL,
-    consent INTEGER NOT NULL DEFAULT 1,
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-  )`).run();
-
-  await db.prepare(`CREATE TABLE IF NOT EXISTS quiz_attempt_locks (
-    post_id INTEGER NOT NULL,
-    email TEXT NOT NULL,
-    locked_until TEXT NOT NULL,
-    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (post_id, email)
-  )`).run();
+// Backward-compatible helper retained for callers while the schema is now
+// centralized in db/platform.ts.
+export async function ensureQuizResearchTables(_db: D1Database) {
+  await ensurePlatformSchema();
 }
 
 export function normalizeQuizAnswer(value: string) {
