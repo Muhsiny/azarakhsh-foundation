@@ -1,4 +1,4 @@
-import { saveContribution, storeContributionFile } from "../../contribution-store";
+import { deleteContributionFile, saveContribution, storeContributionFile } from "../../contribution-store";
 import {
   consumeRateLimit,
   detectUploadType,
@@ -154,6 +154,13 @@ export async function POST(request: Request) {
       { status: 201, headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
+    if (uploadedKey) {
+      try {
+        await deleteContributionFile(uploadedKey);
+      } catch {
+        // The failed submission is still rejected even if storage cleanup is unavailable.
+      }
+    }
     console.error("public contribution failed", error);
     return Response.json(
       { error: "ثبت روایت انجام نشد. لطفاً دوباره تلاش کنید." },
