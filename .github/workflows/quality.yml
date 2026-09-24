@@ -21,6 +21,34 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
+      - name: Reject obsolete legacy files and routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          obsolete=(
+            "app/chatgpt-auth.ts"
+            "public/bismillah-original.svg"
+            "public/bismillah.jpg"
+            "public/media/council-emblem-color-master.svg"
+            "public/media/council-emblem-hq.svg"
+            "public/media/council-emblem.webp"
+            "public/media/council-flag-cover.webp"
+          )
+          for path in "${obsolete[@]}"; do
+            if [[ -e "$path" ]]; then
+              echo "::error::Obsolete legacy file returned: $path"
+              exit 1
+            fi
+          done
+          if grep -R --line-number --exclude-dir=node_modules --exclude-dir=.git "admin/access-required\|chatGPTSignInPath\|ChatGPTUser" app; then
+            echo "::error::Dead legacy authentication path returned."
+            exit 1
+          fi
+          if grep -q "fileUrl: posts.fileUrl" app/api/posts/route.ts && grep -q "return Response.json({ post })" app/api/posts/route.ts; then
+            echo "::error::Public posts API exposes direct internal file URLs."
+            exit 1
+          fi
+
       - name: Reject incomplete source markers
         shell: bash
         run: |
