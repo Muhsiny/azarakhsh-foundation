@@ -21,7 +21,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 
   await ensurePlatformSchema();
   const db = await getDb();
-  const result = await db
+  const changed = await db
     .update(posts)
     .set({ views: sql`${posts.views} + 1` })
     .where(
@@ -30,10 +30,11 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
         eq(posts.status, "published"),
         eq(posts.visibility, "public"),
       ),
-    );
+    )
+    .returning({ id: posts.id });
 
   return Response.json(
-    { ok: true, counted: Boolean(result.rowsAffected) },
+    { ok: true, counted: changed.length > 0 },
     { headers: { "Cache-Control": "no-store" } },
   );
 }
