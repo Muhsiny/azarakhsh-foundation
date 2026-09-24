@@ -2095,3 +2095,198 @@
   }
   .public-redesign .az-file-name{font-size:11px}
 }
+
+
+/* 2026-09-24 authenticity + capability pass */
+
+/* The approved sacred artwork is now genuinely transparent: no white image tile. */
+.az2-basmala{
+  width:66px;
+  height:66px;
+  background:transparent;
+  overflow:visible;
+}
+.az2-basmala img{
+  width:66px;
+  height:66px;
+  object-fit:contain;
+  background:transparent;
+  mix-blend-mode:normal;
+  filter:drop-shadow(0 1px 0 rgba(255,255,255,.3));
+}
+
+/* Primary tabs: large enough to read, still restrained and orderly. */
+.az2-nav{
+  min-height:46px;
+  gap:clamp(18px,2.15vw,34px);
+}
+.az2-nav>a,
+.az2-more>summary{
+  min-height:46px;
+  display:flex;
+  align-items:center;
+  padding:0;
+  color:#53655e;
+  font:650 13px/1.35 var(--az-ui);
+}
+.az2-nav>a::after{
+  inset-inline:24%;
+  bottom:4px;
+  height:2px;
+}
+.az2-more>div a{
+  min-height:46px;
+  font-size:12.5px;
+}
+
+/* Owner/editor convenience from the earliest site, without exposing admin UI publicly. */
+.az2-owner-edit{
+  min-height:36px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 10px;
+  border:1px solid rgba(185,138,49,.26);
+  border-radius:999px;
+  background:#fffaf0;
+  color:#81642d;
+  font:750 10.5px/1 var(--az-ui);
+}
+.az2-owner-edit:hover{
+  border-color:rgba(185,138,49,.5);
+  background:#f5eddb;
+  color:#173f33;
+}
+
+/* The flag itself is untouched. Only its documentary caption is made compact. */
+.az2-hero-visual figcaption{
+  min-height:44px;
+  justify-content:flex-start;
+  gap:11px;
+  padding:7px 14px 8px;
+  background:#0a382f;
+}
+.az2-hero-visual figcaption span{
+  padding-inline-end:11px;
+  border-inline-end:1px solid rgba(232,207,145,.24);
+  font:750 9.5px/1.35 var(--az-ui);
+  letter-spacing:.01em;
+}
+.az2-hero-visual figcaption strong{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  text-align:start;
+  font:600 12.5px/1.55 var(--az-reading);
+}
+
+/* Authentic colored Council seal sourced from the user's archive. */
+.az2-emblem-media img{
+  width:min(190px,70%);
+  max-height:225px;
+  border-radius:0;
+  background:transparent;
+  filter:drop-shadow(0 14px 24px rgba(0,0,0,.2));
+}
+.public-redesign .az-emblem-frame{
+  width:200px;
+  aspect-ratio:auto;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+}
+.public-redesign .az-emblem-frame img{
+  width:100%;
+  height:auto;
+  background:transparent;
+  filter:drop-shadow(0 16px 28px rgba(0,0,0,.18))!important;
+}
+
+/* Keep microcopy readable across the site. */
+.az2-research-dock small{font-size:10.5px}
+.az2-feature-kicker,.az2-eyebrow{font-size:11.5px}
+.az2-footer-links a{font-size:12px}
+.az2-footer-brand>p{font-size:12.5px}
+
+/* Mobile navigation should feel like a real menu, not tiny tabs. */
+@media(max-width:900px){
+  .az2-nav{
+    gap:0;
+    padding-inline:14px;
+  }
+  .az2-nav>a,
+  .az2-more>summary{
+    min-height:48px;
+    padding-inline:10px;
+    font-size:13px;
+  }
+  .az2-more>div a{
+    min-height:46px;
+    font-size:12.5px;
+  }
+}
+@media(max-width:620px){
+  .az2-header-main{
+    min-height:68px;
+    grid-template-columns:minmax(72px,1fr) 58px minmax(112px,1fr);
+  }
+  .az2-basmala,.az2-basmala img{
+    width:56px;
+    height:56px;
+  }
+  .az2-owner-edit{
+    min-height:34px;
+    padding-inline:8px;
+    font-size:9.5px;
+  }
+  .az2-hero-visual figcaption{
+    min-height:40px;
+    gap:8px;
+    padding:6px 11px 7px;
+  }
+  .az2-hero-visual figcaption span{
+    padding-inline-end:8px;
+    font-size:8.5px;
+  }
+  .az2-hero-visual figcaption strong{
+    font-size:10.5px;
+    line-height:1.45;
+  }
+  .az2-emblem-media img{
+    width:136px;
+    max-height:176px;
+  }
+}
+
+@media(max-width:620px){
+  .public-redesign .az-emblem-frame{width:150px}
+}
+
+
+/* Final mobile/menu correction after visual QA */
+.az2-nav>a,.az2-more>summary{font-size:13.5px}
+.az2-hero-visual figcaption{min-height:40px;padding-block:6px}
+@media(max-width:900px){
+  .az2-nav{
+    min-height:0;
+    max-height:0;
+    padding-block:0;
+  }
+  .az2-nav.is-open{
+    min-height:0;
+    max-height:760px;
+    padding-block:8px 14px;
+  }
+  .az2-nav>a,.az2-more>summary{font-size:13.5px}
+}
+@media(max-width:620px){
+  .az2-hero-visual figcaption{min-height:36px;padding-block:5px}
+  .public-redesign .az-emblem-frame{
+    width:150px;
+    padding:12px;
+    border-radius:24px;
+    background:linear-gradient(145deg,#0d493c,#073329);
+    box-shadow:0 14px 28px rgba(6,43,35,.12);
+  }
+}

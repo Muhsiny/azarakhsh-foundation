@@ -102,8 +102,8 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
               />
             </div>
             <figcaption>
-              <span>از آرشیف تصویری</span>
-              <strong>پرچم تاریخی حکومت شورای اتفاق اسلامی افغانستان</strong>
+              <span>آرشیف تصویری</span>
+              <strong>پرچم حکومت شورای اتفاق اسلامی افغانستان</strong>
             </figcaption>
           </figure>
         </div>
