@@ -2741,3 +2741,69 @@
     font-size:11.5px;
   }
 }
+
+
+/* Regression corrections after browser QA: closed mobile nav + authentic color mark. */
+.az2-emblem-media img{
+  width:min(176px,68%);
+  max-height:196px;
+  aspect-ratio:1;
+  object-fit:cover;
+  object-position:center 62%;
+  border:1px solid rgba(224,194,121,.18);
+  border-radius:20px;
+  background:#0a3d32;
+  box-shadow:0 12px 28px rgba(0,0,0,.12);
+}
+.public-redesign .az-emblem-frame{
+  width:184px;
+  min-height:184px;
+  aspect-ratio:1;
+  padding:9px;
+  border-radius:20px;
+  background:#0b3e33;
+  border-color:rgba(197,156,69,.28);
+}
+.public-redesign .az-emblem-frame img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center 62%;
+  border-radius:14px;
+  background:#0b3e33;
+}
+
+@media(max-width:900px){
+  .az2-nav:not(.is-open){
+    min-height:0!important;
+    max-height:0!important;
+    padding-top:0!important;
+    padding-bottom:0!important;
+    border-top:0!important;
+    overflow:hidden!important;
+  }
+  .az2-nav:not(.is-open)>*{
+    visibility:hidden;
+    pointer-events:none;
+  }
+  .az2-nav.is-open>*{
+    visibility:visible;
+    pointer-events:auto;
+  }
+}
+@media(max-width:620px){
+  .az2-emblem-media img{
+    width:132px;
+    max-height:132px;
+    border-radius:17px;
+  }
+  .public-redesign .az-emblem-frame{
+    width:146px;
+    min-height:146px;
+    padding:7px;
+    border-radius:17px;
+  }
+  .public-redesign .az-emblem-frame img{
+    border-radius:12px;
+  }
+}
