@@ -7,8 +7,7 @@ import { readableVisibilities } from "../../content-access";
 export async function GET(request: Request) {
   try {
     await ensurePlatformSchema();
-    const user = await getAdminUser();
-    const visibility = user ? ["public", "members"] : ["public"];
+    const { visibility } = await readableVisibilities();
     const db = await getDb();
     const slug = new URL(request.url).searchParams.get("slug")?.trim();
 
