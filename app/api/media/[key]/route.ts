@@ -17,6 +17,9 @@ export async function GET(_request: Request, context: RouteContext) {
   if (!media) return new Response("Not found", { status: 404 });
 
   const { key } = await context.params;
+  if (!key || key.startsWith("public-contributions/")) {
+    return new Response("Not found", { status: 404 });
+  }
   const object = await media.getWithMetadata<MediaMetadata>(key, "arrayBuffer");
   if (!object.value) return new Response("Not found", { status: 404 });
 
