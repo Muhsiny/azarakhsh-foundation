@@ -1,5 +1,5 @@
 import { createDownloadPermit } from "../../../../download-gate";
-import { loadReadablePublicationById } from "../../../../content-access";
+import { loadReadableDownloadablePostById } from "../../../../content-access";
 import {
   ensureQuizResearchTables,
   getQuizDb,
