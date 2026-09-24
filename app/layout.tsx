@@ -5,7 +5,9 @@ import "./globals.css";
 
 import "./public-system.css";
 import "./apple-home.css";
-import PublicChrome from "./components/PublicChrome";
+import PublicHeader from "./components/PublicHeader";
+import PublicFooter from "./components/PublicFooter";
+import type { CSSProperties } from "react";
 import { siteSettings as settings } from "./site-settings";
 import { SITE_URL } from "./site-url";
 import { ensurePlatformSchema } from "../db/platform";
@@ -126,11 +128,23 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     knowsAbout: ["تاریخ افغانستان", "حکومت شورای اتفاق اسلامی افغانستان", "حضرت آیت‌الله العظمی بهشتی", "تاریخ هزاره‌جات", "تاریخ شفاهی"],
   };
 
+  const theme = {
+    "--az-forest": chromeSettings.colors.primary,
+    "--az-deep": chromeSettings.colors.dark,
+    "--az-gold": chromeSettings.colors.gold,
+    "--az-paper": chromeSettings.colors.paper,
+    "--az-content-width": chromeSettings.design.contentWidth + "px",
+  } as CSSProperties;
+
   return (
     <html lang="fa" dir="rtl" className={`${naskh.variable} ${vazirmatn.variable}`}>
       <body>
         <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} type="application/ld+json" />
-        <PublicChrome settings={chromeSettings} extraPages={extraPages}>{children}</PublicChrome>
+        <div className="public-redesign az2-shell" style={theme}>
+          <PublicHeader settings={chromeSettings} extraPages={extraPages} />
+          <div id="public-content" tabIndex={-1}>{children}</div>
+          <PublicFooter settings={chromeSettings} />
+        </div>
       </body>
     </html>
   );
