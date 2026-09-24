@@ -89,6 +89,28 @@ jobs:
             fi
           done
 
+      - name: Browser-test deployed article hydration
+        if: steps.cloudflare.outputs.available == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://azarakhsh-foundation.com14.workers.dev"
+          ARTICLE="$BASE/publications/hazarajat-1358-uprising-to-regional-government"
+          CHROME=""
+          for bin in google-chrome google-chrome-stable chromium chromium-browser; do
+            if command -v "$bin" >/dev/null 2>&1; then CHROME=$(command -v "$bin"); break; fi
+          done
+          test -n "$CHROME"
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --virtual-time-budget=5000 --dump-dom "$ARTICLE" > /tmp/article-dom.html
+          grep -Fq "از قیام پراکنده تا حکومت منطقه‌ای" /tmp/article-dom.html || {
+            echo "::error::Hydrated article title is missing in a real browser."
+            exit 1
+          }
+          if grep -Fq "بخشی از سایت درست بارگذاری نشد" /tmp/article-dom.html; then
+            echo "::error::Real browser reached the application error boundary after hydration."
+            exit 1
+          fi
+
       - name: Store verified production bundle
         if: steps.cloudflare.outputs.available != 'true'
         uses: actions/upload-artifact@v4
