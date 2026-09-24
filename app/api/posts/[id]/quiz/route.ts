@@ -5,6 +5,7 @@ import { posts } from "../../../../../db/schema";
 import { getAdminUser } from "../../../../admin-auth";
 import { createDownloadPermit } from "../../../../download-gate";
 import {
+  getQuizDb,
   isAcceptableExplanatoryAnswer,
   normalizeQuizAnswer,
 } from "../../../../quiz-research";
@@ -133,9 +134,12 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     }
 
     await ensurePlatformSchema();
-    const db = await getDb();
+    const rawDb = await getQuizDb();
+    if (!rawDb) {
+      return Response.json({ error: "پایگاه دادهٔ پژوهش فعال نیست." }, { status: 503 });
+    }
 
-    const lock = await db.prepare(
+    const lock = await rawDb.prepare(
       "SELECT locked_until FROM quiz_attempt_locks WHERE post_id = ? AND email = ? LIMIT 1",
     ).bind(id, email).first<{ locked_until: string }>();
     if (lock && new Date(lock.locked_until).getTime() > Date.now()) {
@@ -158,7 +162,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 
     if (wrongHistorical.length) {
       const lockedUntil = new Date(Date.now() + 10 * 60 * 1000).toISOString();
-      await db.prepare(`INSERT INTO quiz_attempt_locks (post_id, email, locked_until, updated_at)
+      await rawDb.prepare(`INSERT INTO quiz_attempt_locks (post_id, email, locked_until, updated_at)
         VALUES (?, ?, ?, CURRENT_TIMESTAMP)
         ON CONFLICT(post_id, email) DO UPDATE SET locked_until = excluded.locked_until, updated_at = CURRENT_TIMESTAMP`)
         .bind(id, email, lockedUntil).run();
@@ -184,11 +188,11 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       );
     }
 
-    await db.prepare(
+    await rawDb.prepare(
       "DELETE FROM quiz_attempt_locks WHERE post_id = ? AND email = ?",
     ).bind(id, email).run();
 
-    await db.prepare(`INSERT INTO quiz_responses
+    await rawDb.prepare(`INSERT INTO quiz_responses
       (post_id, full_name, email, occupation, answers_json, analytical_answer, historical_score, consent)
       VALUES (?, ?, ?, ?, ?, ?, ?, 1)`)
       .bind(
