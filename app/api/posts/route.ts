@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray, ne } from "drizzle-orm";
 import { getDb } from "../../../db";
 import { ensurePlatformSchema } from "../../../db/platform";
 import { posts } from "../../../db/schema";
@@ -21,6 +21,7 @@ export async function GET(request: Request) {
             eq(posts.slug, slug),
             eq(posts.status, "published"),
             inArray(posts.visibility, visibility),
+            ne(posts.contentType, "page"),
           ),
         )
         .limit(1);
@@ -38,6 +39,7 @@ export async function GET(request: Request) {
         and(
           eq(posts.status, "published"),
           inArray(posts.visibility, visibility),
+          ne(posts.contentType, "page"),
         ),
       )
       .orderBy(desc(posts.publishedAt), desc(posts.id))
