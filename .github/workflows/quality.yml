@@ -90,9 +90,9 @@ jobs:
           grep -Fq 'return `pbkdf2${iterations}${digest}`;' app/admin-auth.ts
           grep -q 'knowledge-layout-single' 'app/pages/[slug]/page.tsx'
           grep -q 'DownloadQuizGate' 'app/pages/[slug]/page.tsx'
-          grep -q 'href="/contribute"' app/components/PublicChrome.tsx
-          grep -q 'href="/join"' app/components/PublicChrome.tsx
-          grep -q 'href="/login"' app/components/PublicChrome.tsx
+          grep -q 'href="/contribute"' app/components/PublicHeader.tsx
+          grep -q 'href="/join"' app/components/PublicHeader.tsx
+          grep -q 'href="/login"' app/components/PublicHeader.tsx
           grep -q 'AdminArchiveViewer' app/admin/page.tsx
           grep -q 'TextFormattingTools' app/admin/page.tsx
           grep -q 'LeaderPageManager' app/admin/page.tsx
@@ -140,6 +140,12 @@ jobs:
             echo "checking $route"
             curl -fsS --max-time 20 "http://127.0.0.1:4173$route" >/dev/null
           done
+          article_body=$(curl -fsS --max-time 20 "http://127.0.0.1:4173/publications/hazarajat-1358-uprising-to-regional-government")
+          grep -Fq "از قیام پراکنده تا حکومت منطقه‌ای" <<<"$article_body"
+          if grep -Fq "بخشی از سایت درست بارگذاری نشد" <<<"$article_body"; then
+            echo "::error::Article route rendered the application error boundary."
+            exit 1
+          fi
 
       - name: Verify member/admin login error routing
         if: github.event_name == 'pull_request'
