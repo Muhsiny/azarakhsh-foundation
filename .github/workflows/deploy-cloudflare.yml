@@ -77,6 +77,16 @@ jobs:
               echo "::error::Smoke test failed for $path with HTTP $code"
               exit 1
             fi
+            if [[ "$path" == "/publications/hazarajat-1358-uprising-to-regional-government" ]]; then
+              grep -Fq "از قیام پراکنده تا حکومت منطقه‌ای" /tmp/body || {
+                echo "::error::Article body is missing from deployed route."
+                exit 1
+              }
+              if grep -Fq "بخشی از سایت درست بارگذاری نشد" /tmp/body; then
+                echo "::error::Deployed article rendered the application error boundary."
+                exit 1
+              fi
+            fi
           done
 
       - name: Store verified production bundle
