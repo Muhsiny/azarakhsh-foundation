@@ -1,7 +1,7 @@
 import { eq, sql } from "drizzle-orm";
 import { getDb } from "../../../../../db";
 import { posts } from "../../../../../db/schema";
-import { loadReadablePublicationById } from "../../../../content-access";
+import { loadReadableDownloadablePostById } from "../../../../content-access";
 import { consumeDownloadPermit } from "../../../../download-gate";
 
 function resolveDownloadUrl(value: string, requestUrl: string) {
