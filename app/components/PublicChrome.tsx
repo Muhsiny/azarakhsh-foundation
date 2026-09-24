@@ -24,10 +24,12 @@ export default function PublicChrome({
   children,
   settings,
   extraPages = [],
+  viewer,
 }: {
   children: ReactNode;
   settings: PublicChromeSettings;
   extraPages?: Array<{ slug: string; title: string }>;
+  viewer?: { displayName: string; role: string; mustChangePassword: boolean } | null;
 }) {
   const pathname = usePathname() || "/";
   const [menu, setMenu] = useState(false);
@@ -107,8 +109,21 @@ export default function PublicChrome({
                   </a>
                 ))}
                 <a href="/governance" aria-current={isCurrent("/governance")}>ساختار و پاسخ‌گویی</a>
-                <a href="/join" aria-current={isCurrent("/join")}>عضویت پژوهشی</a>
-                <a href="/login" aria-current={isCurrent("/login")}>ورود اعضا</a>
+                {viewer ? (
+                  <>
+                    <a href="/account" aria-current={isCurrent("/account")}>
+                      {viewer.mustChangePassword ? "تغییر رمز حساب" : "حساب من"}
+                    </a>
+                    <form className="az2-nav-logout" action="/api/auth/logout" method="post">
+                      <button type="submit">خروج از حساب</button>
+                    </form>
+                  </>
+                ) : (
+                  <>
+                    <a href="/join" aria-current={isCurrent("/join")}>عضویت پژوهشی</a>
+                    <a href="/login" aria-current={isCurrent("/login")}>ورود اعضا</a>
+                  </>
+                )}
                 <a href="/contact" aria-current={isCurrent("/contact")}>تماس</a>
               </div>
             </details>
@@ -140,8 +155,14 @@ export default function PublicChrome({
             <a href="/archive">آرشیف</a>
             <a href="/publications">نشریات</a>
             <a href="/contribute">ارسال سند و خاطره</a>
-            <a href="/join">عضویت پژوهشی</a>
-            <a href="/login">ورود اعضا</a>
+            {viewer ? (
+              <a href="/account">حساب پژوهشی</a>
+            ) : (
+              <>
+                <a href="/join">عضویت پژوهشی</a>
+                <a href="/login">ورود اعضا</a>
+              </>
+            )}
             <a href="/privacy">حریم خصوصی و حقوق نشر</a>
             <a href="/contact">تماس با ما</a>
           </nav>
