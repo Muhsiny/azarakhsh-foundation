@@ -74,6 +74,9 @@ export default async function ResearchResponsesPage() {
                 <strong>پاسخ تحلیلی پرسش پانزدهم</strong>
                 <p style={{ whiteSpace: "pre-wrap", lineHeight: 1.9 }}>{row.analytical_answer}</p>
               </section>
+              <form action={`/api/admin/research-responses/${row.id}`} method="post" style={{ marginTop: 12 }}>
+                <button className="admin-danger-button" type="submit">حذف کامل این پاسخ</button>
+              </form>
             </article>
           );
         })}
