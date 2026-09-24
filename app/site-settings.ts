@@ -38,10 +38,10 @@ export const siteSettings: Readonly<SiteSettings> = {
   },
   media: {
     leaderImageUrl: "/media/beheshti-original.webp",
-    councilEmblemUrl: "/media/council-emblem-drive.svg",
+    councilEmblemUrl: "/media/council-emblem-color.webp",
     leaderImageAlt: "آیت‌الله سید علی بهشتی",
     councilEmblemAlt: "نشان تاریخی حکومت شورای اتفاق اسلامی افغانستان",
-    councilEmblemCaption: "نشان تاریخی حکومت شورای اتفاق اسلامی افغانستان.",
+    councilEmblemCaption: "نشان رنگی شورای اتفاق اسلامی افغانستان، برگرفته از نسخهٔ تصویری آرشیف.",
   },
   council: {
     text: "این پرونده تجربهٔ حکومت شورای اتفاق اسلامی افغانستان را از مسیر اسناد، روایت‌ها و زمینهٔ تاریخی بررسی می‌کند.",

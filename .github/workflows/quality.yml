@@ -46,12 +46,20 @@ jobs:
           test -f app/api/contributions/route.ts
           test -f 'app/api/posts/[id]/quiz/route.ts'
           test -f 'app/api/posts/[id]/download/route.ts'
+          test -f app/api/membership/route.ts
+          test -f app/api/auth/login/route.ts
           test -f app/admin/contributions/page.tsx
           test -f app/admin/research-responses/page.tsx
           grep -q 'DownloadQuizGate' 'app/publications/[slug]/page.tsx'
+          grep -q 'acceptedAnswers' 'app/api/posts/[id]/quiz/route.ts'
+          grep -q 'quiz_attempt_locks' 'app/api/posts/[id]/quiz/route.ts'
           grep -q 'href="/contribute"' app/components/PublicChrome.tsx
+          grep -q 'href="/join"' app/components/PublicChrome.tsx
+          grep -q 'href="/login"' app/components/PublicChrome.tsx
           grep -q 'AdminArchiveViewer' app/admin/page.tsx
           grep -q 'TextFormattingTools' app/admin/page.tsx
+          grep -q 'LeaderPageManager' app/admin/page.tsx
+          grep -q 'PageManager' app/admin/page.tsx
 
       - name: Type check
         run: npm run typecheck
@@ -177,7 +185,10 @@ jobs:
                 })() : null,
                 basmalaSrc: document.querySelector('.az2-basmala img')?.getAttribute('src') || null,
                 flagCaptionHeight: document.querySelector('.az2-hero-visual figcaption')?.getBoundingClientRect().height ?? null,
-                homeLeadAlign: document.querySelector('.az2-hero-copy > p') ? getComputedStyle(document.querySelector('.az2-hero-copy > p')).textAlign : null
+                homeLeadAlign: document.querySelector('.az2-hero-copy > p') ? getComputedStyle(document.querySelector('.az2-hero-copy > p')).textAlign : null,
+                navClosedHeight: document.querySelector('.az2-nav')?.getBoundingClientRect().height ?? null,
+                headerBackground: document.querySelector('.az2-header') ? getComputedStyle(document.querySelector('.az2-header')).backgroundImage : null,
+                councilEmblemSrc: document.querySelector('.az-flagship-emblem img')?.getAttribute('src') || null
               }))()`,
               returnByValue: true
             });
@@ -226,6 +237,15 @@ jobs:
             }
             if (path === "/" && metrics.homeLeadAlign !== "justify") {
               failures.push(`/: research lead text is not justified`);
+            }
+            if (path === "/" && metrics.navClosedHeight > 2) {
+              failures.push(`/: closed mobile navigation leaked into the page (${metrics.navClosedHeight}px)`);
+            }
+            if (path === "/" && (!metrics.headerBackground || metrics.headerBackground === "none")) {
+              failures.push(`/: diplomatic masthead background is missing`);
+            }
+            if (path === "/council" && metrics.councilEmblemSrc !== "/media/council-emblem-color.webp") {
+              failures.push(`/council: authentic color emblem regressed: ${metrics.councilEmblemSrc}`);
             }
           }
 

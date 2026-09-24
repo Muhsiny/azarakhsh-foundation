@@ -17,6 +17,7 @@ const links = [
   ["/beheshti", "آیت‌الله بهشتی"],
   ["/archive", "آرشیف"],
   ["/publications", "نشریات"],
+  ["/contribute", "ارسال سند"],
 ] as const;
 
 export default function PublicChrome({
@@ -100,7 +101,6 @@ export default function PublicChrome({
               <summary>بیشتر</summary>
               <div>
                 <a href="/standards" aria-current={isCurrent("/standards")}>روش پژوهش</a>
-                <a href="/contribute" aria-current={isCurrent("/contribute")}>ارسال سند و خاطره</a>
                 {extraPages.slice(0, 2).map((page) => (
                   <a href={"/pages/" + page.slug} aria-current={isCurrent("/pages/" + page.slug)} key={page.slug}>
                     {page.title}
@@ -108,6 +108,7 @@ export default function PublicChrome({
                 ))}
                 <a href="/governance" aria-current={isCurrent("/governance")}>ساختار و پاسخ‌گویی</a>
                 <a href="/join" aria-current={isCurrent("/join")}>عضویت پژوهشی</a>
+                <a href="/login" aria-current={isCurrent("/login")}>ورود اعضا</a>
                 <a href="/contact" aria-current={isCurrent("/contact")}>تماس</a>
               </div>
             </details>
@@ -139,6 +140,8 @@ export default function PublicChrome({
             <a href="/archive">آرشیف</a>
             <a href="/publications">نشریات</a>
             <a href="/contribute">ارسال سند و خاطره</a>
+            <a href="/join">عضویت پژوهشی</a>
+            <a href="/login">ورود اعضا</a>
             <a href="/privacy">حریم خصوصی و حقوق نشر</a>
             <a href="/contact">تماس با ما</a>
           </nav>
