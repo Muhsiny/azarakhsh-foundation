@@ -109,6 +109,7 @@ export default function PublicChrome({
                 <a href="/governance" aria-current={isCurrent("/governance")}>ساختار و پاسخ‌گویی</a>
                 <a href="/join" aria-current={isCurrent("/join")}>عضویت پژوهشی</a>
                 <a href="/login" aria-current={isCurrent("/login")}>ورود اعضا</a>
+                <a href="/account" aria-current={isCurrent("/account")}>حساب من</a>
                 <a href="/contact" aria-current={isCurrent("/contact")}>تماس</a>
               </div>
             </details>
@@ -142,6 +143,7 @@ export default function PublicChrome({
             <a href="/contribute">ارسال سند و خاطره</a>
             <a href="/join">عضویت پژوهشی</a>
             <a href="/login">ورود اعضا</a>
+            <a href="/account">حساب من</a>
             <a href="/privacy">حریم خصوصی و حقوق نشر</a>
             <a href="/contact">تماس با ما</a>
           </nav>
