@@ -36,6 +36,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const publicPosts = await db
       .select({
         slug: posts.slug,
+        contentType: posts.contentType,
+        tags: posts.tags,
         updatedAt: posts.updatedAt,
         publishedAt: posts.publishedAt,
       })
@@ -49,12 +51,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .orderBy(desc(posts.updatedAt))
       .limit(5000);
 
+    const seen = new Set(result.map((entry) => entry.url));
     for (const post of publicPosts) {
+      const tags = post.tags.split(",").map((tag) => tag.trim());
+      if (tags.includes("leader-page")) continue;
+      const path =
+        post.contentType === "page"
+          ? `/pages/${encodeURIComponent(post.slug)}`
+          : `/publications/${encodeURIComponent(post.slug)}`;
+      const url = `${SITE_URL}${path}`;
+      if (seen.has(url)) continue;
+      seen.add(url);
       result.push({
-        url: `${SITE_URL}/publications/${encodeURIComponent(post.slug)}`,
+        url,
         lastModified: new Date(post.updatedAt || post.publishedAt || staticLastModified),
         changeFrequency: "monthly",
-        priority: 0.7,
+        priority: post.contentType === "page" ? 0.65 : 0.7,
       });
     }
   } catch (error) {

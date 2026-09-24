@@ -1,4 +1,10 @@
 import { isAdminRequest } from "../../../admin-auth";
+import {
+  consumeRateLimit,
+  detectUploadType,
+  isSameOriginMutation,
+  safeOriginalFileName,
+} from "../../../security";
 
 type RuntimeEnv = {
   MEDIA?: KVNamespace;
@@ -18,8 +24,27 @@ const allowedTypes = new Set([
 
 export async function POST(request: Request) {
   try {
+    if (!isSameOriginMutation(request)) {
+      return Response.json({ error: "درخواست نامعتبر است." }, { status: 403 });
+    }
     if (!(await isAdminRequest())) {
       return Response.json({ error: "اجازهٔ دسترسی ندارید." }, { status: 403 });
+    }
+
+    const limit = await consumeRateLimit(request, "admin-media-upload", 30, 60 * 60);
+    if (!limit.allowed) {
+      return Response.json(
+        { error: "تعداد آپلودها بیش از حد مجاز است. کمی بعد دوباره تلاش کنید." },
+        { status: 429, headers: { "Retry-After": String(limit.retryAfter) } },
+      );
+    }
+
+    const contentLength = Number(request.headers.get("Content-Length") || "0");
+    if (contentLength > 20 * 1024 * 1024 + 512 * 1024) {
+      return Response.json(
+        { error: "حجم فایل باید کمتر از ۲۰ مگابایت باشد." },
+        { status: 413 },
+      );
     }
 
     const { env } = await import("cloudflare:workers");
@@ -33,29 +58,37 @@ export async function POST(request: Request) {
 
     const form = await request.formData();
     const file = form.get("file");
-    if (!(file instanceof File) || !allowedTypes.has(file.type)) {
-      return Response.json(
-        { error: "فقط تصویر، PDF، صوت یا ویدیوی MP4 پذیرفته می‌شود." },
-        { status: 400 },
-      );
+    if (!(file instanceof File) || file.size <= 0) {
+      return Response.json({ error: "فایل معتبر نیست." }, { status: 400 });
     }
     if (file.size > 20 * 1024 * 1024) {
       return Response.json(
         { error: "حجم فایل باید کمتر از ۲۰ مگابایت باشد." },
+        { status: 413 },
+      );
+    }
+
+    const verified = await detectUploadType(file);
+    if (!verified || !allowedTypes.has(verified.mime)) {
+      return Response.json(
+        { error: "نوع واقعی فایل مجاز نیست یا با قالب مورد انتظار سازگار نیست." },
         { status: 400 },
       );
     }
 
-    const extension = file.name.split(".").pop()?.toLowerCase() || "bin";
-    const key = `${Date.now()}-${crypto.randomUUID()}.${extension}`;
+    const key = `${Date.now()}-${crypto.randomUUID()}.${verified.extension}`;
     await media.put(key, await file.arrayBuffer(), {
       metadata: {
-        contentType: file.type,
-        fileName: file.name,
+        contentType: verified.mime,
+        fileName: safeOriginalFileName(file.name),
+        verified: "magic-bytes-v1",
       },
     });
 
-    return Response.json({ url: `/api/media/${encodeURIComponent(key)}` });
+    return Response.json(
+      { url: `/api/media/${encodeURIComponent(key)}` },
+      { headers: { "Cache-Control": "no-store" } },
+    );
   } catch (error) {
     console.error("media upload failed", error);
     return Response.json(
@@ -65,7 +98,7 @@ export async function POST(request: Request) {
             ? `آپلود انجام نشد: ${error.message}`
             : "آپلود به دلیل خطای ناشناخته انجام نشد.",
       },
-      { status: 500 },
+      { status: 500, headers: { "Cache-Control": "no-store" } },
     );
   }
 }

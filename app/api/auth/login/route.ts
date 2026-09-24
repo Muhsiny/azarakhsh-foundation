@@ -1,9 +1,22 @@
 import { authenticateAdmin, sessionCookie } from "../../../admin-auth";
 import { consumeRateLimit, isSameOriginMutation } from "../../../security";
 
-function redirectToLogin(request: Request, error: string, retryAfter = 0) {
+function safePath(value: string, fallback: string) {
+  return value.startsWith("/") && !value.startsWith("//") ? value : fallback;
+}
+
+function redirectToLogin(
+  request: Request,
+  loginPath: "/login" | "/admin/login",
+  returnTo: string,
+  error: string,
+  retryAfter = 0,
+) {
+  const target = new URL(loginPath, request.url);
+  target.searchParams.set("error", error);
+  target.searchParams.set("returnTo", returnTo);
   const headers = new Headers({
-    Location: new URL(`/admin/login?error=${encodeURIComponent(error)}`, request.url).toString(),
+    Location: target.toString(),
     "Cache-Control": "no-store, private",
   });
   if (retryAfter > 0) headers.set("Retry-After", String(retryAfter));
@@ -18,14 +31,19 @@ export async function POST(request: Request) {
     );
   }
 
+  const contentLength = Number(request.headers.get("Content-Length") || "0");
+  if (contentLength > 32 * 1024) {
+    return Response.json({ error: "درخواست بیش از حد مجاز است." }, { status: 413 });
+  }
+
   const form = await request.formData();
-  const email = String(form.get("email") ?? "").trim().toLowerCase();
-  const password = String(form.get("password") ?? "");
-  const returnToValue = String(form.get("returnTo") ?? "/admin");
-  const returnTo =
-    returnToValue.startsWith("/") && !returnToValue.startsWith("//")
-      ? returnToValue
-      : "/admin";
+  const email = String(form.get("email") ?? "").trim().toLowerCase().slice(0, 254);
+  const password = String(form.get("password") ?? "").slice(0, 512);
+  const requestedLoginPath = String(form.get("loginPath") ?? "");
+  const loginPath: "/login" | "/admin/login" =
+    requestedLoginPath === "/login" ? "/login" : "/admin/login";
+  const fallback = loginPath === "/login" ? "/publications" : "/admin";
+  const returnTo = safePath(String(form.get("returnTo") ?? fallback), fallback);
 
   const [ipLimit, accountLimit] = await Promise.all([
     consumeRateLimit(request, "admin-login-ip", 20, 10 * 60),
@@ -34,21 +52,33 @@ export async function POST(request: Request) {
   if (!ipLimit.allowed || !accountLimit.allowed) {
     return redirectToLogin(
       request,
+      loginPath,
+      returnTo,
       "rate",
       Math.max(ipLimit.retryAfter, accountLimit.retryAfter),
     );
   }
 
   const result = await authenticateAdmin(email, password);
-
   if (!result) {
-    return redirectToLogin(request, "credentials");
+    return redirectToLogin(request, loginPath, returnTo, "credentials");
   }
 
+  if (loginPath === "/admin/login" && result.user.role === "member") {
+    return redirectToLogin(request, loginPath, returnTo, "credentials");
+  }
+
+  const authorizedReturnTo =
+    result.user.role === "member" && returnTo.startsWith("/admin")
+      ? "/publications"
+      : returnTo;
+  const destination = result.user.mustChangePassword
+    ? "/account?first=1"
+    : authorizedReturnTo;
   return new Response(null, {
     status: 303,
     headers: {
-      Location: new URL(returnTo, request.url).toString(),
+      Location: new URL(destination, request.url).toString(),
       "Set-Cookie": sessionCookie(result.token),
       "Cache-Control": "no-store, private",
     },

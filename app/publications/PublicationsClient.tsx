@@ -3,10 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { emptyFilters, matchesFilters, readFilters, typeLabels, type SearchFilters } from "./search";
 
-type Post = { id: number; slug: string; title: string; excerpt: string; content: string; category: string; contentType: string; language: string; visibility: string; authorName: string; coverImage: string | null; fileUrl: string | null; fileName: string | null; sourceNote: string; tags: string; views: number; downloads: number; publishedAt: string | null };
+export type PublicationListItem = { id: number; slug: string; title: string; excerpt: string; category: string; contentType: string; language: string; visibility: string; authorName: string; coverImage: string | null; tags: string; publishedAt: string | null };
 const languageLabels: Record<string, string> = { fa: "فارسی", ps: "پښتو", en: "English" };
 
-export default function PublicationsClient({ initialPosts, initialFilters = emptyFilters, archive = false }: { initialPosts: Post[]; initialFilters?: SearchFilters; archive?: boolean }) {
+export default function PublicationsClient({ initialPosts, initialFilters = emptyFilters, archive = false }: { initialPosts: PublicationListItem[]; initialFilters?: SearchFilters; archive?: boolean }) {
   const [filters, setFilters] = useState(initialFilters);
   const [page, setPage] = useState(1);
   useEffect(() => {
@@ -68,7 +68,7 @@ export default function PublicationsClient({ initialPosts, initialFilters = empt
               </a>
             </div>
           )}
-        </> : <><div className="publication-grid">{shown.map(post => <article key={post.id}>{post.coverImage ? <img src={post.coverImage} alt={`تصویر ${post.title}`} loading="lazy" width="600" height="400" /> : <div className="archive-placeholder" aria-hidden="true">آ</div>}<div><span className="az-post-type">{typeLabels[post.contentType] || post.category} · {languageLabels[post.language] || post.language}</span><h2>{post.title}</h2><p style={{display:"-webkit-box",WebkitBoxOrient:"vertical",WebkitLineClamp:3,overflow:"hidden"}}>{post.excerpt || (post.contentType === "page" ? "برای مطالعهٔ متن کامل، پرونده را باز کنید." : post.content)}</p><small>{post.authorName || "تحریریهٔ بنیاد"}{post.visibility === "members" ? " · ویژهٔ اعضا" : ""}</small><a className="publication-read" href={post.tags.split(",").map(t=>t.trim()).includes("leader-page") ? "/beheshti" : post.contentType === "page" ? `/pages/${post.slug}` : `/publications/${post.slug}`}>مطالعه و مشخصات منبع ←</a></div></article>)}</div>{shown.length < visiblePosts.length && <div className="az-actions"><button className="az-action" type="button" onClick={() => setPage(page+1)}>نمایش منابع بیشتر</button></div>}</>}
+        </> : <><div className="publication-grid">{shown.map(post => <article key={post.id}>{post.coverImage ? <img src={post.coverImage} alt={`تصویر ${post.title}`} loading="lazy" width="600" height="400" /> : <div className="archive-placeholder" aria-hidden="true">آ</div>}<div><span className="az-post-type">{typeLabels[post.contentType] || post.category} · {languageLabels[post.language] || post.language}</span><h2>{post.title}</h2><p style={{display:"-webkit-box",WebkitBoxOrient:"vertical",WebkitLineClamp:3,overflow:"hidden"}}>{post.excerpt || "برای مطالعهٔ متن کامل، پرونده را باز کنید."}</p><small>{post.authorName || "تحریریهٔ بنیاد"}{post.visibility === "members" ? " · ویژهٔ اعضا" : ""}</small><a className="publication-read" href={post.tags.split(",").map(t=>t.trim()).includes("leader-page") ? "/beheshti" : post.contentType === "page" ? `/pages/${post.slug}` : `/publications/${post.slug}`}>مطالعه و مشخصات منبع ←</a></div></article>)}</div>{shown.length < visiblePosts.length && <div className="az-actions"><button className="az-action" type="button" onClick={() => setPage(page+1)}>نمایش منابع بیشتر</button></div>}</>}
       </section>
     </main>
   );

@@ -8,6 +8,7 @@ import {
   canPublishRequest,
   isAdminRequest,
 } from "../../../../admin-auth";
+import { isSameOriginMutation } from "../../../../security";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -18,6 +19,7 @@ function errorMessage(error: unknown) {
 }
 
 export async function PUT(request: Request, context: RouteContext) {
+  if (!isSameOriginMutation(request)) return Response.json({ error: "درخواست نامعتبر است." }, { status: 403 });
   if (!(await isAdminRequest())) {
     return Response.json({ error: "اجازهٔ دسترسی ندارید." }, { status: 403 });
   }
@@ -117,7 +119,8 @@ export async function PUT(request: Request, context: RouteContext) {
   }
 }
 
-export async function DELETE(_request: Request, context: RouteContext) {
+export async function DELETE(request: Request, context: RouteContext) {
+  if (!isSameOriginMutation(request)) return Response.json({ error: "درخواست نامعتبر است." }, { status: 403 });
   if (!(await canManageSiteRequest())) {
     return Response.json({ error: "اجازهٔ دسترسی ندارید." }, { status: 403 });
   }

@@ -14,6 +14,7 @@ export default async function AdminLoginPage({
         <h1>مرکز مدیریت بنیاد آذرخش</h1>
         <p>با ایمیل و رمز مدیریتی وارد شوید.</p>
         <form action="/api/auth/login" method="post">
+          <input name="loginPath" type="hidden" value="/admin/login" />
           <input name="returnTo" type="hidden" value={returnTo || "/admin"} />
           <label>
             ایمیل

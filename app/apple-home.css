@@ -3173,3 +3173,14 @@
 .public-redesign .az-leader-portrait{
   box-shadow:0 24px 58px rgba(5,43,35,.115);
 }
+
+
+/* Architecture hardening: managed pages are intentionally single-column. */
+.public-redesign .knowledge-layout.knowledge-layout-single{
+  grid-template-columns:minmax(0,780px);
+  justify-content:center;
+}
+.public-redesign .knowledge-layout.knowledge-layout-single .knowledge-article{
+  width:100%;
+  min-width:0;
+}

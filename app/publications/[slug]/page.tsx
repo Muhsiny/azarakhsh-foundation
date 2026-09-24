@@ -1,6 +1,6 @@
 import { Fragment, cache, type ReactNode } from "react";
 import type { Metadata } from "next";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, ne } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { getDb } from "../../../db";
 import { ensurePlatformSchema } from "../../../db/platform";
@@ -8,6 +8,7 @@ import { posts } from "../../../db/schema";
 import { getAdminUser } from "../../admin-auth";
 import ReadingTools from "../../components/ReadingTools";
 import DownloadQuizGate from "../../components/DownloadQuizGate";
+import ViewTracker from "../../components/ViewTracker";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,7 @@ const loadArticle = cache(async (slug: string) => {
       and(
         eq(posts.slug, slug),
         eq(posts.status, "published"),
+        ne(posts.contentType, "page"),
         inArray(posts.visibility, visibility),
       ),
     )
@@ -105,6 +107,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     <main className="article-page">
       <div className="az-breadcrumb" data-inline-static><a href="/publications">نشریات</a><span aria-hidden="true"> / </span><span>مطالعهٔ مطلب</span></div>
       <article>
+        {post.visibility === "public" && <ViewTracker postId={post.id} />}
         <ReadingTools />
         <div className="article-meta"><span>{post.category}</span><time>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("fa-AF") : ""}</time></div>
         <h1>{post.title}</h1>

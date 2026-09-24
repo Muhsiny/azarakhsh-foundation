@@ -1,3 +1,4 @@
+import { desc, eq } from "drizzle-orm";
 import { getDb } from "../../../db";
 import { ensurePlatformSchema } from "../../../db/platform";
 import { membershipRequests } from "../../../db/schema";
@@ -57,6 +58,26 @@ export async function POST(request: Request) {
   }
 
   const db = await getDb();
+  const [existing] = await db
+    .select({ status: membershipRequests.status })
+    .from(membershipRequests)
+    .where(eq(membershipRequests.email, email))
+    .orderBy(desc(membershipRequests.id))
+    .limit(1);
+
+  if (existing?.status === "pending") {
+    return Response.json(
+      { ok: true, alreadyPending: true },
+      { status: 202, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+  if (existing?.status === "approved") {
+    return Response.json(
+      { error: "برای این ایمیل قبلاً عضویت تأیید شده است." },
+      { status: 409, headers: { "Cache-Control": "no-store" } },
+    );
+  }
+
   await db.insert(membershipRequests).values({
     fullName,
     email,
