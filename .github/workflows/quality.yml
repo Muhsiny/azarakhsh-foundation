@@ -185,7 +185,10 @@ jobs:
                 })() : null,
                 basmalaSrc: document.querySelector('.az2-basmala img')?.getAttribute('src') || null,
                 flagCaptionHeight: document.querySelector('.az2-hero-visual figcaption')?.getBoundingClientRect().height ?? null,
-                homeLeadAlign: document.querySelector('.az2-hero-copy > p') ? getComputedStyle(document.querySelector('.az2-hero-copy > p')).textAlign : null
+                homeLeadAlign: document.querySelector('.az2-hero-copy > p') ? getComputedStyle(document.querySelector('.az2-hero-copy > p')).textAlign : null,
+                navClosedHeight: document.querySelector('.az2-nav')?.getBoundingClientRect().height ?? null,
+                headerBackground: document.querySelector('.az2-header') ? getComputedStyle(document.querySelector('.az2-header')).backgroundImage : null,
+                councilEmblemSrc: document.querySelector('.az-flagship-emblem img')?.getAttribute('src') || null
               }))()`,
               returnByValue: true
             });
@@ -234,6 +237,15 @@ jobs:
             }
             if (path === "/" && metrics.homeLeadAlign !== "justify") {
               failures.push(`/: research lead text is not justified`);
+            }
+            if (path === "/" && metrics.navClosedHeight > 2) {
+              failures.push(`/: closed mobile navigation leaked into the page (${metrics.navClosedHeight}px)`);
+            }
+            if (path === "/" && (!metrics.headerBackground || metrics.headerBackground === "none")) {
+              failures.push(`/: diplomatic masthead background is missing`);
+            }
+            if (path === "/council" && metrics.councilEmblemSrc !== "/media/council-emblem-color.webp") {
+              failures.push(`/council: authentic color emblem regressed: ${metrics.councilEmblemSrc}`);
             }
           }
 
