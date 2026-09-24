@@ -32,7 +32,20 @@ export default async function ArchivePage({ searchParams }: { searchParams: Prom
   const visibility = user ? ["public", "members"] : ["public"];
   const db = await getDb();
   const archivePosts = await db
-    .select()
+    .select({
+      id: posts.id,
+      slug: posts.slug,
+      title: posts.title,
+      excerpt: posts.excerpt,
+      category: posts.category,
+      contentType: posts.contentType,
+      language: posts.language,
+      visibility: posts.visibility,
+      authorName: posts.authorName,
+      coverImage: posts.coverImage,
+      tags: posts.tags,
+      publishedAt: posts.publishedAt,
+    })
     .from(posts)
     .where(
       and(
@@ -42,7 +55,7 @@ export default async function ArchivePage({ searchParams }: { searchParams: Prom
     )
     .orderBy(desc(posts.publishedAt), desc(posts.id))
     .limit(200);
-  const files = archivePosts.filter(post => ["book", "document", "oral-history", "image", "audio", "video"].includes(post.contentType) && Boolean(post.fileUrl));
+  const files = archivePosts.filter(post => ["book", "document", "oral-history", "image", "audio", "video"].includes(post.contentType));
   return (
     <>
       <PublicationsClient initialPosts={files} initialFilters={readFilters(params)} archive />
