@@ -14,6 +14,21 @@ export default function ContributionReviewList({ initialItems }: { initialItems:
   const [items, setItems] = useState(initialItems);
   const [message, setMessage] = useState("");
 
+  async function deleteItem(id: number) {
+    if (!window.confirm("این منبع و ضمیمهٔ آن برای همیشه حذف شود؟")) return;
+    setMessage("");
+    const response = await fetch(`/api/admin/contributions/${id}`, {
+      method: "DELETE",
+    });
+    const data = await response.json().catch(() => ({})) as { error?: string };
+    if (!response.ok) {
+      setMessage(data.error || "حذف انجام نشد.");
+      return;
+    }
+    setItems((current) => current.filter((item) => item.id !== id));
+    setMessage("منبع و ضمیمهٔ آن حذف شد.");
+  }
+
   async function changeStatus(id: number, status: string) {
     setMessage("");
     const response = await fetch(`/api/admin/contributions/${id}/status`, {
@@ -57,6 +72,7 @@ export default function ContributionReviewList({ initialItems }: { initialItems:
               <button type="button" onClick={() => void changeStatus(item.id, "accepted")}>پذیرفتن</button>
               <button type="button" onClick={() => void changeStatus(item.id, "rejected")}>رد کردن</button>
               <button type="button" onClick={() => void changeStatus(item.id, "pending")}>بازگشت به انتظار</button>
+              <button type="button" className="admin-danger-button" onClick={() => void deleteItem(item.id)}>حذف کامل</button>
             </div>
           </article>
         ))}
