@@ -4,6 +4,36 @@ import { ensurePlatformSchema } from "../../../db/platform";
 import { posts } from "../../../db/schema";
 import { getAdminUser } from "../../admin-auth";
 
+const publicPostSelection = {
+  id: posts.id,
+  slug: posts.slug,
+  title: posts.title,
+  excerpt: posts.excerpt,
+  category: posts.category,
+  contentType: posts.contentType,
+  language: posts.language,
+  visibility: posts.visibility,
+  authorName: posts.authorName,
+  coverImage: posts.coverImage,
+  sourceNote: posts.sourceNote,
+  tags: posts.tags,
+  featured: posts.featured,
+  views: posts.views,
+  downloads: posts.downloads,
+  publishedAt: posts.publishedAt,
+} as const;
+
+function publicShape<T extends Record<string, unknown>>(post: T, hasFile: boolean) {
+  return {
+    ...post,
+    hasFile,
+    url:
+      post.contentType === "page"
+        ? `/pages/${encodeURIComponent(String(post.slug))}`
+        : `/publications/${encodeURIComponent(String(post.slug))}`,
+  };
+}
+
 export async function GET(request: Request) {
   try {
     await ensurePlatformSchema();
@@ -14,7 +44,10 @@ export async function GET(request: Request) {
 
     if (slug) {
       const [post] = await db
-        .select()
+        .select({
+          ...publicPostSelection,
+          fileUrl: posts.fileUrl,
+        })
         .from(posts)
         .where(
           and(
@@ -28,11 +61,18 @@ export async function GET(request: Request) {
       if (!post) {
         return Response.json({ error: "مطلب یافت نشد." }, { status: 404 });
       }
-      return Response.json({ post });
+      const { fileUrl, ...safePost } = post;
+      return Response.json(
+        { post: publicShape(safePost, Boolean(fileUrl)) },
+        { headers: { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" } },
+      );
     }
 
     const rows = await db
-      .select()
+      .select({
+        ...publicPostSelection,
+        fileUrl: posts.fileUrl,
+      })
       .from(posts)
       .where(
         and(
@@ -43,8 +83,18 @@ export async function GET(request: Request) {
       .orderBy(desc(posts.publishedAt), desc(posts.id))
       .limit(100);
 
-    return Response.json({ posts: rows });
+    return Response.json(
+      {
+        posts: rows.map(({ fileUrl, ...post }) =>
+          publicShape(post, Boolean(fileUrl)),
+        ),
+      },
+      { headers: { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" } },
+    );
   } catch {
-    return Response.json({ posts: [] });
+    return Response.json(
+      { posts: [] },
+      { status: 503, headers: { "Cache-Control": "no-store" } },
+    );
   }
 }
