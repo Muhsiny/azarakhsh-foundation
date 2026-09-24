@@ -2,7 +2,7 @@ import { and, desc, eq, inArray, ne } from "drizzle-orm";
 import { getDb } from "../../../db";
 import { ensurePlatformSchema } from "../../../db/platform";
 import { posts } from "../../../db/schema";
-import { getAdminUser } from "../../admin-auth";
+import { readableVisibilities } from "../../content-access";
 
 export async function GET(request: Request) {
   try {
