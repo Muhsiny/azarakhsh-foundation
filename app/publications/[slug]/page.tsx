@@ -48,7 +48,10 @@ const loadArticle = cache(async (slug: string) => {
       ),
     )
     .limit(1);
-  return post ? { ...post, canonical: false as const } : null;
+  if (!post) return null;
+  const legacyTargetCategories = new Set(["حکومت شورای اتفاق", "آیت‌الله بهشتی"]);
+  if (post.contentType === "article" && legacyTargetCategories.has(post.category)) return null;
+  return { ...post, canonical: false as const };
 });
 
 export async function generateMetadata({
