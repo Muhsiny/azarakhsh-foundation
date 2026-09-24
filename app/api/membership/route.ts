@@ -1,3 +1,4 @@
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { getDb } from "../../../db";
 import { ensurePlatformSchema } from "../../../db/platform";
 import { membershipRequests } from "../../../db/schema";
@@ -57,12 +58,26 @@ export async function POST(request: Request) {
   }
 
   const db = await getDb();
-  await db.insert(membershipRequests).values({
-    fullName,
-    email,
-    organization,
-    reason,
-  });
+  const [existing] = await db
+    .select({ id: membershipRequests.id, status: membershipRequests.status })
+    .from(membershipRequests)
+    .where(
+      and(
+        eq(membershipRequests.email, email),
+        inArray(membershipRequests.status, ["pending", "approved"]),
+      ),
+    )
+    .orderBy(desc(membershipRequests.id))
+    .limit(1);
+
+  if (!existing) {
+    await db.insert(membershipRequests).values({
+      fullName,
+      email,
+      organization,
+      reason,
+    });
+  }
   return Response.json(
     { ok: true },
     { status: 201, headers: { "Cache-Control": "no-store" } },
