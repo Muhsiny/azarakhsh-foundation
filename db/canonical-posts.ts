@@ -1,4 +1,7 @@
 export type CanonicalPost = {
+  articleNo: number;
+  publishedAt: string;
+  updatedAt: string;
   slug: string;
   title: string;
   excerpt: string;
@@ -17,6 +20,9 @@ export type CanonicalPost = {
 
 export const canonicalPosts: CanonicalPost[] = [
   {
+    articleNo: 2,
+    publishedAt: "2026-09-24T17:42:00.000Z",
+    updatedAt: "2026-09-24T17:42:00.000Z",
     slug: "hazarajat-1358-uprising-to-regional-government",
     title: "از قیام پراکنده تا حکومت منطقه‌ای؛ هزاره‌جات ۱۳۵۸ و پیدایش شورای اتفاق",
     excerpt: "در ۱۳۵۸، فروپاشی ادارهٔ دولتی در بخش بزرگی از مناطق مرکزی، مقاومت را با پرسشی دشوارتر از جنگ روبه‌رو کرد: چه کسی پس از عقب‌نشینی دولت امنیت، قضا، مالیه، ارتباطات و دفاع را اداره کند؟ این پژوهش، گذار قیام‌های محلی به حکومت شورای اتفاق و جایگاه آیت‌الله سید علی بهشتی را با سنجش روایت‌های داخلی و پژوهش‌های مستقل بازسازی می‌کند.",
