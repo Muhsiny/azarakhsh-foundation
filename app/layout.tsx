@@ -11,6 +11,7 @@ import { SITE_URL } from "./site-url";
 import { ensurePlatformSchema } from "../db/platform";
 import { getDb } from "../db";
 import { posts } from "../db/schema";
+import { getAdminUser } from "./admin-auth";
 
 const naskh = Noto_Naskh_Arabic({
   subsets: ["arabic"],
@@ -73,6 +74,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const viewer = await getAdminUser().catch(() => null);
   let extraPages: Array<{ slug: string; title: string }> = [];
   try {
     await ensurePlatformSchema();
@@ -130,7 +132,13 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     <html lang="fa" dir="rtl" className={`${naskh.variable} ${vazirmatn.variable}`}>
       <body>
         <script dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} type="application/ld+json" />
-        <PublicChrome settings={chromeSettings} extraPages={extraPages}>{children}</PublicChrome>
+        <PublicChrome
+          settings={chromeSettings}
+          extraPages={extraPages}
+          viewer={viewer ? { displayName: viewer.displayName, role: viewer.role, mustChangePassword: viewer.mustChangePassword } : null}
+        >
+          {children}
+        </PublicChrome>
       </body>
     </html>
   );
