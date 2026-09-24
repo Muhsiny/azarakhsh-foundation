@@ -40,21 +40,35 @@ export default function PublicationsClient({ initialPosts, initialFilters = empt
         </div>
         <div className="az-results-info"><span role="status" aria-live="polite">{visiblePosts.length.toLocaleString("fa-AF")} نتیجه در مجموعهٔ قابل‌دسترسی</span>{active && <button onClick={() => update(emptyFilters)} type="button">پاک‌کردن جست‌وجو و فیلترها</button>}<a href="/join">عضویت پژوهشی ↗</a></div>
         </>}
-        {!visiblePosts.length ? <div className="az-empty">
-          <div className="az-empty-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M6.5 4.5h11v15h-11zM9 8h6M9 11.5h6M9 15h4" /></svg>
-          </div>
-          <div className="az-empty-copy">
-            <h2>{initialPosts.length ? "منبعی با این مشخصات پیدا نشد." : "هنوز منبعی در این مجموعه در دسترس نیست."}</h2>
-            <p>{initialPosts.length ? "عبارت کوتاه‌تری بنویسید یا یکی از فیلترها را بردارید." : "تا تکمیل این مجموعه، می‌توانید پرونده‌های اصلی بنیاد را مطالعه کنید یا برای غنی‌سازی آرشیف، سند و روایت خود را بفرستید."}</p>
-            <div className="az-actions">
-              {active ? <button className="az-action" type="button" onClick={() => update(emptyFilters)}>نمایش همهٔ منابع</button> : <a className="az-action" href="/archive">مرور آرشیف</a>}
-              <a className="az-small-link" href="/beheshti">پروندهٔ آیت‌الله بهشتی ←</a>
-              <a className="az-small-link" href="/council">پروندهٔ شورای اتفاق ←</a>
-              <a className="az-small-link" href="/contribute">ارسال منبع ←</a>
+        {!visiblePosts.length ? <>
+          <div className="az-empty">
+            <div className="az-empty-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M6.5 4.5h11v15h-11zM9 8h6M9 11.5h6M9 15h4" /></svg>
+            </div>
+            <div className="az-empty-copy">
+              <h2>{initialPosts.length ? "منبعی با این مشخصات پیدا نشد." : "هنوز منبعی در این مجموعه در دسترس نیست."}</h2>
+              <p>{initialPosts.length ? "عبارت کوتاه‌تری بنویسید یا یکی از فیلترها را بردارید." : "تا تکمیل این مجموعه، می‌توانید پرونده‌های اصلی بنیاد را مطالعه کنید یا برای غنی‌سازی آرشیف، سند و روایت خود را بفرستید."}</p>
+              <div className="az-actions">
+                {active ? <button className="az-action" type="button" onClick={() => update(emptyFilters)}>نمایش همهٔ منابع</button> : <a className="az-action" href="/archive">مرور آرشیف</a>}
+                <a className="az-small-link" href="/contribute">ارسال منبع ←</a>
+              </div>
             </div>
           </div>
-        </div> : <><div className="publication-grid">{shown.map(post => <article key={post.id}>{post.coverImage ? <img src={post.coverImage} alt={`تصویر ${post.title}`} loading="lazy" width="600" height="400" /> : <div className="archive-placeholder" aria-hidden="true">آ</div>}<div><span className="az-post-type">{typeLabels[post.contentType] || post.category} · {languageLabels[post.language] || post.language}</span><h2>{post.title}</h2><p style={{display:"-webkit-box",WebkitBoxOrient:"vertical",WebkitLineClamp:3,overflow:"hidden"}}>{post.excerpt || (post.contentType === "page" ? "برای مطالعهٔ متن کامل، پرونده را باز کنید." : post.content)}</p><small>{post.authorName || "تحریریهٔ بنیاد"}{post.visibility === "members" ? " · ویژهٔ اعضا" : ""}</small><a className="publication-read" href={post.tags.split(",").map(t=>t.trim()).includes("leader-page") ? "/beheshti" : post.contentType === "page" ? `/pages/${post.slug}` : `/publications/${post.slug}`}>مطالعه و مشخصات منبع ←</a></div></article>)}</div>{shown.length < visiblePosts.length && <div className="az-actions"><button className="az-action" type="button" onClick={() => setPage(page+1)}>نمایش منابع بیشتر</button></div>}</>}
+          {!initialPosts.length && (
+            <div className="az-empty-dossiers" aria-label="پرونده‌های پیشنهادی برای مطالعه">
+              <a href="/beheshti">
+                <span>پروندهٔ زندگی و زمانه</span>
+                <strong>آیت‌الله سید علی بهشتی</strong>
+                <small>زندگی، فعالیت‌های علمی و سیاسی، اسناد و روایت‌ها ←</small>
+              </a>
+              <a href="/council">
+                <span>پروندهٔ محوری / ۰۱</span>
+                <strong>حکومت شورای اتفاق اسلامی افغانستان</strong>
+                <small>ساختار، حکومت‌داری، اسناد و سلسله‌مراتب شواهد ←</small>
+              </a>
+            </div>
+          )}
+        </> : <><div className="publication-grid">{shown.map(post => <article key={post.id}>{post.coverImage ? <img src={post.coverImage} alt={`تصویر ${post.title}`} loading="lazy" width="600" height="400" /> : <div className="archive-placeholder" aria-hidden="true">آ</div>}<div><span className="az-post-type">{typeLabels[post.contentType] || post.category} · {languageLabels[post.language] || post.language}</span><h2>{post.title}</h2><p style={{display:"-webkit-box",WebkitBoxOrient:"vertical",WebkitLineClamp:3,overflow:"hidden"}}>{post.excerpt || (post.contentType === "page" ? "برای مطالعهٔ متن کامل، پرونده را باز کنید." : post.content)}</p><small>{post.authorName || "تحریریهٔ بنیاد"}{post.visibility === "members" ? " · ویژهٔ اعضا" : ""}</small><a className="publication-read" href={post.tags.split(",").map(t=>t.trim()).includes("leader-page") ? "/beheshti" : post.contentType === "page" ? `/pages/${post.slug}` : `/publications/${post.slug}`}>مطالعه و مشخصات منبع ←</a></div></article>)}</div>{shown.length < visiblePosts.length && <div className="az-actions"><button className="az-action" type="button" onClick={() => setPage(page+1)}>نمایش منابع بیشتر</button></div>}</>}
       </section>
     </main>
   );
