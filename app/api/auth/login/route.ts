@@ -68,7 +68,13 @@ export async function POST(request: Request) {
     return redirectToLogin(request, loginPath, returnTo, "credentials");
   }
 
-  const destination = result.user.mustChangePassword ? "/account?first=1" : returnTo;
+  const authorizedReturnTo =
+    result.user.role === "member" && returnTo.startsWith("/admin")
+      ? "/publications"
+      : returnTo;
+  const destination = result.user.mustChangePassword
+    ? "/account?first=1"
+    : authorizedReturnTo;
   return new Response(null, {
     status: 303,
     headers: {
