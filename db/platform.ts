@@ -1,3 +1,5 @@
+import { canonicalPosts } from "./canonical-posts";
+
 let ready: Promise<void> | null = null;
 
 type RuntimeEnv = { DB?: D1Database };
@@ -191,12 +193,40 @@ async function applyCompatibilityMigrations(db: D1Database) {
   `).run();
 }
 
+async function seedCanonicalPosts(db: D1Database) {
+  for (const post of canonicalPosts) {
+    await db.prepare(`
+      INSERT OR IGNORE INTO posts (
+        slug, title, excerpt, content, category, content_type, language,
+        visibility, author_name, cover_image, source_note, tags, featured,
+        status, published_at, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    `).bind(
+      post.slug,
+      post.title,
+      post.excerpt,
+      post.content,
+      post.category,
+      post.contentType,
+      post.language,
+      post.visibility,
+      post.authorName,
+      post.coverImage,
+      post.sourceNote,
+      post.tags,
+      post.featured,
+      post.status,
+    ).run();
+  }
+}
+
 export async function ensurePlatformSchema() {
   if (ready) return ready;
   ready = (async () => {
     const db = await runtimeDb();
     await bootstrapTables(db);
     await applyCompatibilityMigrations(db);
+    await seedCanonicalPosts(db);
   })().catch((error) => {
     ready = null;
     throw error;
