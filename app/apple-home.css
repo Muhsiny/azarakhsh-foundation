@@ -2807,3 +2807,27 @@
     border-radius:12px;
   }
 }
+
+
+/* Council desktop density: remove the oversized dark text band under the flag. */
+@media(min-width:901px){
+  .public-redesign .az-flagship-hero-grid{
+    min-height:310px;
+    padding-block:28px;
+  }
+  .public-redesign .az-flagship-hero{
+    padding:0;
+  }
+  .public-redesign .az-flagship-copy h1{
+    font-size:clamp(36px,3.25vw,50px);
+    line-height:1.46;
+  }
+  .public-redesign .az-flagship-copy>p{
+    margin:10px 0 16px;
+    font-size:14.5px;
+    line-height:1.9;
+  }
+  .public-redesign .az-flagship-emblem>p{
+    margin-top:7px;
+  }
+}
