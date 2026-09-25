@@ -20,11 +20,21 @@ export const metadata: Metadata = {
 };
 
 function inlineFormatting(value: string): ReactNode[] {
-  return value.split(/(\*\*[^*]+\*\*)/g).filter(Boolean).map((part, index) =>
-    part.startsWith("**") && part.endsWith("**")
-      ? <strong key={index}>{part.slice(2, -2)}</strong>
-      : <Fragment key={index}>{part}</Fragment>,
-  );
+  return value
+    .split(/(\*\*[^*]+\*\*|\*[^*]+\*|\[[۰-۹0-9،,\s]+\])/g)
+    .filter(Boolean)
+    .map((part, index) => {
+      if (part.startsWith("**") && part.endsWith("**")) {
+        return <strong key={index}>{part.slice(2, -2)}</strong>;
+      }
+      if (part.startsWith("*") && part.endsWith("*")) {
+        return <em key={index}>{part.slice(1, -1)}</em>;
+      }
+      if (/^\[[۰-۹0-9،,\s]+\]$/.test(part)) {
+        return <sup className="article-citation" key={index}>{part}</sup>;
+      }
+      return <Fragment key={index}>{part}</Fragment>;
+    });
 }
 
 function renderBlock(value: string, index: number) {
