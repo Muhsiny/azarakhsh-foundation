@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { and, desc, eq } from "drizzle-orm";
 import { Noto_Naskh_Arabic, Vazirmatn } from "next/font/google";
 import "./globals.css";
 
@@ -10,9 +9,6 @@ import PublicFooter from "./components/PublicFooter";
 import type { CSSProperties } from "react";
 import { siteSettings as settings } from "./site-settings";
 import { SITE_URL } from "./site-url";
-import { ensurePlatformSchema } from "../db/platform";
-import { getDb } from "../db";
-import { posts } from "../db/schema";
 
 const naskh = Noto_Naskh_Arabic({
   subsets: ["arabic"],
@@ -74,25 +70,8 @@ export const metadata: Metadata = {
   applicationName: "بنیاد آذرخش",
 };
 
-export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  let extraPages: Array<{ slug: string; title: string }> = [];
-  try {
-    await ensurePlatformSchema();
-    const db = await getDb();
-    extraPages = await db
-      .select({ slug: posts.slug, title: posts.title })
-      .from(posts)
-      .where(and(
-        eq(posts.contentType, "page"),
-        eq(posts.status, "published"),
-        eq(posts.visibility, "public"),
-        eq(posts.featured, 1),
-      ))
-      .orderBy(desc(posts.updatedAt))
-      .limit(6);
-  } catch {
-    extraPages = [];
-  }
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const extraPages: Array<{ slug: string; title: string }> = [];
   const chromeSettings = {
     identity: {
       siteName: settings.identity.siteName,
