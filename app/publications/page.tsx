@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { getDb } from "../../db";
-import { ensurePlatformSchema } from "../../db/platform";
 import { posts } from "../../db/schema";
 import { canonicalPosts } from "../../db/canonical-posts";
 import { getAdminUser } from "../admin-auth";
@@ -43,7 +42,6 @@ export default async function PublicationsPage({ searchParams }: { searchParams:
   }> = [];
 
   try {
-    await ensurePlatformSchema();
     const db = await getDb();
     rows = await db
       .select({
