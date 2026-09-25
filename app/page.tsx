@@ -33,12 +33,12 @@ export default async function Home() {
       .from(posts)
       .where(and(eq(posts.status, "published"), eq(posts.visibility, "public")))
       .orderBy(desc(posts.publishedAt), desc(posts.id))
-      .limit(12))
+      .limit(200))
       .filter((post) => !(
         post.contentType === "article" &&
         new Set(["حکومت شورای اتفاق", "آیت‌الله بهشتی"]).has(post.category)
       ))
-      .slice(0, 3);
+      ;
   } catch {
     latest = [];
   }
