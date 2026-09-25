@@ -102,14 +102,35 @@ function formattedLines(value: string) {
 }
 
 function formattedParagraph(value: string, index: number) {
-  const match = value.match(/^:::(rtl|center|justify)\n([\s\S]*?)\n:::$/);
+  const raw = value.trim();
+
+  // The page already renders the article title as its H1.
+  // Canonical article bodies also begin with "# title"; suppress that duplicate.
+  if (raw.startsWith("# ")) return null;
+
+  if (raw.startsWith("### ")) {
+    return <h3 key={index}>{inlineFormatting(raw.slice(4))}</h3>;
+  }
+
+  if (raw.startsWith("## ")) {
+    return <h2 key={index}>{inlineFormatting(raw.slice(3))}</h2>;
+  }
+
+  if (raw.startsWith("> ")) {
+    return <blockquote key={index}>{formattedLines(raw.replace(/^> ?/gm, ""))}</blockquote>;
+  }
+
+  if (/^(?:[-*] .+\n?)+$/.test(raw)) {
+    const items = raw.split("\n").map((line) => line.replace(/^[-*] /, "").trim()).filter(Boolean);
+    return <ul key={index}>{items.map((item, itemIndex) => <li key={itemIndex}>{inlineFormatting(item)}</li>)}</ul>;
+  }
+
+  const match = raw.match(/^:::(rtl|center|justify)\n([\s\S]*?)\n:::$/);
   const mode = match?.[1];
-  const text = match?.[2] ?? value;
+  const text = match?.[2] ?? raw;
   const style = mode === "center"
     ? { direction: "rtl" as const, textAlign: "center" as const }
-    : mode === "justify"
-      ? { direction: "rtl" as const, textAlign: "justify" as const }
-      : { direction: "rtl" as const, textAlign: "right" as const };
+    : { direction: "rtl" as const, textAlign: "justify" as const };
 
   return <p key={index} style={style}>{formattedLines(text)}</p>;
 }
