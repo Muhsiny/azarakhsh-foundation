@@ -70,7 +70,7 @@ export const canonicalPosts: CanonicalPost[] = [
     language: "fa",
     visibility: "public",
     authorName: "تحریریهٔ پژوهشی بنیاد آذرخش",
-    coverImage: "/media/beheshti-article04-archive.webp",
+    coverImage: "/media/beheshti-article04-original.svg",
     sourceNote: "",
     tags: "beheshti,council,history,minbar,social-authority,religious-leadership,political-mobilization,unity,72-articles,article-04,آیت‌الله بهشتی,منبر,ورس,شورای اتفاق",
     featured: 1,
