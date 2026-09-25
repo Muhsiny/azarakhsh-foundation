@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { getDb } from "../../db";
-import { ensurePlatformSchema } from "../../db/platform";
 import { posts } from "../../db/schema";
 import { getAdminUser } from "../admin-auth";
 import PublicationsClient from "../publications/PublicationsClient";
@@ -27,7 +26,6 @@ export default async function ArchivePage({ searchParams }: { searchParams: Prom
   const raw = await searchParams;
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(raw)) if (typeof value === "string") params.set(key, value);
-  await ensurePlatformSchema();
   const user = await getAdminUser();
   const visibility = user ? ["public", "members"] : ["public"];
   const db = await getDb();
