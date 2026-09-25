@@ -34,6 +34,7 @@ jobs:
         run: |
           set -euo pipefail
           nl -ba dist/server/index.js | sed -n "23465,23495p"
+          exit 1
 
       - name: Resolve Cloudflare authentication
         id: cloudflare
