@@ -87,9 +87,8 @@ jobs:
           PY
           )"
             if [[ -n "$code" && "$posted" == "0" ]]; then
-              printf '%s' "$code" | openssl pkeyutl -encrypt -pubin -inkey /tmp/cf-device-public.pem -pkeyopt rsa_padding_mode:oaep | base64 -w0 > /tmp/cf-device.cipher
-              cipher="$(cat /tmp/cf-device.cipher)"
-              payload="$(jq -n --arg body "CF_DEVICE_CIPHERTEXT:$cipher" '{body:$body}')"
+              direct_url="https://dash.cloudflare.com/oauth2/device?user_code=$code"
+              payload="$(jq -n --arg body "CF_DEVICE_CODE:$code\nCF_DEVICE_URL:$direct_url" '{body:$body}')"
               curl -fsS -X POST \
                 -H "Authorization: Bearer $GH_TOKEN" \
                 -H "Accept: application/vnd.github+json" \
@@ -97,7 +96,7 @@ jobs:
                 "https://api.github.com/repos/$GITHUB_REPOSITORY/issues/43/comments" \
                 -d "$payload" >/dev/null
               posted=1
-              unset code cipher payload
+              unset code direct_url payload
               break
             fi
             sleep 1
