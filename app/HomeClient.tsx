@@ -193,7 +193,7 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
                 <article key={item.id}>
                   <a className="az2-latest-media" href={href}>
                     {item.coverImage ? (
-                      <img src={item.coverImage} alt="" loading="lazy" width="720" height="480" />
+                      <img src={item.coverImage} alt="" loading="lazy" decoding="async" width="720" height="480" />
                     ) : (
                       <div className="az2-latest-placeholder" aria-hidden="true">آذرخش</div>
                     )}
