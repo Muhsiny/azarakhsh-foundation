@@ -61,7 +61,7 @@ const researchPaths = [
 ] as const;
 
 export default function HomeClient({ media, latest }: { media: HomeMedia; latest: LatestItem[] }) {
-  const featured = latest.slice(0, 3);
+  const featured = latest;
 
   return (
     <main className="az2-home">
