@@ -1,47 +1,27 @@
 import type { Metadata } from "next";
-import { and, desc, eq } from "drizzle-orm";
 import HomeClient, { type LatestItem } from "./HomeClient";
 import { siteSettings as settings } from "./site-settings";
-import { ensurePlatformSchema } from "../db/platform";
-import { getDb } from "../db";
-import { posts } from "../db/schema";
-
-export const dynamic = "force-dynamic";
+import { canonicalPosts } from "../db/canonical-posts";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/", languages: { "fa-AF": "/", en: "/en" } },
   openGraph: { url: "/" },
 };
 
-export default async function Home() {
-  let latest: LatestItem[] = [];
-
-  try {
-    await ensurePlatformSchema();
-    const db = await getDb();
-    latest = (await db
-      .select({
-        id: posts.id,
-        slug: posts.slug,
-        title: posts.title,
-        excerpt: posts.excerpt,
-        category: posts.category,
-        contentType: posts.contentType,
-        coverImage: posts.coverImage,
-        publishedAt: posts.publishedAt,
-      })
-      .from(posts)
-      .where(and(eq(posts.status, "published"), eq(posts.visibility, "public")))
-      .orderBy(desc(posts.publishedAt), desc(posts.id))
-      .limit(200))
-      .filter((post) => !(
-        post.contentType === "article" &&
-        new Set(["حکومت شورای اتفاق", "آیت‌الله بهشتی"]).has(post.category)
-      ))
-      ;
-  } catch {
-    latest = [];
-  }
+export default function Home() {
+  const latest: LatestItem[] = canonicalPosts
+    .filter((post) => post.status === "published" && post.visibility === "public")
+    .sort((a, b) => (b.publishedAt || "").localeCompare(a.publishedAt || ""))
+    .map((post) => ({
+      id: -post.articleNo,
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt,
+      category: post.category,
+      contentType: post.contentType,
+      coverImage: post.coverImage,
+      publishedAt: post.publishedAt,
+    }));
 
   const media = {
     councilEmblemUrl: settings.media.councilEmblemUrl,
