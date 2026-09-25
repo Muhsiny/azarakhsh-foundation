@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { and, eq, inArray, ne } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { getDb } from "../../../db";
-import { ensurePlatformSchema } from "../../../db/platform";
 import { posts } from "../../../db/schema";
 import { canonicalPosts } from "../../../db/canonical-posts";
 import { getAdminUser } from "../../admin-auth";
@@ -31,8 +30,6 @@ const loadArticle = cache(async (slug: string) => {
       canonical: true as const,
     };
   }
-
-  await ensurePlatformSchema();
   const user = await getAdminUser();
   const visibility = user ? ["public", "members"] : ["public"];
   const db = await getDb();
