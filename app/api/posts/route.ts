@@ -1,7 +1,7 @@
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { getDb } from "../../../db";
-import { ensurePlatformSchema } from "../../../db/platform";
 import { posts } from "../../../db/schema";
+import { canonicalPosts } from "../../../db/canonical-posts";
 import { getAdminUser } from "../../admin-auth";
 
 const publicPostSelection = {
@@ -34,13 +34,51 @@ function publicShape<T extends Record<string, unknown>>(post: T, hasFile: boolea
   };
 }
 
+function canonicalRows() {
+  return canonicalPosts
+    .filter((post) => post.status === "published" && post.visibility === "public")
+    .map((post) =>
+      publicShape(
+        {
+          id: -post.articleNo,
+          slug: post.slug,
+          title: post.title,
+          excerpt: post.excerpt,
+          category: post.category,
+          contentType: post.contentType,
+          language: post.language,
+          visibility: post.visibility,
+          authorName: post.authorName,
+          coverImage: post.coverImage,
+          sourceNote: post.sourceNote,
+          tags: post.tags,
+          featured: post.featured,
+          views: 0,
+          downloads: 0,
+          publishedAt: post.publishedAt,
+        },
+        false,
+      ),
+    );
+}
+
+const cacheHeaders = {
+  "Cache-Control": "public, max-age=120, stale-while-revalidate=900",
+};
+
 export async function GET(request: Request) {
+  const slug = new URL(request.url).searchParams.get("slug")?.trim();
+  const canonical = canonicalRows();
+
+  if (slug) {
+    const fixed = canonical.find((post) => post.slug === slug);
+    if (fixed) return Response.json({ post: fixed }, { headers: cacheHeaders });
+  }
+
   try {
-    await ensurePlatformSchema();
     const user = await getAdminUser();
     const visibility = user ? ["public", "members"] : ["public"];
     const db = await getDb();
-    const slug = new URL(request.url).searchParams.get("slug")?.trim();
 
     if (slug) {
       const [post] = await db
@@ -58,17 +96,21 @@ export async function GET(request: Request) {
         )
         .limit(1);
 
-      if (!post) {
-        return Response.json({ error: "مطلب یافت نشد." }, { status: 404 });
-      }
+      if (!post) return Response.json({ error: "مطلب یافت نشد." }, { status: 404 });
+
+      const canonicalSlugs = new Set(canonical.map((item) => String(item.slug)));
       const legacyTargetCategories = new Set(["حکومت شورای اتفاق", "آیت‌الله بهشتی"]);
-      if (post.contentType === "article" && legacyTargetCategories.has(post.category)) {
+      if (
+        canonicalSlugs.has(post.slug) ||
+        (post.contentType === "article" && legacyTargetCategories.has(post.category))
+      ) {
         return Response.json({ error: "مطلب یافت نشد." }, { status: 404 });
       }
+
       const { fileUrl, ...safePost } = post;
       return Response.json(
         { post: publicShape(safePost, Boolean(fileUrl)) },
-        { headers: { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" } },
+        { headers: cacheHeaders },
       );
     }
 
@@ -87,23 +129,26 @@ export async function GET(request: Request) {
       .orderBy(desc(posts.publishedAt), desc(posts.id))
       .limit(100);
 
+    const canonicalSlugs = new Set(canonical.map((item) => String(item.slug)));
+    const legacyTargetCategories = new Set(["حکومت شورای اتفاق", "آیت‌الله بهشتی"]);
+    const extras = rows
+      .filter(
+        (post) =>
+          !canonicalSlugs.has(post.slug) &&
+          !(post.contentType === "article" && legacyTargetCategories.has(post.category)),
+      )
+      .map(({ fileUrl, ...post }) => publicShape(post, Boolean(fileUrl)));
+
     return Response.json(
       {
-        posts: rows
-          .filter((post) => !(
-            post.contentType === "article" &&
-            new Set(["حکومت شورای اتفاق", "آیت‌الله بهشتی"]).has(post.category)
-          ))
-          .map(({ fileUrl, ...post }) =>
-            publicShape(post, Boolean(fileUrl)),
-          ),
+        posts: [...canonical, ...extras].sort((a, b) =>
+          String(b.publishedAt || "").localeCompare(String(a.publishedAt || "")),
+        ),
       },
-      { headers: { "Cache-Control": "public, max-age=60, stale-while-revalidate=300" } },
+      { headers: cacheHeaders },
     );
   } catch {
-    return Response.json(
-      { posts: [] },
-      { status: 503, headers: { "Cache-Control": "no-store" } },
-    );
+    if (slug) return Response.json({ error: "مطلب یافت نشد." }, { status: 404, headers: cacheHeaders });
+    return Response.json({ posts: canonical }, { headers: cacheHeaders });
   }
 }
