@@ -37,7 +37,7 @@ export const canonicalPosts: CanonicalPost[] = [
     tags: "beheshti,council,history,najaf,waras,mohammadia,madrasa,scholarship,social-network,religious-authority,judicial-authority,intelligence-analysis,jihad,72-articles,article-02,آیت‌الله بهشتی,نجف,ورس,مدرسه محمدیه,شورای اتفاق",
     featured: 1,
     status: "published",
-  }
+  },
   {
     articleNo: 3,
     publishedAt: "2026-09-24T19:35:00.000Z",
@@ -56,7 +56,7 @@ export const canonicalPosts: CanonicalPost[] = [
     tags: "council,beheshti,history,waras,shura,government,state-building,hazarajat,1358,political-mobilization,intelligence-analysis,civil-war,nasr,pasdaran,article-03,72-articles,حکومت شورای اتفاق,آیت‌الله بهشتی,ورس,شورای انقلابی اتفاق اسلامی",
     featured: 1,
     status: "published",
-  }
+  },
   {
     articleNo: 4,
     publishedAt: "2026-09-25T06:20:00.000Z",
