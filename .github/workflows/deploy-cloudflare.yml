@@ -29,13 +29,6 @@ jobs:
       - name: Verify production build
         run: npm run verify
 
-      - name: Diagnose built worker startup line
-        shell: bash
-        run: |
-          set -euo pipefail
-          nl -ba dist/server/index.js | sed -n "23465,23495p"
-          exit 1
-
       - name: Resolve Cloudflare authentication
         id: cloudflare
         shell: bash
