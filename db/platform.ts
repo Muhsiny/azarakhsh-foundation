@@ -1,3 +1,4 @@
+import { canonicalPosts } from "./canonical-posts";
 let ready: Promise<void> | null = null;
 
 type RuntimeEnv = { DB?: D1Database };
@@ -191,12 +192,62 @@ async function applyCompatibilityMigrations(db: D1Database) {
   `).run();
 }
 
+
+async function syncCanonicalArticle2(db: D1Database) {
+  const post = canonicalPosts.find((item) => item.articleNo === 2);
+  if (!post) return;
+
+  await db.prepare(`
+    INSERT INTO posts (
+      slug, title, excerpt, content, category, content_type, language, visibility,
+      author_name, cover_image, file_url, file_name, source_note, tags, featured,
+      status, published_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(slug) DO UPDATE SET
+      title = excluded.title,
+      excerpt = excluded.excerpt,
+      content = excluded.content,
+      category = excluded.category,
+      content_type = excluded.content_type,
+      language = excluded.language,
+      visibility = excluded.visibility,
+      author_name = excluded.author_name,
+      cover_image = excluded.cover_image,
+      source_note = excluded.source_note,
+      tags = excluded.tags,
+      featured = excluded.featured,
+      status = excluded.status,
+      published_at = excluded.published_at,
+      updated_at = excluded.updated_at
+  `).bind(
+    post.slug,
+    post.title,
+    post.excerpt,
+    post.content,
+    post.category,
+    post.contentType,
+    post.language,
+    post.visibility,
+    post.authorName,
+    post.coverImage,
+    null,
+    null,
+    post.sourceNote,
+    post.tags,
+    post.featured,
+    post.status,
+    post.publishedAt,
+    post.updatedAt,
+  ).run();
+}
+
 export async function ensurePlatformSchema() {
   if (ready) return ready;
   ready = (async () => {
     const db = await runtimeDb();
     await bootstrapTables(db);
     await applyCompatibilityMigrations(db);
+    await syncCanonicalArticle2(db);
   })().catch((error) => {
     ready = null;
     throw error;
