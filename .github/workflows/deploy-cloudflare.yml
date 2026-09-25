@@ -146,7 +146,7 @@ jobs:
           routes=(
             "/" "/about" "/council" "/beheshti" "/archive" "/publications"
             "/standards" "/governance" "/contribute" "/contact" "/privacy"
-            "/publications/hazarajat-1358-uprising-to-regional-government"
+            "/publications/beheshti-scholarship-social-network-before-jihad"
             "/en" "/join" "/login" "/robots.txt" "/sitemap.xml"
             "/.well-known/security.txt" "/api/posts"
           )
@@ -161,8 +161,8 @@ jobs:
               echo "::error::Smoke test failed for $path with HTTP $code"
               exit 1
             fi
-            if [[ "$path" == "/publications/hazarajat-1358-uprising-to-regional-government" ]]; then
-              grep -Fq "آنچه ۴۷ سال در سایه مانده است" /tmp/body || {
+            if [[ "$path" == "/publications/beheshti-scholarship-social-network-before-jihad" ]]; then
+              grep -Fq "پیش از حکومت؛ چگونه علم، مدرسه و مرجعیت اجتماعی بهشتی را به مرکز قدرت بدل کرد" /tmp/body || {
                 echo "::error::Article body is missing from deployed route."
                 exit 1
               }
@@ -178,14 +178,14 @@ jobs:
         run: |
           set -euo pipefail
           BASE="https://azarakhsh-foundation.com14.workers.dev"
-          ARTICLE="$BASE/publications/hazarajat-1358-uprising-to-regional-government"
+          ARTICLE="$BASE/publications/beheshti-scholarship-social-network-before-jihad"
           CHROME=""
           for bin in google-chrome google-chrome-stable chromium chromium-browser; do
             if command -v "$bin" >/dev/null 2>&1; then CHROME=$(command -v "$bin"); break; fi
           done
           test -n "$CHROME"
           "$CHROME" --headless=new --no-sandbox --disable-gpu --virtual-time-budget=5000 --dump-dom "$ARTICLE" > /tmp/article-dom.html
-          grep -Fq "آنچه ۴۷ سال در سایه مانده است" /tmp/article-dom.html || {
+          grep -Fq "پیش از حکومت؛ چگونه علم، مدرسه و مرجعیت اجتماعی بهشتی را به مرکز قدرت بدل کرد" /tmp/article-dom.html || {
             echo "::error::Hydrated article title is missing in a real browser."
             exit 1
           }
