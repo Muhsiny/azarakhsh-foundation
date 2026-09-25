@@ -47,7 +47,7 @@ function renderBlock(value: string, index: number) {
   return <p key={index} style={{ direction: "rtl", textAlign: "justify" }}>{inlineFormatting(value)}</p>;
 }
 
-export default function CanonicalArticle03Page() {
+export default function CanonicalArticle04Page() {
   const blocks = post.content.split(/\n{2,}/).filter(Boolean);
 
   return (
@@ -69,8 +69,8 @@ export default function CanonicalArticle03Page() {
         <p className="article-deck">{post.excerpt}</p>
         {post.coverImage && (
           <figure>
-            <img src={post.coverImage} alt={`تصویر آرشیوی ${post.title}`} />
-            <figcaption>تصویر آرشیوی آیت‌الله سید علی بهشتی — بنیاد آذرخش.</figcaption>
+            <img src={post.coverImage} alt="تصویر آرشیوی ارائه‌شده برای پروندهٔ مقالهٔ شمارهٔ ۴" />
+            <figcaption>تصویر آرشیوی ارائه‌شده برای این پرونده — بنیاد آذرخش.</figcaption>
           </figure>
         )}
         <div className="article-provenance">
