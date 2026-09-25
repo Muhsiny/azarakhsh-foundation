@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 concurrency:
   group: cloudflare-production
@@ -51,9 +52,59 @@ jobs:
       - name: Authorize Wrangler with Cloudflare
         if: steps.cloudflare.outputs.mode == 'device'
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          npx --yes wrangler@4.119.0 login --device --browser=false
+          cat > /tmp/cf-device-public.pem <<'EOF'
+          -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtsK9SSLZt05jV3mAPhW5
+          3miLIrAeQ8ZBsoH7oiRHCWc+EnPlr1YQxtVPPSlQOBFfPxMGnRgyFoJN3rJXF6m3
+          P0JY6wyUQx+ZTb/huspV+3JwLzMRSECXmkBwYqYLa+rnO82LOtbIMxV4zY+TkyKD
+          0IJNMBhjnxoMI+Ljr2ROtUXmgrOxC1hOxrdDHRIDKePKeYDxmjO/0NWdirbJqnih
+          WRcqhOvhrtRIpK+3rPXCqRmmKmM6O42Se3T17QxeIu0ensoFWmniQrkSu3t36GzM
+          s4yUuW5Jn5EaVZ5jPrV15sQb9f5jm+e5u1aQX3ZkcAzdjvv95etU2ldE9ku8oPEZ
+          xQIDAQAB
+          -----END PUBLIC KEY-----
+          EOF
+
+          log=/tmp/wrangler-device.log
+          (
+            stdbuf -oL -eL npx --yes wrangler@4.119.0 login --device --browser=false 2>&1 | tee "$log"
+          ) &
+          login_pid=$!
+
+          posted=0
+          for attempt in {1..90}; do
+            code="$(python3 - <<'PY'
+          import re
+          from pathlib import Path
+          p = Path("/tmp/wrangler-device.log")
+          s = p.read_text(errors="ignore") if p.exists() else ""
+          s = re.sub(r"\x1b\[[0-9;]*[A-Za-z]", "", s)
+          m = re.search(r"enter the code:\s*\n\s*([A-Za-z0-9_-]{6,20})", s, re.I)
+          print(m.group(1) if m else "")
+          PY
+          )"
+            if [[ -n "$code" && "$posted" == "0" ]]; then
+              printf '%s' "$code" | openssl pkeyutl -encrypt -pubin -inkey /tmp/cf-device-public.pem -pkeyopt rsa_padding_mode:oaep | base64 -w0 > /tmp/cf-device.cipher
+              cipher="$(cat /tmp/cf-device.cipher)"
+              payload="$(jq -n --arg body "CF_DEVICE_CIPHERTEXT:$cipher" '{body:$body}')"
+              curl -fsS -X POST \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                "https://api.github.com/repos/$GITHUB_REPOSITORY/issues/43/comments" \
+                -d "$payload" >/dev/null
+              posted=1
+              unset code cipher payload
+              break
+            fi
+            sleep 1
+          done
+
+          [[ "$posted" == "1" ]] || { echo "::error::Could not capture Cloudflare device code."; kill "$login_pid" || true; exit 1; }
+          wait "$login_pid"
 
       - name: Resolve the Azarakhsh Cloudflare account
         if: steps.cloudflare.outputs.mode == 'device'
@@ -111,7 +162,7 @@ jobs:
               exit 1
             fi
             if [[ "$path" == "/publications/hazarajat-1358-uprising-to-regional-government" ]]; then
-              grep -Fq "از قیام پراکنده تا حکومت منطقه‌ای" /tmp/body || {
+              grep -Fq "آنچه ۴۷ سال در سایه مانده است" /tmp/body || {
                 echo "::error::Article body is missing from deployed route."
                 exit 1
               }
@@ -134,7 +185,7 @@ jobs:
           done
           test -n "$CHROME"
           "$CHROME" --headless=new --no-sandbox --disable-gpu --virtual-time-budget=5000 --dump-dom "$ARTICLE" > /tmp/article-dom.html
-          grep -Fq "از قیام پراکنده تا حکومت منطقه‌ای" /tmp/article-dom.html || {
+          grep -Fq "آنچه ۴۷ سال در سایه مانده است" /tmp/article-dom.html || {
             echo "::error::Hydrated article title is missing in a real browser."
             exit 1
           }
