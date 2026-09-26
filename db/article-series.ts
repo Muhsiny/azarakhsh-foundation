@@ -30,6 +30,8 @@ function fallbackSeries(visibility: string[]) {
       featured: post.featured,
       views: 0,
       downloads: 0,
+      quizEnabled: 1,
+      quizConfig: "",
       status: post.status,
       publishedAt: post.publishedAt,
       createdAt: post.publishedAt,
