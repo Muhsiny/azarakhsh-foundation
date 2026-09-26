@@ -44,6 +44,8 @@ async function bootstrapTables(db: D1Database) {
       featured INTEGER NOT NULL DEFAULT 0,
       views INTEGER NOT NULL DEFAULT 0,
       downloads INTEGER NOT NULL DEFAULT 0,
+      quiz_enabled INTEGER NOT NULL DEFAULT 1,
+      quiz_config TEXT NOT NULL DEFAULT '',
       status TEXT NOT NULL DEFAULT 'draft',
       published_at TEXT,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -167,6 +169,8 @@ async function applyCompatibilityMigrations(db: D1Database) {
     ["featured", "INTEGER NOT NULL DEFAULT 0"],
     ["views", "INTEGER NOT NULL DEFAULT 0"],
     ["downloads", "INTEGER NOT NULL DEFAULT 0"],
+    ["quiz_enabled", "INTEGER NOT NULL DEFAULT 1"],
+    ["quiz_config", "TEXT NOT NULL DEFAULT ''"],
   ];
   for (const [name, definition] of postColumns) {
     await addMissingColumn(db, "posts", name, definition);
@@ -195,7 +199,7 @@ async function applyCompatibilityMigrations(db: D1Database) {
 
   await db.prepare(`
     INSERT INTO platform_schema (id, version, updated_at)
-    VALUES (1, 4, CURRENT_TIMESTAMP)
+    VALUES (1, 5, CURRENT_TIMESTAMP)
     ON CONFLICT(id) DO UPDATE SET version = excluded.version, updated_at = CURRENT_TIMESTAMP
   `).run();
 }
