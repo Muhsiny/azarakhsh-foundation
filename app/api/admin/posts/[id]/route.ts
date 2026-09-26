@@ -47,6 +47,8 @@ export async function PUT(request: Request, context: RouteContext) {
       sourceNote?: string;
       tags?: string;
       featured?: boolean;
+      quizEnabled?: boolean;
+      quizConfig?: string;
       status?: "draft" | "review" | "approved" | "published" | "archived";
     };
     const title = payload.title?.trim() ?? "";
@@ -89,6 +91,8 @@ export async function PUT(request: Request, context: RouteContext) {
         sourceNote: payload.sourceNote?.trim() || "",
         tags: payload.tags?.trim() || "",
         featured: payload.featured ? 1 : 0,
+        quizEnabled: payload.quizEnabled === false ? 0 : 1,
+        quizConfig: payload.quizConfig?.trim() || "",
         status,
         publishedAt: status === "published" ? now : null,
         updatedAt: now,
