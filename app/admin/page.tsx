@@ -5,6 +5,7 @@ import LeaderPageManager from "./LeaderPageManager";
 import PageManager from "./PageManager";
 import PublishingHealth from "./PublishingHealth";
 import TextFormattingTools from "./TextFormattingTools";
+import SiteControlCenter from "./SiteControlCenter";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,7 @@ export default async function AdminPage() {
   return (
     <>
       <TextFormattingTools />
+      {user.role === "owner" && <SiteControlCenter />}
       <AdminDashboard displayName={user.displayName} signOutHref="/api/auth/logout" />
       {user.role === "owner" && (
         <section className="admin-access-card" style={{ margin: "18px auto", width: "min(1100px, calc(100% - 32px))" }}>
