@@ -27,6 +27,7 @@ async function bootstrapTables(db: D1Database) {
     `CREATE TABLE IF NOT EXISTS posts (
       id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
       slug TEXT NOT NULL UNIQUE,
+      article_no INTEGER,
       title TEXT NOT NULL,
       excerpt TEXT NOT NULL DEFAULT '',
       content TEXT NOT NULL DEFAULT '',
@@ -46,6 +47,11 @@ async function bootstrapTables(db: D1Database) {
       status TEXT NOT NULL DEFAULT 'draft',
       published_at TEXT,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE TABLE IF NOT EXISTS site_settings (
+      key TEXT PRIMARY KEY NOT NULL,
+      value TEXT NOT NULL DEFAULT '{}',
       updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     )`,
     `CREATE TABLE IF NOT EXISTS admin_users (
@@ -149,6 +155,7 @@ async function bootstrapTables(db: D1Database) {
 
 async function applyCompatibilityMigrations(db: D1Database) {
   const postColumns: Array<[string, string]> = [
+    ["article_no", "INTEGER"],
     ["content_type", "TEXT NOT NULL DEFAULT 'article'"],
     ["language", "TEXT NOT NULL DEFAULT 'fa'"],
     ["visibility", "TEXT NOT NULL DEFAULT 'public'"],
@@ -175,6 +182,7 @@ async function applyCompatibilityMigrations(db: D1Database) {
   const indexes = [
     "CREATE INDEX IF NOT EXISTS posts_publication_idx ON posts(status, visibility, published_at DESC)",
     "CREATE INDEX IF NOT EXISTS posts_content_type_idx ON posts(content_type, status)",
+    "CREATE UNIQUE INDEX IF NOT EXISTS posts_article_no_idx ON posts(article_no) WHERE article_no IS NOT NULL",
     "CREATE INDEX IF NOT EXISTS membership_status_idx ON membership_requests(status, id DESC)",
     "CREATE INDEX IF NOT EXISTS contribution_status_idx ON public_contributions(status, id DESC)",
     "CREATE INDEX IF NOT EXISTS quiz_responses_post_idx ON quiz_responses(post_id, id DESC)",
@@ -187,58 +195,43 @@ async function applyCompatibilityMigrations(db: D1Database) {
 
   await db.prepare(`
     INSERT INTO platform_schema (id, version, updated_at)
-    VALUES (1, 3, CURRENT_TIMESTAMP)
+    VALUES (1, 4, CURRENT_TIMESTAMP)
     ON CONFLICT(id) DO UPDATE SET version = excluded.version, updated_at = CURRENT_TIMESTAMP
   `).run();
 }
 
 
-async function syncCanonicalArticle2(db: D1Database) {
-  const post = canonicalPosts.find((item) => item.articleNo === 2);
-  if (!post) return;
-
-  await db.prepare(`
-    INSERT INTO posts (
-      slug, title, excerpt, content, category, content_type, language, visibility,
-      author_name, cover_image, file_url, file_name, source_note, tags, featured,
-      status, published_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ON CONFLICT(slug) DO UPDATE SET
-      title = excluded.title,
-      excerpt = excluded.excerpt,
-      content = excluded.content,
-      category = excluded.category,
-      content_type = excluded.content_type,
-      language = excluded.language,
-      visibility = excluded.visibility,
-      author_name = excluded.author_name,
-      cover_image = excluded.cover_image,
-      source_note = excluded.source_note,
-      tags = excluded.tags,
-      featured = excluded.featured,
-      status = excluded.status,
-      published_at = excluded.published_at,
-      updated_at = excluded.updated_at
-  `).bind(
-    post.slug,
-    post.title,
-    post.excerpt,
-    post.content,
-    post.category,
-    post.contentType,
-    post.language,
-    post.visibility,
-    post.authorName,
-    post.coverImage,
-    null,
-    null,
-    post.sourceNote,
-    post.tags,
-    post.featured,
-    post.status,
-    post.publishedAt,
-    post.updatedAt,
-  ).run();
+async function seedCanonicalPosts(db: D1Database) {
+  for (const post of canonicalPosts) {
+    await db.prepare(`
+      INSERT INTO posts (
+        slug, article_no, title, excerpt, content, category, content_type, language, visibility,
+        author_name, cover_image, file_url, file_name, source_note, tags, featured,
+        status, published_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(slug) DO UPDATE SET article_no = excluded.article_no
+    `).bind(
+      post.slug,
+      post.articleNo,
+      post.title,
+      post.excerpt,
+      post.content,
+      post.category,
+      post.contentType,
+      post.language,
+      post.visibility,
+      post.authorName,
+      post.coverImage,
+      null,
+      null,
+      post.sourceNote,
+      post.tags,
+      post.featured,
+      post.status,
+      post.publishedAt,
+      post.updatedAt,
+    ).run();
+  }
 }
 
 export async function ensurePlatformSchema() {
@@ -247,7 +240,7 @@ export async function ensurePlatformSchema() {
     const db = await runtimeDb();
     await bootstrapTables(db);
     await applyCompatibilityMigrations(db);
-    await syncCanonicalArticle2(db);
+    await seedCanonicalPosts(db);
   })().catch((error) => {
     ready = null;
     throw error;
