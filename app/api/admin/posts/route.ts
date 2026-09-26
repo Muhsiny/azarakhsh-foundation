@@ -69,6 +69,8 @@ export async function POST(request: Request) {
       sourceNote?: string;
       tags?: string;
       featured?: boolean;
+      quizEnabled?: boolean;
+      quizConfig?: string;
       status?: "draft" | "review" | "approved" | "published" | "archived";
     };
 
@@ -119,6 +121,8 @@ export async function POST(request: Request) {
         sourceNote: payload.sourceNote?.trim() || "",
         tags: payload.tags?.trim() || "",
         featured: payload.featured ? 1 : 0,
+        quizEnabled: payload.quizEnabled === false ? 0 : 1,
+        quizConfig: payload.quizConfig?.trim() || "",
         status,
         publishedAt: status === "published" ? now : null,
         updatedAt: now,
