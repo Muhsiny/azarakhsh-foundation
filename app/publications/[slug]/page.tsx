@@ -6,6 +6,7 @@ import { getAdminUser } from "../../admin-auth";
 import ReadingTools from "../../components/ReadingTools";
 import DownloadQuizGate from "../../components/DownloadQuizGate";
 import ViewTracker from "../../components/ViewTracker";
+import { parseQuizConfig, toPublicQuizConfig } from "../../quiz-config";
 
 export const dynamic = "force-dynamic";
 
@@ -109,6 +110,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   if (!post) notFound();
 
   const paragraphs = post.content.split(/\n{2,}/).filter(Boolean);
+  const publicQuizConfig = toPublicQuizConfig(parseQuizConfig(post.quizConfig));
   const numberedSeries = post.canonical ? await getNumberedSeries(["public"]) : [];
   const seriesIndex = post.canonical
     ? numberedSeries.findIndex((item) => item.articleNo === post.articleNo)
@@ -138,8 +140,16 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         )}
         <div className="article-body">{paragraphs.map(formattedParagraph)}</div>
         {post.sourceNote && <section className="source-note"><strong>منبع و یادداشت آرشیوی</strong><p>{post.sourceNote}</p></section>}
-        {post.fileUrl && post.id > 0 && <DownloadQuizGate postId={post.id} fileName={post.fileName || "فایل آرشیوی"} downloads={post.downloads} />}
-        <aside className="citation-box"><strong>شیوهٔ پیشنهادی ارجاع</strong><p>بنیاد آذرخش، «{post.title}»، شناسهٔ {post.canonical ? `AZ-R${String(Math.abs(post.id)).padStart(2, "0")}` : `AZ-${post.id}`}, تاریخ دسترسی: {new Date().toLocaleDateString("fa-AF")}.</p></aside>
+        {post.fileUrl && post.id > 0 && (
+          <DownloadQuizGate
+            postId={post.id}
+            fileName={post.fileName || "فایل آرشیوی"}
+            downloads={post.downloads}
+            enabled={Boolean(post.quizEnabled)}
+            config={publicQuizConfig}
+          />
+        )}
+        <aside className="citation-box"><strong>شیوهٔ پیشنهادی ارجاع</strong><p>بنیاد آذرخش، «{post.title}»، شناسهٔ {post.canonical && post.articleNo ? `AZ-R${String(post.articleNo).padStart(2, "0")}` : `AZ-${post.id}`}, تاریخ دسترسی: {new Date().toLocaleDateString("fa-AF")}.</p></aside>
       </article>
     </main>
   );
