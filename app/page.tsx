@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import HomeClient, { type LatestItem } from "./HomeClient";
-import { siteSettings as settings } from "./site-settings";
+import { getSiteSettings } from "./site-settings";
 import { getNumberedSeries } from "../db/article-series";
 
 export const metadata: Metadata = {
@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
+  const settings = await getSiteSettings();
   const series = await getNumberedSeries(["public"]);
   const latest: LatestItem[] = series
     .sort((a, b) => (b.publishedAt || "").localeCompare(a.publishedAt || ""))
@@ -27,7 +28,10 @@ export default async function Home() {
   const media = {
     councilEmblemUrl: settings.media.councilEmblemUrl,
     councilEmblemAlt: settings.media.councilEmblemAlt,
+    leaderImageUrl: settings.media.leaderImageUrl,
+    leaderImageAlt: settings.media.leaderImageAlt,
+    heroFlagUrl: settings.media.heroFlagUrl,
   };
 
-  return <HomeClient media={media} latest={latest} />;
+  return <HomeClient media={media} home={settings.home} latest={latest} />;
 }
