@@ -6,6 +6,7 @@ import GovernanceCenter from "./GovernanceCenter";
 type Post = {
   id: number;
   slug: string;
+  articleNo: number | null;
   title: string;
   excerpt: string;
   content: string;
@@ -28,6 +29,7 @@ type Post = {
 
 type Draft = {
   title: string;
+  articleNo: number | null;
   excerpt: string;
   content: string;
   category: string;
@@ -46,6 +48,7 @@ type Draft = {
 
 const blankDraft: Draft = {
   title: "",
+  articleNo: null,
   excerpt: "",
   content: "",
   category: "مقالات",
@@ -152,6 +155,7 @@ export default function AdminDashboard({
     setEditingId(post.id);
     setDraft({
       title: post.title,
+      articleNo: post.articleNo ?? null,
       excerpt: post.excerpt,
       content: post.content,
       category: post.category,
@@ -230,6 +234,17 @@ export default function AdminDashboard({
               required
               value={draft.title}
             />
+          </label>
+          <label>
+            شمارهٔ مقالهٔ مجموعه (اختیاری)
+            <input
+              min="1"
+              onChange={(event) => setDraft({ ...draft, articleNo: event.target.value ? Number(event.target.value) : null })}
+              placeholder="مثلاً ۸"
+              type="number"
+              value={draft.articleNo ?? ""}
+            />
+            <small>برای مقاله‌های شماره‌دار پروندهٔ بهشتی/شورای اتفاق استفاده می‌شود. شماره باید یکتا باشد.</small>
           </label>
           <div className="form-row">
             <label>
