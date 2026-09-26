@@ -33,6 +33,7 @@ export async function PUT(request: Request, context: RouteContext) {
 
     const payload = (await request.json()) as {
       title?: string;
+      articleNo?: number | null;
       excerpt?: string;
       content?: string;
       category?: string;
@@ -68,6 +69,7 @@ export async function PUT(request: Request, context: RouteContext) {
       .update(posts)
       .set({
         title,
+        articleNo: Number.isInteger(payload.articleNo) && Number(payload.articleNo) > 0 ? Number(payload.articleNo) : null,
         excerpt: payload.excerpt?.trim() ?? "",
         content: payload.content?.trim() ?? "",
         category: payload.category?.trim() || "مقالات",
