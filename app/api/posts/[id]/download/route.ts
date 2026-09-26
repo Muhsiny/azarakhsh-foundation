@@ -19,6 +19,7 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
       status: posts.status,
       visibility: posts.visibility,
       fileUrl: posts.fileUrl,
+      quizEnabled: posts.quizEnabled,
     })
     .from(posts)
     .where(eq(posts.id, id))
@@ -34,12 +35,14 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     return new Response("Not found", { status: 404 });
   }
 
-  const token = new URL(request.url).searchParams.get("token") || "";
-  if (!token || !(await verifyAndConsumeDownloadPermit(token, id))) {
-    return new Response(
-      "مجوز دانلود معتبر نیست، استفاده شده یا منقضی شده است. آزمون را دوباره تکمیل کنید.",
-      { status: 403, headers: { "Cache-Control": "no-store" } },
-    );
+  if (item.quizEnabled) {
+    const token = new URL(request.url).searchParams.get("token") || "";
+    if (!token || !(await verifyAndConsumeDownloadPermit(token, id))) {
+      return new Response(
+        "مجوز دانلود معتبر نیست، استفاده شده یا منقضی شده است. آزمون را دوباره تکمیل کنید.",
+        { status: 403, headers: { "Cache-Control": "no-store" } },
+      );
+    }
   }
 
   await db
