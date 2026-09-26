@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { siteSettings as settings } from "../site-settings";
-import { canonicalPosts } from "../../db/canonical-posts";
+import { getNumberedSeries } from "../../db/article-series";
 
 export const metadata: Metadata = {
   title: "حکومت شورای اتفاق اسلامی افغانستان",
@@ -13,10 +13,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CouncilPage() {
-  const articles = canonicalPosts
-    .filter((post) => post.status === "published" && post.tags.split(",").map((tag) => tag.trim()).includes("council"))
-    .sort((a, b) => a.articleNo - b.articleNo);
+export default async function CouncilPage() {
+  const series = await getNumberedSeries(["public"]);
+  const articles = series
+    .filter((post) => post.tags.split(",").map((tag) => tag.trim()).includes("council"))
+    .sort((a, b) => (a.articleNo ?? 0) - (b.articleNo ?? 0));
 
   return (
     <main className="az-flagship-page">
@@ -51,7 +52,7 @@ export default function CouncilPage() {
         <div className="az-evidence-list">
           {articles.map((post) => (
             <article key={post.slug}>
-              <span>{post.articleNo.toLocaleString("fa-AF", { minimumIntegerDigits: 2 })}</span>
+              <span>{(post.articleNo ?? 0).toLocaleString("fa-AF", { minimumIntegerDigits: 2 })}</span>
               <div>
                 <h3><a href={`/publications/${post.slug}`}>{post.title}</a></h3>
                 <p>{post.excerpt}</p>
