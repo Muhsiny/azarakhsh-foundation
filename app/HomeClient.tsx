@@ -24,6 +24,30 @@ const typeLabels: Record<string, string> = {
 export type HomeMedia = {
   councilEmblemUrl: string;
   councilEmblemAlt: string;
+  leaderImageUrl: string;
+  leaderImageAlt: string;
+  heroFlagUrl: string;
+};
+
+export type HomeCopy = {
+  eyebrow: string;
+  title: string;
+  emphasis: string;
+  description: string;
+  archiveButton: string;
+  standardsButton: string;
+  leaderKicker: string;
+  leaderTitle: string;
+  leaderText: string;
+  councilKicker: string;
+  councilTitle: string;
+  councilText: string;
+  oralKicker: string;
+  oralTitle: string;
+  oralText: string;
+  contributeKicker: string;
+  contributeTitle: string;
+  contributeText: string;
 };
 
 const researchPaths = [
@@ -61,7 +85,7 @@ const researchPaths = [
   },
 ] as const;
 
-export default function HomeClient({ media, latest }: { media: HomeMedia; latest: LatestItem[] }) {
+export default function HomeClient({ media, home, latest }: { media: HomeMedia; home: HomeCopy; latest: LatestItem[] }) {
   const featured = latest;
 
   return (
@@ -69,22 +93,19 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
       <section className="az2-hero" aria-labelledby="az2-home-title">
         <div className="az-container az2-hero-grid">
           <div className="az2-hero-copy">
-            <span className="az2-eyebrow">بنیاد پژوهشی تاریخی آذرخش</span>
+            <span className="az2-eyebrow">{home.eyebrow}</span>
             <h1 id="az2-home-title">
-              تاریخ، آنگاه روشن می‌شود
-              <em>که اسناد سخن بگویند.</em>
+              {home.title}
+              <em>{home.emphasis}</em>
             </h1>
-            <p>
-              نهاد مستقل پژوهشی برای گردآوری، سنجش و بازخوانی مستند تاریخ افغانستان؛
-              با تفکیک روشن میان سند، روایت، خاطره و تفسیر.
-            </p>
+            <p>{home.description}</p>
             <div className="az2-actions">
               <a className="az2-button az2-button-primary" href="/archive">
-                <span>کاوش در آرشیف</span>
+                <span>{home.archiveButton}</span>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7.5h14v11H5zM8 4.5h8l1 3H7zM9 12h6" /></svg>
               </a>
               <a className="az2-button az2-button-ghost" href="/standards">
-                <span>معیارهای پژوهش</span>
+                <span>{home.standardsButton}</span>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h10l2 2v14H6zM9 9h6M9 13h6M9 17h4" /></svg>
               </a>
             </div>
@@ -93,7 +114,7 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
           <figure className="az2-hero-visual">
             <div className="az2-hero-media">
               <img
-                src="/media/council-flag-hq.svg"
+                src={media.heroFlagUrl}
                 alt="پرچم تاریخی حکومت شورای اتفاق اسلامی افغانستان"
                 width="1280"
                 height="720"
@@ -124,17 +145,17 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
         <article className="az2-feature az2-feature-leader">
           <div className="az2-feature-media">
             <img
-              src="/media/beheshti-original.webp"
-              alt="آیت‌الله سید علی بهشتی"
+              src={media.leaderImageUrl}
+              alt={media.leaderImageAlt}
               width="1182"
               height="1200"
               loading="lazy"
             />
           </div>
           <div className="az2-feature-copy">
-            <span className="az2-feature-kicker">پروندهٔ زندگی و زمانه</span>
-            <h2>آیت‌الله سید علی بهشتی</h2>
-            <p>پروندهٔ مقاله‌های پژوهشیِ شماره‌دار.</p>
+            <span className="az2-feature-kicker">{home.leaderKicker}</span>
+            <h2>{home.leaderTitle}</h2>
+            <p>{home.leaderText}</p>
             <a className="az2-inline-button" href="/beheshti">مطالعهٔ پرونده <span aria-hidden="true">←</span></a>
           </div>
         </article>
@@ -150,9 +171,9 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
             />
           </div>
           <div className="az2-feature-copy">
-            <span className="az2-feature-kicker">پروندهٔ محوری / ۰۱</span>
-            <h2>حکومت شورای اتفاق اسلامی افغانستان</h2>
-            <p>پروندهٔ مقاله‌های پژوهشیِ شماره‌دار.</p>
+            <span className="az2-feature-kicker">{home.councilKicker}</span>
+            <h2>{home.councilTitle}</h2>
+            <p>{home.councilText}</p>
             <a className="az2-inline-button az2-inline-light" href="/council">مطالعهٔ پرونده <span aria-hidden="true">←</span></a>
           </div>
         </article>
@@ -162,12 +183,9 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
             <svg viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="12" rx="4" /><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3M9 21h6" /></svg>
           </div>
           <div className="az2-feature-copy">
-            <span className="az2-feature-kicker">حافظهٔ زنده</span>
-            <h2>تاریخ شفاهی</h2>
-            <p>
-              خاطرات و روایت‌های شاهدان، با ثبت زمینهٔ زمانی، موقعیت راوی و امکان مقایسه
-              با اسناد و روایت‌های دیگر.
-            </p>
+            <span className="az2-feature-kicker">{home.oralKicker}</span>
+            <h2>{home.oralTitle}</h2>
+            <p>{home.oralText}</p>
             <a className="az2-inline-button" href="/publications?type=oral-history">مشاهدهٔ روایت‌ها <span aria-hidden="true">←</span></a>
           </div>
           <div className="az2-oral-wave" aria-hidden="true">
@@ -214,9 +232,9 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
 
       <section className="az-container az2-contribute">
         <div>
-          <span className="az2-feature-kicker">حافظهٔ جمعی</span>
-          <h2>سند، تصویر یا خاطره‌ای در اختیار دارید؟</h2>
-          <p>منشأ، زمینه و حقوق استفاده از هر منبع پیش از نشر بررسی می‌شود.</p>
+          <span className="az2-feature-kicker">{home.contributeKicker}</span>
+          <h2>{home.contributeTitle}</h2>
+          <p>{home.contributeText}</p>
         </div>
         <a className="az2-button az2-button-primary" href="/contribute">ارسال سند و خاطره</a>
       </section>
