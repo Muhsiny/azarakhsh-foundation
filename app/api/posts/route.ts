@@ -7,6 +7,7 @@ import { getAdminUser } from "../../admin-auth";
 const publicPostSelection = {
   id: posts.id,
   slug: posts.slug,
+  articleNo: posts.articleNo,
   title: posts.title,
   excerpt: posts.excerpt,
   category: posts.category,
@@ -68,12 +69,9 @@ const cacheHeaders = {
 
 export async function GET(request: Request) {
   const slug = new URL(request.url).searchParams.get("slug")?.trim();
-  const canonical = canonicalRows();
-
-  if (slug) {
-    const fixed = canonical.find((post) => post.slug === slug);
-    if (fixed) return Response.json({ post: fixed }, { headers: cacheHeaders });
-  }
+  const cacheHeaders = {
+    "Cache-Control": "public, max-age=120, stale-while-revalidate=900",
+  };
 
   try {
     const user = await getAdminUser();
@@ -82,10 +80,7 @@ export async function GET(request: Request) {
 
     if (slug) {
       const [post] = await db
-        .select({
-          ...publicPostSelection,
-          fileUrl: posts.fileUrl,
-        })
+        .select({ ...publicPostSelection, fileUrl: posts.fileUrl })
         .from(posts)
         .where(
           and(
@@ -95,30 +90,13 @@ export async function GET(request: Request) {
           ),
         )
         .limit(1);
-
-      if (!post) return Response.json({ error: "مطلب یافت نشد." }, { status: 404 });
-
-      const canonicalSlugs = new Set(canonical.map((item) => String(item.slug)));
-      const legacyTargetCategories = new Set(["حکومت شورای اتفاق", "آیت‌الله بهشتی"]);
-      if (
-        canonicalSlugs.has(post.slug) ||
-        (post.contentType === "article" && legacyTargetCategories.has(post.category))
-      ) {
-        return Response.json({ error: "مطلب یافت نشد." }, { status: 404 });
-      }
-
+      if (!post) return Response.json({ error: "مطلب یافت نشد." }, { status: 404, headers: cacheHeaders });
       const { fileUrl, ...safePost } = post;
-      return Response.json(
-        { post: publicShape(safePost, Boolean(fileUrl)) },
-        { headers: cacheHeaders },
-      );
+      return Response.json({ post: publicShape(safePost, Boolean(fileUrl)) }, { headers: cacheHeaders });
     }
 
     const rows = await db
-      .select({
-        ...publicPostSelection,
-        fileUrl: posts.fileUrl,
-      })
+      .select({ ...publicPostSelection, fileUrl: posts.fileUrl })
       .from(posts)
       .where(
         and(
@@ -127,28 +105,20 @@ export async function GET(request: Request) {
         ),
       )
       .orderBy(desc(posts.publishedAt), desc(posts.id))
-      .limit(100);
-
-    const canonicalSlugs = new Set(canonical.map((item) => String(item.slug)));
-    const legacyTargetCategories = new Set(["حکومت شورای اتفاق", "آیت‌الله بهشتی"]);
-    const extras = rows
-      .filter(
-        (post) =>
-          !canonicalSlugs.has(post.slug) &&
-          !(post.contentType === "article" && legacyTargetCategories.has(post.category)),
-      )
-      .map(({ fileUrl, ...post }) => publicShape(post, Boolean(fileUrl)));
+      .limit(200);
 
     return Response.json(
-      {
-        posts: [...canonical, ...extras].sort((a, b) =>
-          String(b.publishedAt || "").localeCompare(String(a.publishedAt || "")),
-        ),
-      },
+      { posts: rows.map(({ fileUrl, ...post }) => publicShape(post, Boolean(fileUrl))) },
       { headers: cacheHeaders },
     );
   } catch {
-    if (slug) return Response.json({ error: "مطلب یافت نشد." }, { status: 404, headers: cacheHeaders });
-    return Response.json({ posts: canonical }, { headers: cacheHeaders });
+    const fallback = canonicalRows();
+    if (slug) {
+      const fixed = fallback.find((post) => post.slug === slug);
+      return fixed
+        ? Response.json({ post: fixed }, { headers: cacheHeaders })
+        : Response.json({ error: "مطلب یافت نشد." }, { status: 404, headers: cacheHeaders });
+    }
+    return Response.json({ posts: fallback }, { headers: cacheHeaders });
   }
 }
