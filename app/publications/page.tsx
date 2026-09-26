@@ -86,6 +86,7 @@ export default async function PublicationsPage({ searchParams }: { searchParams:
       coverImage: post.coverImage,
       tags: post.tags,
       publishedAt: post.publishedAt,
+      articleNo: post.articleNo,
     }));
 
   const canonicalSlugs = new Set(canonicalRows.map((post) => post.slug));

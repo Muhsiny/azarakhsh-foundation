@@ -7,6 +7,7 @@ export type LatestItem = {
   contentType: string;
   coverImage: string | null;
   publishedAt: string | null;
+  articleNo?: number | null;
 };
 
 const typeLabels: Record<string, string> = {
@@ -197,7 +198,7 @@ export default function HomeClient({ media, latest }: { media: HomeMedia; latest
                     ) : (
                       <div className="az2-latest-placeholder" aria-hidden="true">آذرخش</div>
                     )}
-                    <span>{label}</span>
+                    <span>{item.articleNo ? `مقالهٔ ${item.articleNo.toLocaleString("fa-AF", { minimumIntegerDigits: 2 })} · ${label}` : label}</span>
                   </a>
                   <div className="az2-latest-body">
                     <h3><a href={href}>{item.title}</a></h3>

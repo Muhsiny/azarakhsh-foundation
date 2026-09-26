@@ -21,6 +21,7 @@ export default function Home() {
       contentType: post.contentType,
       coverImage: post.coverImage,
       publishedAt: post.publishedAt,
+      articleNo: post.articleNo,
     }));
 
   const media = {

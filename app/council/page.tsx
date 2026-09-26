@@ -46,7 +46,7 @@ export default function CouncilPage() {
       <section className="az-container az-evidence-section" aria-labelledby="council-articles-title">
         <div className="az-evidence-heading">
           <span className="az-overline">مجموعهٔ شماره‌دار</span>
-          <h2 id="council-articles-title">مقالات پژوهشی پرونده</h2>
+          <h2 id="council-articles-title">مقالات پژوهشی پرونده</h2>\n          <p>ترتیب مطالعه از شمارهٔ کمتر به شمارهٔ بیشتر است؛ شمارهٔ مقاله مسیر زمانی و پژوهشی مجموعه را نشان می‌دهد.</p>
         </div>
         <div className="az-evidence-list">
           {articles.map((post) => (

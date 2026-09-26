@@ -31,7 +31,7 @@ export default function LeaderProfile({
       <section className="az-container az-evidence-section" aria-labelledby="beheshti-numbered-title">
         <div className="az-evidence-heading">
           <span className="az-overline">مجموعهٔ شماره‌دار</span>
-          <h2 id="beheshti-numbered-title">مقالات پژوهشی پرونده</h2>
+          <h2 id="beheshti-numbered-title">مقالات پژوهشی پرونده</h2>\n          <p>ترتیب مطالعه از شمارهٔ کمتر به شمارهٔ بیشتر است؛ شمارهٔ مقاله مسیر زمانی و پژوهشی مجموعه را نشان می‌دهد.</p>
         </div>
         <div className="az-evidence-list">
           {articles.length ? articles.map((post) => (

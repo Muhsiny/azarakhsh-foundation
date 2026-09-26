@@ -142,17 +142,37 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   if (!post) notFound();
 
   const paragraphs = post.content.split(/\n{2,}/).filter(Boolean);
+  const numberedSeries = post.canonical
+    ? canonicalPosts
+        .filter((item) => item.status === "published" && item.visibility === "public")
+        .sort((a, b) => a.articleNo - b.articleNo)
+    : [];
+  const seriesIndex = post.canonical
+    ? numberedSeries.findIndex((item) => item.articleNo === post.articleNo)
+    : -1;
+  const previousArticle = seriesIndex > 0 ? numberedSeries[seriesIndex - 1] : null;
+  const nextArticle = seriesIndex >= 0 && seriesIndex < numberedSeries.length - 1 ? numberedSeries[seriesIndex + 1] : null;
+
   return (
     <main className="article-page">
       <div className="az-breadcrumb" data-inline-static><a href="/publications">نشریات</a><span aria-hidden="true"> / </span><span>مطالعهٔ مطلب</span></div>
       <article>
         {post.visibility === "public" && !post.canonical && <ViewTracker postId={post.id} />}
         <ReadingTools />
-        <div className="article-meta"><span>{post.category}</span><time>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("fa-AF") : ""}</time></div>
+        <div className="article-meta"><span>{post.category}</span>{post.canonical && <span>مقالهٔ {post.articleNo.toLocaleString("fa-AF", { minimumIntegerDigits: 2 })} از مجموعهٔ شماره‌دار</span>}<time>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("fa-AF") : ""}</time></div>
         <h1>{post.title}</h1>
         <p className="article-deck">{post.excerpt}</p>
         {post.coverImage && <figure><img src={post.coverImage} alt={`تصویر شاخص ${post.title}`} /><figcaption>تصویر مرتبط با این پرونده — منبع باید در متن پژوهش درج شود.</figcaption></figure>}
         <div className="article-provenance"><div><b>پدیدآورنده</b><span>{post.authorName || "تحریریهٔ بنیاد آذرخش"}</span></div><div><b>شناسه</b><span>{post.canonical ? `AZ-R${String(Math.abs(post.id)).padStart(2, "0")}` : `AZ-${post.id}`}</span></div><div><b>آخرین ویرایش</b><span>{new Date(post.updatedAt).toLocaleDateString("fa-AF")}</span></div></div>
+        {post.canonical && (
+          <nav className="article-series-nav" aria-label="ترتیب مقالات مجموعه">
+            <p><strong>ترتیب مطالعه:</strong> شمارهٔ کمتر، زودتر در زنجیرهٔ پژوهش آمده است.</p>
+            <div>
+              {previousArticle ? <a href={`/publications/${previousArticle.slug}`}>← مقالهٔ {previousArticle.articleNo.toLocaleString("fa-AF", { minimumIntegerDigits: 2 })}</a> : <span>آغاز زنجیرهٔ موجود</span>}
+              {nextArticle ? <a href={`/publications/${nextArticle.slug}`}>مقالهٔ {nextArticle.articleNo.toLocaleString("fa-AF", { minimumIntegerDigits: 2 })} →</a> : <span>آخرین مقالهٔ موجود</span>}
+            </div>
+          </nav>
+        )}
         <div className="article-body">{paragraphs.map(formattedParagraph)}</div>
         {post.sourceNote && <section className="source-note"><strong>منبع و یادداشت آرشیوی</strong><p>{post.sourceNote}</p></section>}
         {post.fileUrl && <DownloadQuizGate postId={post.id} fileName={post.fileName || "فایل آرشیوی"} downloads={post.downloads} />}
