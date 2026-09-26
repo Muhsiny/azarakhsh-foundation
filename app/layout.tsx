@@ -7,7 +7,7 @@ import "./apple-home.css";
 import PublicHeader from "./components/PublicHeader";
 import PublicFooter from "./components/PublicFooter";
 import type { CSSProperties } from "react";
-import { getSiteSettings, siteSettings } from "./site-settings";
+import { getSiteSettings } from "./site-settings";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "../db";
 import { ensurePlatformSchema } from "../db/platform";
