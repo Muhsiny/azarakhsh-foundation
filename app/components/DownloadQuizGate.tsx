@@ -1,36 +1,33 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { PublicQuizConfig } from "../quiz-config";
 
-type Question = { prompt: string; placeholder: string; hint: string; multiline?: boolean };
-
-const questions: Question[] = [
-  { prompt: "شورای انقلابی اتفاق اسلامی افغانستان در چه تاریخی تأسیس شد؟", placeholder: "روز، ماه و سال", hint: "تاریخ خورشیدی را دقیق بنویسید." },
-  { prompt: "چرا نمایندگان مردم برای تأسیس شورا، منطقهٔ ورس را انتخاب کردند؟", placeholder: "دیدگاه خود را بنویسید", hint: "پاسخ مرتبط و توضیحی باشد.", multiline: true },
-  { prompt: "رهبر شورای اتفاق با چه نوع رأیی برگزیده شد؟", placeholder: "نوع رأی", hint: "پاسخ کوتاه و دقیق باشد." },
-  { prompt: "حضور گستردهٔ نمایندگان مردم در اجلاس تأسیس، چه چیزی را دربارهٔ منشأ مشروعیت شورا نشان می‌دهد؟", placeholder: "دیدگاه خود را بنویسید", hint: "پاسخ مرتبط و توضیحی باشد.", multiline: true },
-  { prompt: "شورای اتفاق در ساختار رهبری خود چند معاون داشت؟", placeholder: "فقط عدد", hint: "تعداد معاونان را بنویسید." },
-  { prompt: "شورای اتفاق برای تنظیم امور اداری چند منشی داشت؟", placeholder: "فقط عدد", hint: "تعداد منشیان را بنویسید." },
-  { prompt: "ساختار حکومت شورای اتفاق چند کمیسیون اصلی داشت؟", placeholder: "فقط عدد", hint: "تعداد کمیسیون‌های اصلی را بنویسید." },
-  { prompt: "نام یکی از کمیسیون‌های اصلی حکومت شورای اتفاق را بنویسید.", placeholder: "نام یک کمیسیون", hint: "فقط نام یک کمیسیون کافی است." },
-  { prompt: "قانون یا نظام‌نامهٔ حکومت شورای اتفاق چند ماده داشت؟", placeholder: "فقط عدد", hint: "تعداد مواد را بنویسید." },
-  { prompt: "قلمرو حکومت شورای اتفاق چند ولایت را دربر می‌گرفت؟", placeholder: "فقط عدد", hint: "تعداد ولایت‌ها را بنویسید." },
-  { prompt: "قلمرو حکومت شورای اتفاق چند ولسوالی را دربر می‌گرفت؟", placeholder: "فقط عدد", hint: "تعداد ولسوالی‌ها را بنویسید." },
-  { prompt: "قلمرو اداری حکومت شورای اتفاق به چند حوزه تقسیم شده بود؟", placeholder: "فقط عدد", hint: "تعداد حوزه‌ها را بنویسید." },
-  { prompt: "سند صادرشده برای شناسایی و رفت‌وآمد افراد در قلمرو حکومت شورای اتفاق چه نام داشت؟", placeholder: "نام سند", hint: "پاسخ کوتاه و دقیق باشد." },
-  { prompt: "صدور اسناد رفت‌وآمد، تنظیم حوزه‌ها و ایجاد کمیسیون‌ها چه چیزی را دربارهٔ میزان سازمان‌یافتگی حکومت شورای اتفاق نشان می‌دهد؟", placeholder: "تحلیل کوتاه خود را بنویسید", hint: "پاسخ مرتبط، توضیحی و محترمانه باشد.", multiline: true },
-  { prompt: "اگر حکومت شورای اتفاق سقوط نمی‌کرد و فرصت ادامه، اصلاح و تکامل می‌یافت، به نظر شما امروز وضعیت سیاسی، اجتماعی، فرهنگی و اقتصادی شیعیان افغانستان چگونه می‌بود؟", placeholder: "تحلیل خود را با استدلال بنویسید", hint: "پاسخ تحلیلی و دست‌کم ۱۲۰ نویسه باشد.", multiline: true },
-];
-
-export default function DownloadQuizGate({ postId, fileName, downloads }: { postId: number; fileName: string; downloads: number }) {
+export default function DownloadQuizGate({
+  postId,
+  fileName,
+  downloads,
+  enabled,
+  config,
+}: {
+  postId: number;
+  fileName: string;
+  downloads: number;
+  enabled: boolean;
+  config: PublicQuizConfig;
+}) {
   const [open, setOpen] = useState(false);
-  const [answers, setAnswers] = useState<string[]>(Array(15).fill(""));
+  const [answers, setAnswers] = useState<string[]>(() => Array(config.questions.length).fill(""));
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [occupation, setOccupation] = useState("");
   const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    setAnswers(Array(config.questions.length).fill(""));
+  }, [config.questions.length]);
 
   useEffect(() => {
     if (!open) return;
@@ -55,8 +52,8 @@ export default function DownloadQuizGate({ postId, fileName, downloads }: { post
       setMessage("برای ثبت پاسخ پژوهشی، موافقت شما لازم است.");
       return;
     }
-    if (answers.some((answer) => !answer.trim())) {
-      setMessage("لطفاً به هر ۱۵ پرسش پاسخ دهید.");
+    if (answers.length !== config.questions.length || answers.some((answer) => !answer.trim())) {
+      setMessage("لطفاً به همهٔ پرسش‌ها پاسخ دهید.");
       return;
     }
 
@@ -76,6 +73,14 @@ export default function DownloadQuizGate({ postId, fileName, downloads }: { post
     } finally {
       setBusy(false);
     }
+  }
+
+  if (!enabled) {
+    return (
+      <a className="az-action az-action-primary az-download-trigger" href={"/api/posts/" + postId + "/download"}>
+        دریافت {fileName} <span aria-label={downloads + " بار دریافت"}>({downloads})</span>
+      </a>
+    );
   }
 
   return (
@@ -98,16 +103,11 @@ export default function DownloadQuizGate({ postId, fileName, downloads }: { post
             <div className="az-quiz-header">
               <div>
                 <span className="section-kicker">دسترسی پژوهشی به فایل</span>
-                <h2 id="az-quiz-title">پانزده پرسش برای پانزدهم سنبله</h2>
+                <h2 id="az-quiz-title">{config.title}</h2>
               </div>
-              <button className="az-quiz-close" type="button" onClick={() => setOpen(false)} disabled={busy} aria-label="بستن پنجره">
-                ×
-              </button>
+              <button className="az-quiz-close" type="button" onClick={() => setOpen(false)} disabled={busy} aria-label="بستن پنجره">×</button>
             </div>
-            <p id="az-quiz-intro">
-              این پرسش‌ها به یاد پانزدهم سنبله، روز تأسیس شورای انقلابی اتفاق اسلامی افغانستان، تنظیم شده‌اند.
-              پرسش‌های تاریخی بر پایهٔ پاسخ درست و پرسش‌های تشریحی بر پایهٔ ارتباط با موضوع و رعایت ادب بررسی می‌شوند.
-            </p>
+            <p id="az-quiz-intro">{config.intro}</p>
 
             <section className="az-quiz-profile">
               <h3>مشخصات پژوهشی</h3>
@@ -116,9 +116,7 @@ export default function DownloadQuizGate({ postId, fileName, downloads }: { post
                 <label>ایمیل<input className="az-form-control" value={email} onChange={(event) => setEmail(event.target.value)} type="email" autoComplete="email" dir="ltr" /></label>
                 <label>شغل یا حوزهٔ فعالیت<input className="az-form-control" value={occupation} onChange={(event) => setOccupation(event.target.value)} autoComplete="organization-title" /></label>
               </div>
-              <p>
-                این اطلاعات برای مدیریت دسترسی و شناخت مخاطبان پژوهشی ثبت می‌شود و اطلاعات تماس بدون رضایت شما عمومی یا در اختیار اشخاص ثالث قرار نمی‌گیرد.
-              </p>
+              <p>این اطلاعات برای مدیریت دسترسی و تحلیل پژوهشی پاسخ‌ها ثبت می‌شود و اطلاعات تماس بدون رضایت شما عمومی یا در اختیار اشخاص ثالث قرار نمی‌گیرد.</p>
               <label className="az-consent-box az-consent-compact">
                 <input type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} />
                 <span>با ثبت مشخصات و استفادهٔ پژوهشی از پاسخ خود موافقم.</span>
@@ -126,16 +124,16 @@ export default function DownloadQuizGate({ postId, fileName, downloads }: { post
             </section>
 
             <div className="az-quiz-questions">
-              {questions.map((question, index) => (
-                <label className="az-quiz-question" key={question.prompt}>
+              {config.questions.map((question, index) => (
+                <label className="az-quiz-question" key={question.id || String(index)}>
                   <span className="az-quiz-number">{(index + 1).toLocaleString("fa-AF", { minimumIntegerDigits: 2 })}</span>
                   <strong>{question.prompt}</strong>
-                  {question.multiline ? (
+                  {question.multiline || question.kind === "analysis" ? (
                     <textarea
                       className="az-form-control"
-                      value={answers[index]}
-                      placeholder={question.placeholder}
-                      rows={index === 14 ? 7 : 4}
+                      value={answers[index] || ""}
+                      placeholder={question.placeholder || "پاسخ خود را بنویسید"}
+                      rows={index === config.questions.length - 1 ? 7 : 4}
                       onChange={(event) => {
                         const next = [...answers];
                         next[index] = event.target.value;
@@ -146,8 +144,8 @@ export default function DownloadQuizGate({ postId, fileName, downloads }: { post
                     <input
                       className="az-form-control"
                       type="text"
-                      value={answers[index]}
-                      placeholder={question.placeholder}
+                      value={answers[index] || ""}
+                      placeholder={question.placeholder || "پاسخ"}
                       autoComplete="off"
                       onChange={(event) => {
                         const next = [...answers];
@@ -156,7 +154,8 @@ export default function DownloadQuizGate({ postId, fileName, downloads }: { post
                       }}
                     />
                   )}
-                  <small>{question.hint}</small>
+                  {question.hint && <small>{question.hint}</small>}
+                  {question.sourceNote && <small><b>راهنمای منبع:</b> {question.sourceNote}</small>}
                 </label>
               ))}
             </div>
