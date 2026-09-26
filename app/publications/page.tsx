@@ -39,6 +39,7 @@ export default async function PublicationsPage({ searchParams }: { searchParams:
     coverImage: string | null;
     tags: string;
     publishedAt: string | null;
+    articleNo: number | null;
   }> = [];
 
   try {
@@ -57,6 +58,7 @@ export default async function PublicationsPage({ searchParams }: { searchParams:
         coverImage: posts.coverImage,
         tags: posts.tags,
         publishedAt: posts.publishedAt,
+        articleNo: posts.articleNo,
       })
       .from(posts)
       .where(
@@ -71,33 +73,27 @@ export default async function PublicationsPage({ searchParams }: { searchParams:
     rows = [];
   }
 
-  const canonicalRows = canonicalPosts
-    .filter((post) => post.status === "published" && visibility.includes(post.visibility))
-    .map((post) => ({
-      id: -post.articleNo,
-      slug: post.slug,
-      title: post.title,
-      excerpt: post.excerpt,
-      category: post.category,
-      contentType: post.contentType,
-      language: post.language,
-      visibility: post.visibility,
-      authorName: post.authorName,
-      coverImage: post.coverImage,
-      tags: post.tags,
-      publishedAt: post.publishedAt,
-      articleNo: post.articleNo,
-    }));
+  if (rows.length === 0) {
+    rows = canonicalPosts
+      .filter((post) => post.status === "published" && visibility.includes(post.visibility))
+      .map((post) => ({
+        id: -post.articleNo,
+        slug: post.slug,
+        title: post.title,
+        excerpt: post.excerpt,
+        category: post.category,
+        contentType: post.contentType,
+        language: post.language,
+        visibility: post.visibility,
+        authorName: post.authorName,
+        coverImage: post.coverImage,
+        tags: post.tags,
+        publishedAt: post.publishedAt,
+        articleNo: post.articleNo,
+      }));
+  }
 
-  const canonicalSlugs = new Set(canonicalRows.map((post) => post.slug));
-  const legacyTargetCategories = new Set(["حکومت شورای اتفاق", "آیت‌الله بهشتی"]);
-  const mergedRows = [
-    ...canonicalRows,
-    ...rows.filter((post) =>
-      !canonicalSlugs.has(post.slug) &&
-      !(post.contentType === "article" && legacyTargetCategories.has(post.category)),
-    ),
-  ].sort((a, b) => (b.publishedAt || "").localeCompare(a.publishedAt || ""));
+  const mergedRows = rows.sort((a, b) => (b.publishedAt || "").localeCompare(a.publishedAt || ""));
 
   return <PublicationsClient initialPosts={mergedRows} initialFilters={readFilters(params)} />;
 }
