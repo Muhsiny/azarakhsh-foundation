@@ -1,10 +1,7 @@
 import { Fragment, cache, type ReactNode } from "react";
 import type { Metadata } from "next";
-import { and, eq, inArray, ne } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { getDb } from "../../../db";
-import { posts } from "../../../db/schema";
-import { canonicalPosts } from "../../../db/canonical-posts";
+import { getNumberedSeries, getPostBySlug } from "../../../db/article-series";
 import { getAdminUser } from "../../admin-auth";
 import ReadingTools from "../../components/ReadingTools";
 import DownloadQuizGate from "../../components/DownloadQuizGate";
@@ -14,41 +11,11 @@ export const dynamic = "force-dynamic";
 
 
 const loadArticle = cache(async (slug: string) => {
-  const canonical = canonicalPosts.find(
-    (post) => post.slug === slug && post.status === "published" && post.visibility === "public",
-  );
-
-  if (canonical) {
-    return {
-      ...canonical,
-      id: -canonical.articleNo,
-      fileUrl: null,
-      fileName: null,
-      views: 0,
-      downloads: 0,
-      createdAt: canonical.publishedAt,
-      canonical: true as const,
-    };
-  }
   const user = await getAdminUser();
   const visibility = user ? ["public", "members"] : ["public"];
-  const db = await getDb();
-  const [post] = await db
-    .select()
-    .from(posts)
-    .where(
-      and(
-        eq(posts.slug, slug),
-        eq(posts.status, "published"),
-        ne(posts.contentType, "page"),
-        inArray(posts.visibility, visibility),
-      ),
-    )
-    .limit(1);
-  if (!post) return null;
-  const legacyTargetCategories = new Set(["حکومت شورای اتفاق", "آیت‌الله بهشتی"]);
-  if (post.contentType === "article" && legacyTargetCategories.has(post.category)) return null;
-  return { ...post, canonical: false as const };
+  const post = await getPostBySlug(slug, visibility);
+  if (!post || post.contentType === "page") return null;
+  return { ...post, canonical: post.articleNo !== null };
 });
 
 export async function generateMetadata({
@@ -142,11 +109,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   if (!post) notFound();
 
   const paragraphs = post.content.split(/\n{2,}/).filter(Boolean);
-  const numberedSeries = post.canonical
-    ? canonicalPosts
-        .filter((item) => item.status === "published" && item.visibility === "public")
-        .sort((a, b) => a.articleNo - b.articleNo)
-    : [];
+  const numberedSeries = post.canonical ? await getNumberedSeries(["public"]) : [];
   const seriesIndex = post.canonical
     ? numberedSeries.findIndex((item) => item.articleNo === post.articleNo)
     : -1;
@@ -157,25 +120,25 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     <main className="article-page">
       <div className="az-breadcrumb" data-inline-static><a href="/publications">نشریات</a><span aria-hidden="true"> / </span><span>مطالعهٔ مطلب</span></div>
       <article>
-        {post.visibility === "public" && !post.canonical && <ViewTracker postId={post.id} />}
+        {post.visibility === "public" && post.id > 0 && <ViewTracker postId={post.id} />}
         <ReadingTools />
-        <div className="article-meta"><span>{post.category}</span>{post.canonical && <span>مقالهٔ {post.articleNo.toLocaleString("fa-AF", { minimumIntegerDigits: 2 })} از مجموعهٔ شماره‌دار</span>}<time>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("fa-AF") : ""}</time></div>
+        <div className="article-meta"><span>{post.category}</span>{post.canonical && post.articleNo && <span>مقالهٔ {post.articleNo.toLocaleString("fa-AF", { minimumIntegerDigits: 2 })} از مجموعهٔ شماره‌دار</span>}<time>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("fa-AF") : ""}</time></div>
         <h1>{post.title}</h1>
         <p className="article-deck">{post.excerpt}</p>
         {post.coverImage && <figure><img src={post.coverImage} alt={`تصویر شاخص ${post.title}`} /><figcaption>تصویر مرتبط با این پرونده — منبع باید در متن پژوهش درج شود.</figcaption></figure>}
-        <div className="article-provenance"><div><b>پدیدآورنده</b><span>{post.authorName || "تحریریهٔ بنیاد آذرخش"}</span></div><div><b>شناسه</b><span>{post.canonical ? `AZ-R${String(Math.abs(post.id)).padStart(2, "0")}` : `AZ-${post.id}`}</span></div><div><b>آخرین ویرایش</b><span>{new Date(post.updatedAt).toLocaleDateString("fa-AF")}</span></div></div>
+        <div className="article-provenance"><div><b>پدیدآورنده</b><span>{post.authorName || "تحریریهٔ بنیاد آذرخش"}</span></div><div><b>شناسه</b><span>{post.canonical && post.articleNo ? `AZ-R${String(post.articleNo).padStart(2, "0")}` : `AZ-${post.id}`}</span></div><div><b>آخرین ویرایش</b><span>{new Date(post.updatedAt).toLocaleDateString("fa-AF")}</span></div></div>
         {post.canonical && (
           <nav className="article-series-nav" aria-label="ترتیب مقالات مجموعه">
             <p><strong>ترتیب مطالعه:</strong> شمارهٔ کمتر، زودتر در زنجیرهٔ پژوهش آمده است.</p>
             <div>
-              {previousArticle ? <a href={`/publications/${previousArticle.slug}`}>← مقالهٔ {previousArticle.articleNo.toLocaleString("fa-AF", { minimumIntegerDigits: 2 })}</a> : <span>آغاز زنجیرهٔ موجود</span>}
-              {nextArticle ? <a href={`/publications/${nextArticle.slug}`}>مقالهٔ {nextArticle.articleNo.toLocaleString("fa-AF", { minimumIntegerDigits: 2 })} →</a> : <span>آخرین مقالهٔ موجود</span>}
+              {previousArticle?.articleNo ? <a href={`/publications/${previousArticle.slug}`}>← مقالهٔ {previousArticle.articleNo.toLocaleString("fa-AF", { minimumIntegerDigits: 2 })}</a> : <span>آغاز زنجیرهٔ موجود</span>}
+              {nextArticle?.articleNo ? <a href={`/publications/${nextArticle.slug}`}>مقالهٔ {nextArticle.articleNo.toLocaleString("fa-AF", { minimumIntegerDigits: 2 })} →</a> : <span>آخرین مقالهٔ موجود</span>}
             </div>
           </nav>
         )}
         <div className="article-body">{paragraphs.map(formattedParagraph)}</div>
         {post.sourceNote && <section className="source-note"><strong>منبع و یادداشت آرشیوی</strong><p>{post.sourceNote}</p></section>}
-        {post.fileUrl && <DownloadQuizGate postId={post.id} fileName={post.fileName || "فایل آرشیوی"} downloads={post.downloads} />}
+        {post.fileUrl && post.id > 0 && <DownloadQuizGate postId={post.id} fileName={post.fileName || "فایل آرشیوی"} downloads={post.downloads} />}
         <aside className="citation-box"><strong>شیوهٔ پیشنهادی ارجاع</strong><p>بنیاد آذرخش، «{post.title}»، شناسهٔ {post.canonical ? `AZ-R${String(Math.abs(post.id)).padStart(2, "0")}` : `AZ-${post.id}`}, تاریخ دسترسی: {new Date().toLocaleDateString("fa-AF")}.</p></aside>
       </article>
     </main>
