@@ -7,7 +7,11 @@ import "./apple-home.css";
 import PublicHeader from "./components/PublicHeader";
 import PublicFooter from "./components/PublicFooter";
 import type { CSSProperties } from "react";
-import { siteSettings as settings } from "./site-settings";
+import { getSiteSettings, siteSettings } from "./site-settings";
+import { and, eq } from "drizzle-orm";
+import { getDb } from "../db";
+import { ensurePlatformSchema } from "../db/platform";
+import { posts } from "../db/schema";
 import { SITE_URL } from "./site-url";
 
 const naskh = Noto_Naskh_Arabic({
@@ -70,12 +74,28 @@ export const metadata: Metadata = {
   applicationName: "بنیاد آذرخش",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const extraPages: Array<{ slug: string; title: string }> = [];
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const settings = await getSiteSettings();
+  let extraPages: Array<{ slug: string; title: string }> = [];
+  try {
+    await ensurePlatformSchema();
+    const db = await getDb();
+    extraPages = await db
+      .select({ slug: posts.slug, title: posts.title })
+      .from(posts)
+      .where(and(eq(posts.contentType, "page"), eq(posts.status, "published"), eq(posts.visibility, "public"), eq(posts.featured, 1)))
+      .limit(20);
+  } catch {
+    extraPages = [];
+  }
   const chromeSettings = {
     identity: {
       siteName: settings.identity.siteName,
       logoUrl: settings.identity.logoUrl,
+      tagline: settings.identity.tagline,
+    },
+    media: {
+      bismillahUrl: settings.media.bismillahUrl,
     },
     colors: {
       primary: settings.colors.primary,
@@ -89,7 +109,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     footer: {
       mission: settings.footer.mission,
       copyright: settings.footer.copyright,
+      mottoKicker: settings.footer.mottoKicker,
+      mottoTitle: settings.footer.mottoTitle,
+      mottoText: settings.footer.mottoText,
     },
+    navigation: settings.navigation,
     contact: {
       email: settings.contact.email,
     },
@@ -98,10 +122,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ResearchOrganization",
-    name: "بنیاد آذرخش",
+    name: settings.identity.siteName,
     alternateName: "Azarakhsh Research Foundation",
     url: SITE_URL,
-    logo: `${SITE_URL}/azarakhsh-logo-transparent-web.png`,
+    logo: settings.identity.logoUrl.startsWith("http") ? settings.identity.logoUrl : `${SITE_URL}${settings.identity.logoUrl}`,
     description: "بنیاد مستقل برای پژوهش عمیق تاریخ افغانستان، گردآوری اسناد و بازتاب مسئولانهٔ حقیقت‌های تاریخی.",
     areaServed: "Afghanistan",
     knowsAbout: ["تاریخ افغانستان", "حکومت شورای اتفاق اسلامی افغانستان", "حضرت آیت‌الله العظمی بهشتی", "تاریخ هزاره‌جات", "تاریخ شفاهی"],
