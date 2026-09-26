@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { siteSettings as settings } from "../site-settings";
+import { getSiteSettings } from "../site-settings";
 import { getNumberedSeries } from "../../db/article-series";
 
 export const metadata: Metadata = {
@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function CouncilPage() {
+  const settings = await getSiteSettings();
   const series = await getNumberedSeries(["public"]);
   const articles = series
     .filter((post) => post.tags.split(",").map((tag) => tag.trim()).includes("council"))
@@ -22,7 +23,7 @@ export default async function CouncilPage() {
   return (
     <main className="az-flagship-page">
       <section className="az-council-cover" aria-label="کاور پروندهٔ حکومت شورای اتفاق اسلامی افغانستان">
-        <img src="/media/council-flag-hq.svg" alt="پرچم حکومت شورای اتفاق اسلامی افغانستان" width="1280" height="720" fetchPriority="high" />
+        <img src={settings.media.heroFlagUrl} alt="پرچم حکومت شورای اتفاق اسلامی افغانستان" width="1280" height="720" fetchPriority="high" />
         <div className="az-council-cover-caption">
           <span>پروندهٔ پژوهشی</span>
           <strong>حکومت شورای اتفاق اسلامی افغانستان</strong>
