@@ -21,6 +21,8 @@ export const posts = sqliteTable("posts", {
   featured: integer("featured").notNull().default(0),
   views: integer("views").notNull().default(0),
   downloads: integer("downloads").notNull().default(0),
+  quizEnabled: integer("quiz_enabled").notNull().default(1),
+  quizConfig: text("quiz_config").notNull().default(""),
   status: text("status").notNull().default("draft"),
   publishedAt: text("published_at"),
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
