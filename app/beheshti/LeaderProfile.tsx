@@ -1,15 +1,16 @@
-import { canonicalPosts } from "../../db/canonical-posts";
+import { getNumberedSeries } from "../../db/article-series";
 
-export default function LeaderProfile({
+export default async function LeaderProfile({
   imageUrl,
   imageAlt,
 }: {
   imageUrl: string;
   imageAlt: string;
 }) {
-  const articles = canonicalPosts
-    .filter((post) => post.status === "published" && post.tags.split(",").map((tag) => tag.trim()).includes("beheshti"))
-    .sort((a, b) => a.articleNo - b.articleNo);
+  const series = await getNumberedSeries(["public"]);
+  const articles = series
+    .filter((post) => post.tags.split(",").map((tag) => tag.trim()).includes("beheshti"))
+    .sort((a, b) => (a.articleNo ?? 0) - (b.articleNo ?? 0));
 
   return (
     <main className="az-leader-page">
@@ -36,7 +37,7 @@ export default function LeaderProfile({
         <div className="az-evidence-list">
           {articles.length ? articles.map((post) => (
             <article key={post.slug}>
-              <span>{post.articleNo.toLocaleString("fa-AF", { minimumIntegerDigits: 2 })}</span>
+              <span>{(post.articleNo ?? 0).toLocaleString("fa-AF", { minimumIntegerDigits: 2 })}</span>
               <div>
                 <h3><a href={`/publications/${post.slug}`}>{post.title}</a></h3>
                 <p>{post.excerpt}</p>
