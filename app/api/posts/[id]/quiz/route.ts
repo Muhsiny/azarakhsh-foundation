@@ -4,36 +4,13 @@ import { ensurePlatformSchema } from "../../../../../db/platform";
 import { posts } from "../../../../../db/schema";
 import { getAdminUser } from "../../../../admin-auth";
 import { createDownloadPermit } from "../../../../download-gate";
+import { parseQuizConfig } from "../../../../quiz-config";
 import {
   getQuizDb,
   isAcceptableExplanatoryAnswer,
   normalizeQuizAnswer,
 } from "../../../../quiz-research";
-import {
-  consumeRateLimit,
-  isSameOriginMutation,
-} from "../../../../security";
-
-const acceptedAnswers: Record<number, string[]> = {
-  0: ["15 سنبله 1358", "۱۵ سنبله ۱۳۵۸", "15سنبله1358", "۱۵سنبله۱۳۵۸"],
-  2: ["اتفاق آرا", "اتفاق آراء", "به اتفاق آرا", "به اتفاق آراء"],
-  4: ["2", "۲", "دو"],
-  5: ["2", "۲", "دو"],
-  6: ["5", "۵", "پنج"],
-  7: ["نظامی", "قضا", "قضایی", "مالی", "سیاسی", "فرهنگ", "فرهنگی", "روابط", "دارالانشا"],
-  8: ["90", "۹۰", "نود"],
-  9: ["8", "۸", "هشت"],
-  10: ["42", "۴۲", "چهل و دو", "چهل‌ودو"],
-  11: ["15", "۱۵", "پانزده"],
-  12: ["خط راهداری", "راهداری", "خط راه داری"],
-};
-
-const explanatoryRules: Record<number, number> = {
-  1: 30,
-  3: 30,
-  13: 50,
-  14: 120,
-};
+import { consumeRateLimit, isSameOriginMutation } from "../../../../security";
 
 function emailIsValid(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -52,6 +29,8 @@ async function downloadablePost(id: number) {
       status: posts.status,
       visibility: posts.visibility,
       fileUrl: posts.fileUrl,
+      quizEnabled: posts.quizEnabled,
+      quizConfig: posts.quizConfig,
     })
     .from(posts)
     .where(eq(posts.id, id))
@@ -74,7 +53,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   }
 
   const contentLength = Number(request.headers.get("Content-Length") || "0");
-  if (contentLength > 72 * 1024) {
+  if (contentLength > 96 * 1024) {
     return Response.json({ error: "حجم پاسخ بیش از حد مجاز است." }, { status: 413 });
   }
 
@@ -87,10 +66,11 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   }
 
   try {
-    if (!(await downloadablePost(id))) {
-      return Response.json({ error: "این فایل برای دانلود در دسترس نیست." }, { status: 404 });
-    }
+    const item = await downloadablePost(id);
+    if (!item) return Response.json({ error: "این فایل برای دانلود در دسترس نیست." }, { status: 404 });
+    if (!item.quizEnabled) return Response.json({ error: "این فایل به آزمون نیاز ندارد." }, { status: 400 });
 
+    const config = parseQuizConfig(item.quizConfig);
     const payload = (await request.json()) as {
       answers?: unknown[];
       fullName?: unknown;
@@ -108,24 +88,12 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     if (fullName.length < 3 || !emailIsValid(email) || occupation.length < 2) {
       return Response.json({ error: "نام کامل، ایمیل معتبر و شغل خود را دقیق وارد کنید." }, { status: 400 });
     }
-    if (!consent) {
-      return Response.json({ error: "برای ثبت پاسخ پژوهشی، موافقت شما لازم است." }, { status: 400 });
-    }
-    if (
-      answers.length !== 15 ||
-      answers.some((answer) => !answer) ||
-      answers.some((answer, index) => answer.length > (index === 14 ? 5000 : 2500))
-    ) {
-      return Response.json({ error: "لطفاً به هر ۱۵ پرسش در اندازهٔ مجاز پاسخ دهید." }, { status: 400 });
+    if (!consent) return Response.json({ error: "برای ثبت پاسخ پژوهشی، موافقت شما لازم است." }, { status: 400 });
+    if (answers.length !== config.questions.length || answers.some((answer) => !answer)) {
+      return Response.json({ error: "لطفاً به همهٔ پرسش‌ها پاسخ دهید." }, { status: 400 });
     }
 
-    const accountLimit = await consumeRateLimit(
-      request,
-      "download-quiz-account",
-      6,
-      10 * 60,
-      `${id}|${email}`,
-    );
+    const accountLimit = await consumeRateLimit(request, "download-quiz-account", 6, 10 * 60, `${id}|${email}`);
     if (!accountLimit.allowed) {
       return Response.json(
         { error: "تعداد تلاش‌های این حساب بیش از حد مجاز است. کمی بعد دوباره تلاش کنید." },
@@ -135,82 +103,65 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 
     await ensurePlatformSchema();
     const rawDb = await getQuizDb();
-    if (!rawDb) {
-      return Response.json({ error: "پایگاه دادهٔ پژوهش فعال نیست." }, { status: 503 });
-    }
+    if (!rawDb) return Response.json({ error: "پایگاه دادهٔ پژوهش فعال نیست." }, { status: 503 });
 
     const lock = await rawDb.prepare(
       "SELECT locked_until FROM quiz_attempt_locks WHERE post_id = ? AND email = ? LIMIT 1",
     ).bind(id, email).first<{ locked_until: string }>();
     if (lock && new Date(lock.locked_until).getTime() > Date.now()) {
-      const remaining = Math.max(
-        1,
-        Math.ceil((new Date(lock.locked_until).getTime() - Date.now()) / 60000),
-      );
+      const remaining = Math.max(1, Math.ceil((new Date(lock.locked_until).getTime() - Date.now()) / 60000));
       return Response.json({ error: `تلاش بعدی پس از ${remaining} دقیقه ممکن است.` }, { status: 429 });
     }
 
-    const wrongHistorical = Object.entries(acceptedAnswers)
-      .map(([indexValue, accepted]) => {
-        const index = Number(indexValue);
-        const candidate = normalizeQuizAnswer(answers[index]);
-        return accepted.some((answer) => normalizeQuizAnswer(answer) === candidate)
-          ? null
-          : index + 1;
-      })
-      .filter((value): value is number => value !== null);
+    const wrongFacts: number[] = [];
+    const weakAnalysis: number[] = [];
+    let factCount = 0;
 
-    if (wrongHistorical.length) {
-      const lockedUntil = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+    config.questions.forEach((question, index) => {
+      const answer = answers[index] || "";
+      if (question.kind === "fact") {
+        factCount += 1;
+        const accepted = question.acceptedAnswers ?? [];
+        const candidate = normalizeQuizAnswer(answer);
+        if (!accepted.length || !accepted.some((value) => normalizeQuizAnswer(value) === candidate)) {
+          wrongFacts.push(index + 1);
+        }
+      } else {
+        const minimum = Math.max(20, question.minimumLength ?? 40);
+        if (!isAcceptableExplanatoryAnswer(answer, minimum)) weakAnalysis.push(index + 1);
+      }
+    });
+
+    if (wrongFacts.length) {
+      const lockedUntil = new Date(Date.now() + config.lockMinutes * 60 * 1000).toISOString();
       await rawDb.prepare(`INSERT INTO quiz_attempt_locks (post_id, email, locked_until, updated_at)
         VALUES (?, ?, ?, CURRENT_TIMESTAMP)
         ON CONFLICT(post_id, email) DO UPDATE SET locked_until = excluded.locked_until, updated_at = CURRENT_TIMESTAMP`)
         .bind(id, email, lockedUntil).run();
       return Response.json(
-        { error: "یک یا چند پاسخ تاریخی درست نیست. ده دقیقه بعد دوباره تلاش کنید." },
+        { error: `پاسخ تاریخی پرسش‌های ${wrongFacts.join("، ")} با منبع تعریف‌شده هم‌خوان نیست. پس از ${config.lockMinutes} دقیقه دوباره تلاش کنید.` },
         { status: 400 },
       );
     }
 
-    const unacceptable = Object.entries(explanatoryRules)
-      .map(([indexValue, minimumLength]) => {
-        const index = Number(indexValue);
-        return isAcceptableExplanatoryAnswer(answers[index], minimumLength)
-          ? null
-          : index + 1;
-      })
-      .filter((value): value is number => value !== null);
-
-    if (unacceptable.length) {
+    if (weakAnalysis.length) {
       return Response.json(
-        { error: `پاسخ پرسش‌های ${unacceptable.join("، ")} باید مرتبط، توضیحی و بدون توهین یا تحقیر باشد.` },
+        { error: `پاسخ پرسش‌های ${weakAnalysis.join("، ")} باید مرتبط، توضیحی و محترمانه باشد.` },
         { status: 400 },
       );
     }
 
-    await rawDb.prepare(
-      "DELETE FROM quiz_attempt_locks WHERE post_id = ? AND email = ?",
-    ).bind(id, email).run();
+    await rawDb.prepare("DELETE FROM quiz_attempt_locks WHERE post_id = ? AND email = ?").bind(id, email).run();
 
+    const lastAnalysisIndex = [...config.questions].map((q, i) => ({ q, i })).reverse().find((item) => item.q.kind === "analysis")?.i ?? config.questions.length - 1;
     await rawDb.prepare(`INSERT INTO quiz_responses
       (post_id, full_name, email, occupation, answers_json, analytical_answer, historical_score, consent)
       VALUES (?, ?, ?, ?, ?, ?, ?, 1)`)
-      .bind(
-        id,
-        fullName,
-        email,
-        occupation,
-        JSON.stringify(answers),
-        answers[14],
-        Object.keys(acceptedAnswers).length,
-      )
+      .bind(id, fullName, email, occupation, JSON.stringify(answers), answers[lastAnalysisIndex] || "", factCount)
       .run();
 
     const token = await createDownloadPermit(id, email);
-    return Response.json(
-      { token, expiresInSeconds: 600 },
-      { headers: { "Cache-Control": "no-store" } },
-    );
+    return Response.json({ token, expiresInSeconds: 600 }, { headers: { "Cache-Control": "no-store" } });
   } catch {
     return Response.json(
       { error: "مجوز دانلود صادر نشد. لطفاً دوباره تلاش کنید." },
