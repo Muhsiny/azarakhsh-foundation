@@ -23,6 +23,8 @@ type Post = {
   featured: number;
   views: number;
   downloads: number;
+  quizEnabled: number;
+  quizConfig: string;
   status: "draft" | "review" | "approved" | "published" | "archived";
   updatedAt: string;
 };
@@ -43,6 +45,8 @@ type Draft = {
   sourceNote: string;
   tags: string;
   featured: boolean;
+  quizEnabled: boolean;
+  quizConfig: string;
   status: "draft" | "review" | "approved" | "published" | "archived";
 };
 
@@ -62,6 +66,8 @@ const blankDraft: Draft = {
   sourceNote: "",
   tags: "",
   featured: false,
+  quizEnabled: true,
+  quizConfig: "",
   status: "draft",
 };
 
@@ -169,6 +175,8 @@ export default function AdminDashboard({
       sourceNote: post.sourceNote,
       tags: post.tags,
       featured: Boolean(post.featured),
+      quizEnabled: Boolean(post.quizEnabled),
+      quizConfig: post.quizConfig || "",
       status: post.status,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -441,6 +449,26 @@ export default function AdminDashboard({
             />
             نمایش به‌عنوان محتوای برجسته
           </label>
+          <label className="visibility-toggle">
+            <input
+              checked={draft.quizEnabled}
+              onChange={(event) => setDraft({ ...draft, quizEnabled: event.target.checked })}
+              type="checkbox"
+            />
+            برای دانلود فایل، آزمون پژوهشی فعال باشد
+          </label>
+          <details>
+            <summary>تنظیمات پیشرفتهٔ آزمون دانلود</summary>
+            <p>اگر خالی بماند، الگوی پیش‌فرضِ منبع‌محور استفاده می‌شود. برای سؤال‌های اختلافی، پاسخ را به یک منبع مشخص نسبت دهید.</p>
+            <textarea
+              className="content-editor"
+              dir="ltr"
+              onChange={(event) => setDraft({ ...draft, quizConfig: event.target.value })}
+              placeholder='{"title":"...","questions":[...]}'
+              rows={12}
+              value={draft.quizConfig}
+            />
+          </details>
           <button className="button button-dark" disabled={saving} type="submit">
             {saving ? "در حال ذخیره..." : "ذخیرهٔ محتوا"}
           </button>
