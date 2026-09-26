@@ -24,8 +24,14 @@ export type SiteSettings = {
   footer: {
     mission: string;
     copyright: string;
+    mottoKicker: string;
     mottoTitle: string;
     mottoText: string;
+  };
+  navigation: {
+    primary: Array<{ href: string; label: string; enabled: boolean }>;
+    more: Array<{ href: string; label: string; enabled: boolean }>;
+    footer: Array<{ href: string; label: string; enabled: boolean }>;
   };
   contact: {
     email: string;
@@ -82,6 +88,7 @@ export const siteSettings: Readonly<SiteSettings> = {
   footer: {
     mission: "بنیاد مستقل پژوهش، اسناد و حافظهٔ تاریخی افغانستان",
     copyright: "تمام حقوق محفوظ است.",
+    mottoKicker: "تاریخ",
     mottoTitle: "برای فهم آینده",
     mottoText: "منبع را حفظ می‌کنیم، روایت را می‌سنجیم و مرز میان سند و تفسیر را روشن نگه می‌داریم.",
   },
@@ -126,6 +133,11 @@ function mergeSettings(input: Partial<SiteSettings> | null | undefined): SiteSet
     media: { ...siteSettings.media, ...(value.media ?? {}) },
     council: { ...siteSettings.council, ...(value.council ?? {}) },
     footer: { ...siteSettings.footer, ...(value.footer ?? {}) },
+    navigation: {
+      primary: value.navigation?.primary ?? siteSettings.navigation.primary,
+      more: value.navigation?.more ?? siteSettings.navigation.more,
+      footer: value.navigation?.footer ?? siteSettings.navigation.footer,
+    },
     contact: { ...siteSettings.contact, ...(value.contact ?? {}) },
     colors: { ...siteSettings.colors, ...(value.colors ?? {}) },
     design: { ...siteSettings.design, ...(value.design ?? {}) },
